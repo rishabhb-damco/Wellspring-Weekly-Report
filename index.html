@@ -578,11 +578,11 @@ function generateDashboard() {
   const totalImpr   = c1.impr+c2.impr;
   const totalCost   = c1.cost+c2.cost;
   const totalCTR    = totalImpr ? (totalClicks/totalImpr*100).toFixed(2) : '0.00';
-  const totalCVR    = totalClicks ? (totalAllConv / totalClicks * 100).toFixed(2) : '0.00';
   // Total conversions = platform conv + phone calls (per Google Ads definition)
   const c1totalConv = c1.conv + c1.phone;
   const c2totalConv = c2.conv + c2.phone;
   const totalAllConv = c1totalConv + c2totalConv;
+  const totalCVR    = totalClicks ? (totalAllConv / totalClicks * 100).toFixed(2) : '0.00';
   const totalCostPerConv = totalAllConv ? totalCost / totalAllConv : 0;
   const c1CostPerConv = c1totalConv ? c1.cost / c1totalConv : 0;
   const c2CostPerConv = c2totalConv ? c2.cost / c2totalConv : 0;
