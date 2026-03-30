@@ -586,6 +586,15 @@ function generateDashboard() {
   const totalImpr   = c1.impr+c2.impr;
   const totalCost   = c1.cost+c2.cost;
   const totalCTR    = totalImpr ? (totalClicks/totalImpr*100).toFixed(2) : '0.00';
+
+  const totalLeads     = n('totalLeads');
+  const lastWeekLeads  = n('lastWeekLeads');
+  const scheduledLeads = n('scheduledLeads');
+  const notScheduled   = totalLeads-scheduledLeads;
+  const scheduledPct   = pct(scheduledLeads,totalLeads);
+  const leadDiff       = totalLeads-lastWeekLeads;
+  const leadDiffPct    = pct(Math.abs(leadDiff),lastWeekLeads);
+
   // Platform conversions = Col Q (Conversions) + Col R (Phone calls) from Ads sheet
   const c1totalConv = n('c1_platform_conv') || (c1.conv + c1.phone);
   const c2totalConv = n('c2_platform_conv') || (c2.conv + c2.phone);
@@ -596,14 +605,6 @@ function generateDashboard() {
   const totalCostPerConv = totalAllConv ? totalCost / totalAllConv : 0;
   const c1CostPerConv = c1totalConv ? c1.cost / c1totalConv : 0;
   const c2CostPerConv = c2totalConv ? c2.cost / c2totalConv : 0;
-
-  const totalLeads     = n('totalLeads');
-  const lastWeekLeads  = n('lastWeekLeads');
-  const scheduledLeads = n('scheduledLeads');
-  const notScheduled   = totalLeads-scheduledLeads;
-  const scheduledPct   = pct(scheduledLeads,totalLeads);
-  const leadDiff       = totalLeads-lastWeekLeads;
-  const leadDiffPct    = pct(Math.abs(leadDiff),lastWeekLeads);
 
   const reasons = [
     { label:"Didn't Answer Consult Call", count:n('r_noanswer'), color:'var(--red)' },
