@@ -514,8 +514,11 @@ function processAds(file) {
         const c2ctr = c2.impr ? (c2.clicks / c2.impr * 100) : 0;
         const c1cpc = c1.clicks ? (c1.cost / c1.clicks) : 0;
         const c2cpc = c2.clicks ? (c2.cost / c2.clicks) : 0;
-        const c1cvr = c1.clicks ? (c1.conv / c1.clicks * 100) : 0;
-        const c2cvr = c2.clicks ? (c2.conv / c2.clicks * 100) : 0;
+        // Total conversions = platform conv + phone call conv
+        const c1totalConv = c1.conv + c1.phone;
+        const c2totalConv = c2.conv + c2.phone;
+        const c1cvr = c1.clicks ? (c1totalConv / c1.clicks * 100) : 0;
+        const c2cvr = c2.clicks ? (c2totalConv / c2.clicks * 100) : 0;
 
         const sf = (id, val, decimals=2) => {
           const el = document.getElementById(id);
@@ -575,10 +578,14 @@ function generateDashboard() {
   const totalImpr   = c1.impr+c2.impr;
   const totalCost   = c1.cost+c2.cost;
   const totalCTR    = totalImpr ? (totalClicks/totalImpr*100).toFixed(2) : '0.00';
-  const totalCVR    = totalClicks ? ((c1.conv+c2.conv)/totalClicks*100).toFixed(2) : '0.00';
-  const totalCostPerConv = (c1.conv+c2.conv) ? totalCost/(c1.conv+c2.conv) : 0;
-  const c1CostPerConv = c1.conv ? c1.cost/c1.conv : 0;
-  const c2CostPerConv = c2.conv ? c2.cost/c2.conv : 0;
+  const totalCVR    = totalClicks ? (totalAllConv / totalClicks * 100).toFixed(2) : '0.00';
+  // Total conversions = platform conv + phone calls (per Google Ads definition)
+  const c1totalConv = c1.conv + c1.phone;
+  const c2totalConv = c2.conv + c2.phone;
+  const totalAllConv = c1totalConv + c2totalConv;
+  const totalCostPerConv = totalAllConv ? totalCost / totalAllConv : 0;
+  const c1CostPerConv = c1totalConv ? c1.cost / c1totalConv : 0;
+  const c2CostPerConv = c2totalConv ? c2.cost / c2totalConv : 0;
 
   const totalLeads     = n('totalLeads');
   const lastWeekLeads  = n('lastWeekLeads');
@@ -678,7 +685,7 @@ function generateDashboard() {
             </tr>
             <tr class="total-row">
               <td><strong>Total</strong></td>
-              <td><strong>${c1.conv+c2.conv}</strong></td><td><strong>${totalPhone}</strong></td><td><strong>${totalClicks}</strong></td>
+              <td><strong>${totalAllConv}</strong></td><td><strong>${totalPhone}</strong></td><td><strong>${totalClicks}</strong></td>
               <td><strong>${totalCTR}%</strong></td><td><strong>${fmt(c1.cpc+c2.cpc)}</strong></td>
               <td><strong>${fmt(totalCost)}</strong></td><td><strong>${fmt(totalCostPerConv)}</strong></td>
             </tr>
