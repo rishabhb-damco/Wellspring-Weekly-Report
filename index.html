@@ -194,6 +194,8 @@
 
   <input type="hidden" id="c1_platform_conv" value="0" />
   <input type="hidden" id="c2_platform_conv" value="0" />
+  <input type="hidden" id="googleLeads" value="0" />
+  <input type="hidden" id="googleSched" value="0" />
 
   <!-- ===== STEP 2: REPORT DETAILS ===== -->
   <div class="form-section">
@@ -399,7 +401,7 @@ function processCRM(file) {
       try {
         const rows      = results.data;
         const dataRows  = rows.slice(1).filter(r => r[0] && r[0].toString().trim() !== '');
-        let total = 0, sched = 0;
+        let total = 0, sched = 0, googleLeads = 0, googleSched = 0;
         const sources  = { Google:0, Internal:0, Referral:0, 'Psychology Today':0 };
         const services = { Psychotherapy:0, 'Medication Management':0, "Couple's Therapy":0, Testing:0, Unknown:0, Other:0 };
         const reasons  = { r_noanswer:0, r_incomplete:0, r_hap:0, r_esa:0, r_noprovider:0, r_waitlist:0, r_other:0 };
@@ -408,13 +410,20 @@ function processCRM(file) {
           total++;
           const isScheduled = (row[CRM_COL.SCHEDULED]||'').toString().trim().toLowerCase() === 'yes';
           if (isScheduled) sched++;
-          sources[classifySource(row[CRM_COL.SOURCE])] = (sources[classifySource(row[CRM_COL.SOURCE])]||0) + 1;
+          const src = classifySource(row[CRM_COL.SOURCE]);
+          sources[src] = (sources[src]||0) + 1;
+          // Track Google leads separately for KPI cards
+          if (src === 'Google') {
+            googleLeads++;
+            if (isScheduled) googleSched++;
+          }
           for (const s of normaliseServices(row[CRM_COL.SERVICE])) { if(services[s]!==undefined) services[s]++; else services.Other++; }
           if (!isScheduled) { const rk = classifyReason(row[CRM_COL.REASON]); if(rk) reasons[rk]++; }
         }
 
         const sf = (id, val) => { const el = document.getElementById(id); if(el){ el.value=val; el.classList.add('auto-filled'); } };
         sf('totalLeads', total); sf('scheduledLeads', sched);
+        sf('googleLeads', googleLeads); sf('googleSched', googleSched);
         sf('r_noanswer', reasons.r_noanswer); sf('r_incomplete', reasons.r_incomplete);
         sf('r_hap', reasons.r_hap); sf('r_esa', reasons.r_esa);
         sf('r_noprovider', reasons.r_noprovider); sf('r_waitlist', reasons.r_waitlist); sf('r_other', reasons.r_other);
@@ -423,14 +432,15 @@ function processCRM(file) {
         sf('s_couples', services["Couple's Therapy"]); sf('s_other', services.Other);
 
         const schedPct = total ? ((sched/total)*100).toFixed(1) : 0;
+        const googleSchedPct = googleLeads ? ((googleSched/googleLeads)*100).toFixed(1) : 0;
         const srcSummary = Object.entries(sources).filter(([,v])=>v>0).map(([k,v])=>`<strong>${k}:</strong> ${v}`).join(' · ');
         statusEl.className = 'import-status success';
-        statusEl.innerHTML = `✓ ${total} leads imported
+        statusEl.innerHTML = `✓ ${total} leads imported (${googleLeads} from Google)
           <div class="import-stats">
-            <div class="import-stat"><div class="import-stat-val">${total}</div><div class="import-stat-label">Total</div></div>
-            <div class="import-stat"><div class="import-stat-val">${sched}</div><div class="import-stat-label">Scheduled</div></div>
-            <div class="import-stat"><div class="import-stat-val">${total-sched}</div><div class="import-stat-label">Not Sched.</div></div>
-            <div class="import-stat"><div class="import-stat-val">${schedPct}%</div><div class="import-stat-label">Rate</div></div>
+            <div class="import-stat"><div class="import-stat-val">${googleLeads}</div><div class="import-stat-label">Google Leads</div></div>
+            <div class="import-stat"><div class="import-stat-val">${googleSched}</div><div class="import-stat-label">Google Sched.</div></div>
+            <div class="import-stat"><div class="import-stat-val">${total-googleLeads}</div><div class="import-stat-label">Other Sources</div></div>
+            <div class="import-stat"><div class="import-stat-val">${googleSchedPct}%</div><div class="import-stat-label">Google Rate</div></div>
           </div>
           <div class="import-breakdown">${srcSummary}</div>`;
       } catch(e) {
@@ -587,20 +597,22 @@ function generateDashboard() {
   const totalCost   = c1.cost+c2.cost;
   const totalCTR    = totalImpr ? (totalClicks/totalImpr*100).toFixed(2) : '0.00';
 
-  const totalLeads     = n('totalLeads');
+  const totalLeads     = n('totalLeads');      // all CRM leads (used for internal reference)
   const lastWeekLeads  = n('lastWeekLeads');
-  const scheduledLeads = n('scheduledLeads');
-  const notScheduled   = totalLeads-scheduledLeads;
-  const scheduledPct   = pct(scheduledLeads,totalLeads);
-  const leadDiff       = totalLeads-lastWeekLeads;
-  const leadDiffPct    = pct(Math.abs(leadDiff),lastWeekLeads);
+  const googleLeads    = n('googleLeads') || totalLeads;  // Google-source leads only (KPI cards)
+  const googleSched    = n('googleSched') || n('scheduledLeads'); // scheduled among Google leads
+  const scheduledLeads = n('scheduledLeads');  // all scheduled (used for donut chart)
+  const notScheduled   = googleLeads - googleSched;
+  const scheduledPct   = pct(googleSched, googleLeads);
+  const leadDiff       = googleLeads - lastWeekLeads;
+  const leadDiffPct    = pct(Math.abs(leadDiff), lastWeekLeads);
 
   // Platform conversions = Col Q (Conversions) + Col R (Phone calls) from Ads sheet
   const c1totalConv = n('c1_platform_conv') || (c1.conv + c1.phone);
   const c2totalConv = n('c2_platform_conv') || (c2.conv + c2.phone);
   const totalAllConv = c1totalConv + c2totalConv;
   // Conv Rate = CRM leads ÷ clicks
-  const totalCVR    = totalClicks ? (totalLeads / totalClicks * 100).toFixed(2) : '0.00';
+  const totalCVR    = totalClicks ? (googleLeads / totalClicks * 100).toFixed(2) : '0.00';
   // Cost/Conv = total spend ÷ platform conversions
   const totalCostPerConv = totalAllConv ? totalCost / totalAllConv : 0;
   const c1CostPerConv = c1totalConv ? c1.cost / c1totalConv : 0;
@@ -644,7 +656,7 @@ function generateDashboard() {
 
   const obsSection = customObs
     ? `<div class="insight-card"><strong>This week's observations:</strong> ${customObs}</div>`
-    : `<div class="insight-card"><strong>Conversions are trending in the right direction.</strong> We moved from ${lastWeekLeads} to ${totalLeads} conversions week-on-week (${leadDiff>=0?'+':''}${leadDiffPct}%) without increasing spend.</div>
+    : `<div class="insight-card"><strong>Conversions are trending in the right direction.</strong> We moved from ${lastWeekLeads} to ${googleLeads} Google-sourced leads week-on-week (${leadDiff>=0?'+':''}${leadDiffPct}%) without increasing spend.</div>
        <div class="insight-card amber"><strong>DSA is our strongest performer this week.</strong> Cost per conversion of ${fmt(c2CostPerConv)} on DSA vs. ${fmt(c1CostPerConv)} on Search, with CTR of ${c2.ctr.toFixed(2)}% confirming strong intent match.</div>
        <div class="insight-card rust"><strong>${scheduledPct}% of leads scheduled — the drop-off has structural causes.</strong> Several leads could not convert due to service or provider gaps. We recommend the Wellspring team reviews capacity as a parallel action.</div>
        <div class="insight-card amber"><strong>${topService.label} is driving most inbound volume at ${topSvcPct}%.</strong> We plan to test copy redirecting ADHD, Anxiety, and ADD queries toward medication management to shift the inbound mix.</div>
@@ -668,8 +680,8 @@ function generateDashboard() {
     ${flagSection}
     <div class="section-label">Platform Overview: Google Ads</div>
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">Total Conversions (CRM)</div><div class="kpi-value">${totalLeads}</div><div class="kpi-sub">Platform: ${totalAllConv} conv &nbsp;·&nbsp; vs. ${lastWeekLeads} last week</div><span class="kpi-badge ${leadDiff>=0?'badge-up':'badge-warn'}">${leadDiff>=0?'↑ +':'↓ '}${leadDiffPct}%</span></div>
-      <div class="kpi-card amber"><div class="kpi-label">Scheduled</div><div class="kpi-value">${scheduledLeads}</div><div class="kpi-sub">${scheduledPct}% of leads</div><span class="kpi-badge badge-up">Quality leads</span></div>
+      <div class="kpi-card"><div class="kpi-label">Google Leads</div><div class="kpi-value">${googleLeads}</div><div class="kpi-sub">Platform: ${totalAllConv} conv &nbsp;·&nbsp; vs. ${lastWeekLeads} last week</div><span class="kpi-badge ${leadDiff>=0?'badge-up':'badge-warn'}">${leadDiff>=0?'↑ +':'↓ '}${leadDiffPct}%</span></div>
+      <div class="kpi-card amber"><div class="kpi-label">Scheduled (Google)</div><div class="kpi-value">${googleSched}</div><div class="kpi-sub">${scheduledPct}% of Google leads</div><span class="kpi-badge badge-up">Quality leads</span></div>
       <div class="kpi-card violet"><div class="kpi-label">Total Spend</div><div class="kpi-value">$${Math.round(totalCost)}</div><div class="kpi-sub">This week</div><span class="kpi-badge badge-neutral">Budget on track</span></div>
       <div class="kpi-card green"><div class="kpi-label">Conv. Rate</div><div class="kpi-value">${totalCVR}%</div><div class="kpi-sub">${totalClicks} clicks</div><span class="kpi-badge badge-up">Healthy</span></div>
       <div class="kpi-card rust"><div class="kpi-label">Cost / Conv.</div><div class="kpi-value">$${Math.round(totalCostPerConv)}</div><div class="kpi-sub">DSA: ${fmt(c2CostPerConv)}</div><span class="kpi-badge badge-up">↓ DSA efficient</span></div>
@@ -709,10 +721,10 @@ function generateDashboard() {
           <div style="width:140px;flex-shrink:0;"><canvas id="scheduleDonut"></canvas></div>
           <div style="flex:1;">
             <div style="margin-bottom:10px;">
-              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><div style="width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div><span style="font-size:11.5px;">Scheduled</span><strong style="margin-left:auto;">${scheduledLeads} &nbsp;(${scheduledPct}%)</strong></div>
-              <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;border-radius:50%;background:var(--rust);flex-shrink:0;"></div><span style="font-size:11.5px;">Not Scheduled</span><strong style="margin-left:auto;">${notScheduled} &nbsp;(${pct(notScheduled,totalLeads)}%)</strong></div>
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><div style="width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div><span style="font-size:11.5px;">Scheduled</span><strong style="margin-left:auto;">${googleSched} &nbsp;(${scheduledPct}%)</strong></div>
+              <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;border-radius:50%;background:var(--rust);flex-shrink:0;"></div><span style="font-size:11.5px;">Not Scheduled</span><strong style="margin-left:auto;">${notScheduled} &nbsp;(${pct(notScheduled,googleLeads)}%)</strong></div>
             </div>
-            <div style="background:var(--teal-pale);border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.6;"><strong>${scheduledPct}%</strong> of leads confirmed an appointment, indicating strong lead quality from paid campaigns.</div>
+            <div style="background:var(--teal-pale);border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.6;"><strong>${scheduledPct}%</strong> of Google-sourced leads confirmed an appointment.</div>
           </div>
         </div>
       </div>
@@ -751,7 +763,7 @@ function generateDashboard() {
   setTimeout(() => {
     new Chart(document.getElementById('scheduleDonut').getContext('2d'), {
       type:'doughnut',
-      data:{ labels:['Scheduled','Not Scheduled'], datasets:[{ data:[scheduledLeads,notScheduled], backgroundColor:['#3D7A72','#C25B3F'], borderWidth:0, hoverOffset:4 }] },
+      data:{ labels:['Scheduled','Not Scheduled'], datasets:[{ data:[googleSched, notScheduled], backgroundColor:['#3D7A72','#C25B3F'], borderWidth:0, hoverOffset:4 }] },
       options:{ cutout:'70%', plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}`}} } }
     });
     if (services.length) {
