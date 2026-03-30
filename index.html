@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wellspring Dashboard Generator</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<style>
+  :root {
+    --cream: #F7F3EE; --cream-dark: #EDE7DC; --charcoal: #1C1C1A; --warm-mid: #6B6460;
+    --teal: #3D7A72; --teal-light: #5A9E95; --teal-pale: #EAF3F2;
+    --rust: #C25B3F; --amber: #C9882A; --violet: #5C4E9E;
+    --green: #3D8A60; --pink: #C4527A; --red: #C44040; --border: #DDD5C8;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:#f0ece6; font-family:'DM Sans',sans-serif; color:var(--charcoal); font-size:13px; line-height:1.6; }
+
+  #form-view { max-width:820px; margin:0 auto; padding:36px 28px; }
+  .form-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:28px; padding-bottom:18px; border-bottom:1.5px solid var(--border); }
+  .form-logo { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:500; line-height:1; }
+  .form-logo span { display:block; font-family:'DM Sans',sans-serif; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--rust); margin-top:3px; }
+  .form-title { font-size:11px; color:var(--warm-mid); text-align:right; line-height:1.8; }
+
+  .form-section { background:#fff; border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:14px; }
+  .form-section-title { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:600; color:var(--charcoal); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--cream-dark); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+  .fsec-dot { width:7px; height:7px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+  .auto-tag { font-size:11px; font-family:'DM Sans',sans-serif; font-weight:400; color:var(--teal); margin-left:4px; }
+
+  .form-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
+  .form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
+  .form-grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; }
+
+  .field { display:flex; flex-direction:column; gap:4px; }
+  .field label { font-size:9.5px; text-transform:uppercase; letter-spacing:1.5px; color:var(--warm-mid); font-weight:500; }
+  .field input, .field textarea { background:var(--cream); border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:12.5px; color:var(--charcoal); outline:none; transition:border-color 0.15s; }
+  .field input:focus, .field textarea:focus { border-color:var(--teal); background:#fff; }
+  .field textarea { resize:vertical; min-height:70px; line-height:1.5; }
+  .field input.auto-filled { border-color:var(--teal); background:var(--teal-pale); }
+
+  .campaign-row { background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin-bottom:10px; }
+  .campaign-row-title { font-size:11px; font-weight:500; color:var(--teal); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; }
+  .reason-row { display:grid; grid-template-columns:2fr 80px 60px; gap:8px; align-items:center; margin-bottom:8px; }
+  .reason-row label { font-size:12px; color:var(--charcoal); }
+  .reason-row input.auto-filled { border-color:var(--teal); background:var(--teal-pale); }
+
+  .generate-btn { width:100%; background:var(--teal); color:#fff; border:none; border-radius:10px; padding:14px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:background 0.15s; margin-top:6px; }
+  .generate-btn:hover { background:var(--teal-light); }
+  .flag-toggle { display:flex; align-items:center; gap:10px; margin-top:8px; }
+  .flag-toggle input[type=checkbox] { width:15px; height:15px; accent-color:var(--amber); }
+  .flag-toggle label { font-size:12px; color:var(--charcoal); }
+
+  /* ── IMPORT CARDS ── */
+  .import-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
+  .import-card { background:#fff; border:2px dashed var(--border); border-radius:12px; padding:18px 20px; transition:border-color 0.2s; }
+  .import-card.drag-over { border-color:var(--teal); background:var(--teal-pale); }
+  .import-card-title { font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:600; color:var(--charcoal); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
+  .import-card-hint { font-size:10.5px; color:var(--warm-mid); margin-bottom:12px; line-height:1.6; }
+  .drop-zone { border:1.5px dashed var(--border); border-radius:8px; padding:18px 12px; text-align:center; cursor:pointer; transition:all 0.15s; background:var(--cream); }
+  .drop-zone:hover { border-color:var(--teal); background:var(--teal-pale); }
+  .drop-icon { font-size:22px; margin-bottom:6px; }
+  .drop-text { font-size:11.5px; color:var(--warm-mid); }
+  .drop-text strong { color:var(--teal); }
+  .import-status { margin-top:10px; border-radius:8px; padding:10px 12px; font-size:11.5px; display:none; }
+  .import-status.success { display:block; background:var(--teal-pale); border:1px solid #b2d8d4; color:var(--teal); }
+  .import-status.error   { display:block; background:#FDF1EE; border:1px solid #f0b4a4; color:var(--rust); }
+  .import-stats { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
+  .import-stat { background:#fff; border-radius:6px; padding:7px 10px; text-align:center; border:1px solid var(--border); }
+  .import-stat-val { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--charcoal); line-height:1; }
+  .import-stat-label { font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--warm-mid); margin-top:2px; }
+  .import-breakdown { font-size:10.5px; color:var(--warm-mid); margin-top:8px; line-height:1.8; }
+  .import-breakdown strong { color:var(--charcoal); }
+
+  /* ── DASHBOARD ── */
+  #dashboard-view { display:none; }
+  .dash-actions { background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:10px 24px; gap:12px; font-size:12.5px; }
+  .dash-actions button { background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); border-radius:6px; padding:6px 14px; font-family:'DM Sans',sans-serif; font-size:12px; cursor:pointer; transition:background 0.15s; }
+  .dash-actions button:hover { background:rgba(255,255,255,0.35); }
+  .dash-actions-left { display:flex; gap:8px; }
+  .page { max-width:1100px; margin:0 auto; padding:28px 32px; background:var(--cream); min-height:100vh; }
+  .header { display:flex; align-items:flex-start; justify-content:space-between; padding-bottom:16px; border-bottom:1.5px solid var(--border); margin-bottom:16px; }
+  .logo-name { font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:500; letter-spacing:-0.5px; color:var(--charcoal); line-height:1; }
+  .logo-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--rust); margin-top:4px; font-weight:500; }
+  .header-meta { text-align:right; }
+  .header-meta .report-label { font-size:10px; text-transform:uppercase; letter-spacing:2px; color:var(--warm-mid); font-weight:500; }
+  .header-meta .report-week { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:600; color:var(--charcoal); margin-top:2px; }
+  .header-meta .report-prepared { font-size:11px; color:var(--warm-mid); margin-top:4px; }
+  .section-label { font-size:9px; text-transform:uppercase; letter-spacing:3px; color:var(--teal); font-weight:500; margin-bottom:8px; }
+  .kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
+  .kpi-card { background:#fff; border:1px solid var(--border); border-radius:10px; padding:14px 18px; position:relative; overflow:visible; }
+  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--teal); border-radius:10px 10px 0 0; }
+  .kpi-card.amber::before { background:var(--amber); } .kpi-card.violet::before { background:var(--violet); }
+  .kpi-card.green::before { background:var(--green); } .kpi-card.rust::before { background:var(--rust); }
+  .kpi-card.pink::before { background:var(--pink); }
+  .kpi-label { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--warm-mid); font-weight:500; margin-bottom:4px; }
+  .kpi-value { font-family:'Cormorant Garamond',serif; font-size:42px; font-weight:600; color:var(--charcoal); line-height:1; }
+  .kpi-sub { font-size:11.5px; color:var(--warm-mid); margin-top:4px; }
+  .kpi-badge { display:inline-block; font-size:9.5px; padding:2px 7px; border-radius:20px; margin-top:4px; font-weight:500; }
+  .badge-up { background:#E8F5EC; color:#2E7D4F; } .badge-neutral { background:#F0EDE8; color:#6B6460; } .badge-warn { background:#FDF6EC; color:#C9882A; }
+  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
+  .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
+  .panel-title { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:600; color:var(--charcoal); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
+  .panel-title .dot { width:8px; height:8px; border-radius:50%; background:var(--teal); flex-shrink:0; }
+  .campaign-table { width:100%; border-collapse:collapse; }
+  .campaign-table th { font-size:9px; text-transform:uppercase; letter-spacing:1.5px; color:var(--warm-mid); font-weight:500; padding:8px 10px; text-align:right; border-bottom:1px solid var(--border); white-space:nowrap; }
+  .campaign-table th:first-child { text-align:left; }
+  .campaign-table td { padding:11px 10px; font-size:12.5px; text-align:right; border-bottom:1px solid #F0EDE8; color:var(--charcoal); }
+  .campaign-table td:first-child { text-align:left; }
+  .campaign-table tr.total-row td { border-bottom:none; font-weight:500; background:var(--teal-pale); }
+  .campaign-table tr.total-row td:first-child { border-radius:6px 0 0 6px; }
+  .campaign-table tr.total-row td:last-child { border-radius:0 6px 6px 0; }
+  .campaign-name { font-size:11px; color:var(--warm-mid); max-width:180px; line-height:1.3; }
+  .campaign-name strong { display:block; font-size:12px; color:var(--charcoal); font-weight:500; }
+  .badge-tag { display:inline-block; font-size:8.5px; padding:2px 6px; border-radius:4px; font-weight:500; margin-top:3px; }
+  .tag-search { background:#EAF0FF; color:#3D5FA0; } .tag-dsa { background:#EEF9EC; color:#2E7D4F; }
+  .metric-highlight { display:inline-block; background:var(--teal-pale); color:var(--teal); font-weight:500; border-radius:4px; padding:1px 6px; font-size:12px; }
+  .highlight-green { color:var(--green); font-weight:600; }
+  .hbar-row { display:flex; align-items:center; gap:10px; margin-bottom:11px; }
+  .hbar-label { font-size:11.5px; color:var(--charcoal); min-width:190px; flex-shrink:0; }
+  .hbar-track { flex:1; background:var(--cream-dark); border-radius:4px; height:26px; }
+  .hbar-fill { height:100%; border-radius:4px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; min-width:48px; }
+  .hbar-pct { font-size:11px; font-weight:600; color:#fff; white-space:nowrap; }
+  .hbar-count { font-size:12px; color:var(--warm-mid); min-width:20px; text-align:right; font-weight:600; }
+  .insight-card { border-left:3px solid var(--teal); padding:8px 12px; margin-bottom:7px; background:var(--teal-pale); border-radius:0 8px 8px 0; font-size:12px; line-height:1.5; }
+  .insight-card.amber { border-left-color:var(--amber); background:#FDF6EC; }
+  .insight-card.rust  { border-left-color:var(--rust);  background:#FDF1EE; }
+  .insight-card strong { font-weight:500; color:var(--charcoal); }
+  .next-step { display:flex; gap:10px; align-items:flex-start; margin-bottom:8px; }
+  .step-num { width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; font-size:10px; font-weight:500; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
+  .step-text { font-size:12px; line-height:1.6; color:var(--charcoal); }
+  .step-text strong { font-weight:500; }
+  .flag-card { background:#FDF6EC; border:1px solid #F0D9B5; border-radius:10px; padding:12px 16px; display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
+  .flag-icon { font-size:16px; flex-shrink:0; }
+  .flag-text { font-size:12px; line-height:1.6; }
+  .flag-text strong { font-weight:500; color:var(--charcoal); }
+  .footer { margin-top:20px; padding-top:14px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
+  .footer-left { font-size:10.5px; color:var(--warm-mid); line-height:1.7; }
+  .footer-right { font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:500; color:var(--teal); }
+  .divider { border:none; border-top:1px solid var(--border); margin:14px 0; }
+  canvas { max-height:220px; }
+  @media print { .dash-actions { display:none !important; } body { background:white; } .page { padding:16px 20px; } }
+</style>
+</head>
+<body>
+
+<div id="form-view">
+  <div class="form-header">
+    <div><div class="form-logo">Wellspring <span>Therapeutic Partners</span></div></div>
+    <div class="form-title">Weekly Dashboard Generator<br>Upload both CSVs → Generate in seconds</div>
+  </div>
+
+  <!-- ===== STEP 1: BOTH CSV IMPORTS SIDE BY SIDE ===== -->
+  <div class="form-section">
+    <div class="form-section-title"><span class="fsec-dot"></span> Step 1 — Upload CSVs (auto-fills everything)</div>
+    <div class="import-grid">
+
+      <!-- CRM CSV -->
+      <div class="import-card" id="crmCard">
+        <div class="import-card-title">
+          <span class="fsec-dot" style="background:var(--amber)"></span> CRM Data
+        </div>
+        <div class="import-card-hint">
+          Download the weekly tab from the CRM sheet:<br>
+          <strong>File → Download → CSV</strong>
+        </div>
+        <div class="drop-zone" id="crmDrop" onclick="document.getElementById('crmInput').click()">
+          <div class="drop-icon">📋</div>
+          <div class="drop-text"><strong>Drop CRM CSV here</strong><br>or click to browse</div>
+          <input type="file" id="crmInput" style="display:none" accept=".csv" onchange="handleCRM(event)" />
+        </div>
+        <div class="import-status" id="crmStatus"></div>
+      </div>
+
+      <!-- ADS CSV -->
+      <div class="import-card" id="adsCard">
+        <div class="import-card-title">
+          <span class="fsec-dot" style="background:var(--violet)"></span> Google Ads Data
+        </div>
+        <div class="import-card-hint">
+          Download from your Ads performance sheet:<br>
+          <strong>File → Download → CSV</strong>
+        </div>
+        <div class="drop-zone" id="adsDrop" onclick="document.getElementById('adsInput').click()">
+          <div class="drop-icon">📊</div>
+          <div class="drop-text"><strong>Drop Ads CSV here</strong><br>or click to browse</div>
+          <input type="file" id="adsInput" style="display:none" accept=".csv" onchange="handleAds(event)" />
+        </div>
+        <div class="import-status" id="adsStatus"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===== STEP 2: REPORT DETAILS ===== -->
+  <div class="form-section">
+    <div class="form-section-title"><span class="fsec-dot"></span> Step 2 — Report Details</div>
+    <div class="form-grid-2">
+      <div class="field"><label>Week Date Range</label><input type="text" id="weekRange" placeholder="e.g. March 15 – March 21, 2026" /></div>
+      <div class="field"><label>Prepared By</label><input type="text" id="preparedBy" value="Damco Digital" /></div>
+    </div>
+  </div>
+
+  <!-- ===== CAMPAIGN 1 (auto-filled from Ads CSV) ===== -->
+  <div class="form-section">
+    <div class="form-section-title">
+      <span class="fsec-dot" style="background:var(--violet)"></span> Campaign 1 — Generic Search
+      <span class="auto-tag">← auto-filled from Ads CSV</span>
+    </div>
+    <div class="campaign-row">
+      <div class="campaign-row-title">Generic Search Campaign</div>
+      <div class="form-grid-4">
+        <div class="field"><label>Conversions</label><input type="number" id="c1_conv" placeholder="0" /></div>
+        <div class="field"><label>Phone Conv.</label><input type="number" id="c1_phone" placeholder="0" /></div>
+        <div class="field"><label>Clicks</label><input type="number" id="c1_clicks" placeholder="0" /></div>
+        <div class="field"><label>Impressions</label><input type="number" id="c1_impr" placeholder="0" /></div>
+        <div class="field"><label>Avg. CPC ($)</label><input type="number" step="0.01" id="c1_cpc" placeholder="0.00" /></div>
+        <div class="field"><label>Total Cost ($)</label><input type="number" step="0.01" id="c1_cost" placeholder="0.00" /></div>
+        <div class="field"><label>Conv. Rate (%)</label><input type="number" step="0.01" id="c1_cvr" placeholder="0.00" /></div>
+        <div class="field"><label>CTR (%)</label><input type="number" step="0.01" id="c1_ctr" placeholder="0.00" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== CAMPAIGN 2 (auto-filled from Ads CSV) ===== -->
+  <div class="form-section">
+    <div class="form-section-title">
+      <span class="fsec-dot" style="background:var(--green)"></span> Campaign 2 — DSA
+      <span class="auto-tag">← auto-filled from Ads CSV</span>
+    </div>
+    <div class="campaign-row">
+      <div class="campaign-row-title">DSA Campaign</div>
+      <div class="form-grid-4">
+        <div class="field"><label>Conversions</label><input type="number" id="c2_conv" placeholder="0" /></div>
+        <div class="field"><label>Phone Conv.</label><input type="number" id="c2_phone" placeholder="0" /></div>
+        <div class="field"><label>Clicks</label><input type="number" id="c2_clicks" placeholder="0" /></div>
+        <div class="field"><label>Impressions</label><input type="number" id="c2_impr" placeholder="0" /></div>
+        <div class="field"><label>Avg. CPC ($)</label><input type="number" step="0.01" id="c2_cpc" placeholder="0.00" /></div>
+        <div class="field"><label>Total Cost ($)</label><input type="number" step="0.01" id="c2_cost" placeholder="0.00" /></div>
+        <div class="field"><label>Conv. Rate (%)</label><input type="number" step="0.01" id="c2_cvr" placeholder="0.00" /></div>
+        <div class="field"><label>CTR (%)</label><input type="number" step="0.01" id="c2_ctr" placeholder="0.00" /></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== LEAD SCHEDULING (auto-filled from CRM CSV) ===== -->
+  <div class="form-section">
+    <div class="form-section-title">
+      <span class="fsec-dot" style="background:var(--amber)"></span> Lead Scheduling
+      <span class="auto-tag">← auto-filled from CRM CSV</span>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label>Total Leads This Week</label><input type="number" id="totalLeads" placeholder="0" /></div>
+      <div class="field"><label>Total Leads Last Week</label><input type="number" id="lastWeekLeads" placeholder="0" /></div>
+      <div class="field"><label>Scheduled Leads</label><input type="number" id="scheduledLeads" placeholder="0" /></div>
+    </div>
+  </div>
+
+  <!-- ===== REASON NOT SCHEDULED (auto-filled from CRM CSV) ===== -->
+  <div class="form-section">
+    <div class="form-section-title">
+      <span class="fsec-dot" style="background:var(--rust)"></span> Reason Not Scheduled
+      <span class="auto-tag">← auto-filled from CRM CSV</span>
+    </div>
+    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Auto-detected from the CRM CSV. Edit manually if needed.</p>
+    <div class="reason-row"><label>Didn't Answer Consult Call</label><input type="number" id="r_noanswer" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
+    <div class="reason-row"><label>Incomplete Inquiry</label><input type="number" id="r_incomplete" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
+    <div class="reason-row"><label>HAP Insurance / Financial</label><input type="number" id="r_hap" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
+    <div class="reason-row"><label>Service Not Offered (ESA)</label><input type="number" id="r_esa" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
+    <div class="reason-row"><label>No Provider Available</label><input type="number" id="r_noprovider" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
+    <div class="reason-row"><label>Testing Waitlist</label><input type="number" id="r_waitlist" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
+    <div class="reason-row"><label>Other / Unspecified</label><input type="number" id="r_other" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
+  </div>
+
+  <!-- ===== SERVICE TYPE (auto-filled from CRM CSV) ===== -->
+  <div class="form-section">
+    <div class="form-section-title">
+      <span class="fsec-dot" style="background:var(--violet)"></span> Lead Service Type
+      <span class="auto-tag">← auto-filled from CRM CSV</span>
+    </div>
+    <div class="form-grid">
+      <div class="field"><label>Psychotherapy</label><input type="number" id="s_psycho" value="0" min="0" /></div>
+      <div class="field"><label>Unknown</label><input type="number" id="s_unknown" value="0" min="0" /></div>
+      <div class="field"><label>Medication Management</label><input type="number" id="s_med" value="0" min="0" /></div>
+      <div class="field"><label>Testing</label><input type="number" id="s_testing" value="0" min="0" /></div>
+      <div class="field"><label>Couple's Therapy</label><input type="number" id="s_couples" value="0" min="0" /></div>
+      <div class="field"><label>Other Service</label><input type="number" id="s_other" value="0" min="0" /></div>
+    </div>
+  </div>
+
+  <!-- ===== FLAGS ===== -->
+  <div class="form-section">
+    <div class="form-section-title"><span class="fsec-dot" style="background:var(--amber)"></span> Key Question for Wellspring Team</div>
+    <div class="flag-toggle" style="margin-bottom:10px;">
+      <input type="checkbox" id="showHAPFlag" />
+      <label for="showHAPFlag">Include HAP insurance open question</label>
+    </div>
+    <div class="field">
+      <label>Custom question / flag (optional)</label>
+      <textarea id="customFlag" placeholder="e.g. Incomplete Forms: What exactly do these represent?"></textarea>
+    </div>
+  </div>
+
+  <!-- ===== OBSERVATIONS ===== -->
+  <div class="form-section">
+    <div class="form-section-title"><span class="fsec-dot" style="background:var(--teal)"></span> Key Observations (optional override)</div>
+    <p style="margin-bottom:10px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate, or type custom observations.</p>
+    <div class="field">
+      <label>Custom Observations</label>
+      <textarea id="customObs" rows="4" placeholder="e.g. DSA campaign is outperforming Search on CPA this week..."></textarea>
+    </div>
+  </div>
+
+  <button class="generate-btn" onclick="generateDashboard()">Generate Weekly Dashboard →</button>
+</div>
+
+<!-- ===== DASHBOARD VIEW ===== -->
+<div id="dashboard-view">
+  <div class="dash-actions">
+    <span>✦ Wellspring Weekly Dashboard: Ready to share</span>
+    <div class="dash-actions-left">
+      <button onclick="window.print()">Print / Save as PDF</button>
+      <button onclick="showForm()">← Edit Data</button>
+    </div>
+  </div>
+  <div class="page" id="dashboardContent"></div>
+</div>
+
+<script>
+// ══════════════════════════════════════════════════
+//  DRAG & DROP WIRING
+// ══════════════════════════════════════════════════
+function wireDrop(dropId, cardId, handler) {
+  const drop = document.getElementById(dropId);
+  const card = document.getElementById(cardId);
+  drop.addEventListener('dragover',  e => { e.preventDefault(); card.classList.add('drag-over'); });
+  drop.addEventListener('dragleave', () => card.classList.remove('drag-over'));
+  drop.addEventListener('drop', e => {
+    e.preventDefault(); card.classList.remove('drag-over');
+    const f = e.dataTransfer.files[0]; if (f) handler(f);
+  });
+}
+wireDrop('crmDrop', 'crmCard', processCRM);
+wireDrop('adsDrop', 'adsCard', processAds);
+function handleCRM(e) { if (e.target.files[0]) processCRM(e.target.files[0]); }
+function handleAds(e) { if (e.target.files[0]) processAds(e.target.files[0]); }
+
+// ══════════════════════════════════════════════════
+//  CRM CSV PROCESSING
+// ══════════════════════════════════════════════════
+const CRM_COL = { SOURCE:9, SERVICE:12, SCHEDULED:15, REASON:16 };
+
+function classifySource(raw) {
+  const v = (raw||'').toString().trim().toLowerCase();
+  const internal = ['internal','current patient','previous pt','previous patient','daughter was pt','son was pt','jamie'];
+  const google   = ['google','other','online','insurance','damco',''];
+  const psychToday = ['psychology today'];
+  if (internal.some(k => v===k || v.includes(k)))   return 'Internal';
+  if (psychToday.some(k => v.includes(k)))           return 'Psychology Today';
+  if (google.some(k => v===k || v.includes(k)))      return 'Google';
+  return 'Referral';
+}
+function normaliseServices(raw) {
+  if (!raw) return ['Unknown'];
+  const v = raw.toString().trim().toLowerCase();
+  if (!v) return ['Unknown'];
+  const parts = v.split(',').map(s => s.trim());
+  const out = parts.map(p => {
+    if (p.includes('psychotherapy'))                 return 'Psychotherapy';
+    if (p.includes('medication'))                    return 'Medication Management';
+    if (p.includes('couple')||p.includes('couples')) return "Couple's Therapy";
+    if (p.includes('testing'))                       return 'Testing';
+    if (p.includes('unknown')||!p)                   return 'Unknown';
+    return 'Other';
+  });
+  return [...new Set(out)];
+}
+function classifyReason(raw) {
+  const v = (raw||'').toString().trim().toLowerCase();
+  if (!v) return null;
+  if (v.includes('didn')||v.includes('answer')||v.includes('call')||v.includes('lvm')) return 'r_noanswer';
+  if (v.includes('incomplete')||v.includes('inquiry')||v.includes('form'))             return 'r_incomplete';
+  if (v.includes('hap')||v.includes('insurance')||v.includes('financial'))             return 'r_hap';
+  if (v.includes('esa')||v.includes('emotional support')||v.includes('not offered'))   return 'r_esa';
+  if (v.includes('provider')||v.includes('capacity')||v.includes('available'))         return 'r_noprovider';
+  if (v.includes('waitlist')||v.includes('wait list'))                                 return 'r_waitlist';
+  return 'r_other';
+}
+
+function processCRM(file) {
+  const statusEl = document.getElementById('crmStatus');
+  statusEl.className = 'import-status';
+  Papa.parse(file, {
+    skipEmptyLines: true,
+    complete(results) {
+      try {
+        const rows      = results.data;
+        const dataRows  = rows.slice(1).filter(r => r[0] && r[0].toString().trim() !== '');
+        let total = 0, sched = 0;
+        const sources  = { Google:0, Internal:0, Referral:0, 'Psychology Today':0 };
+        const services = { Psychotherapy:0, 'Medication Management':0, "Couple's Therapy":0, Testing:0, Unknown:0, Other:0 };
+        const reasons  = { r_noanswer:0, r_incomplete:0, r_hap:0, r_esa:0, r_noprovider:0, r_waitlist:0, r_other:0 };
+
+        for (const row of dataRows) {
+          total++;
+          const isScheduled = (row[CRM_COL.SCHEDULED]||'').toString().trim().toLowerCase() === 'yes';
+          if (isScheduled) sched++;
+          sources[classifySource(row[CRM_COL.SOURCE])] = (sources[classifySource(row[CRM_COL.SOURCE])]||0) + 1;
+          for (const s of normaliseServices(row[CRM_COL.SERVICE])) { if(services[s]!==undefined) services[s]++; else services.Other++; }
+          if (!isScheduled) { const rk = classifyReason(row[CRM_COL.REASON]); if(rk) reasons[rk]++; }
+        }
+
+        const sf = (id, val) => { const el = document.getElementById(id); if(el){ el.value=val; el.classList.add('auto-filled'); } };
+        sf('totalLeads', total); sf('scheduledLeads', sched);
+        sf('r_noanswer', reasons.r_noanswer); sf('r_incomplete', reasons.r_incomplete);
+        sf('r_hap', reasons.r_hap); sf('r_esa', reasons.r_esa);
+        sf('r_noprovider', reasons.r_noprovider); sf('r_waitlist', reasons.r_waitlist); sf('r_other', reasons.r_other);
+        sf('s_psycho', services.Psychotherapy); sf('s_unknown', services.Unknown);
+        sf('s_med', services['Medication Management']); sf('s_testing', services.Testing);
+        sf('s_couples', services["Couple's Therapy"]); sf('s_other', services.Other);
+
+        const schedPct = total ? ((sched/total)*100).toFixed(1) : 0;
+        const srcSummary = Object.entries(sources).filter(([,v])=>v>0).map(([k,v])=>`<strong>${k}:</strong> ${v}`).join(' · ');
+        statusEl.className = 'import-status success';
+        statusEl.innerHTML = `✓ ${total} leads imported
+          <div class="import-stats">
+            <div class="import-stat"><div class="import-stat-val">${total}</div><div class="import-stat-label">Total</div></div>
+            <div class="import-stat"><div class="import-stat-val">${sched}</div><div class="import-stat-label">Scheduled</div></div>
+            <div class="import-stat"><div class="import-stat-val">${total-sched}</div><div class="import-stat-label">Not Sched.</div></div>
+            <div class="import-stat"><div class="import-stat-val">${schedPct}%</div><div class="import-stat-label">Rate</div></div>
+          </div>
+          <div class="import-breakdown">${srcSummary}</div>`;
+      } catch(e) {
+        statusEl.className = 'import-status error';
+        statusEl.textContent = 'Error: ' + e.message;
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  ADS CSV PROCESSING
+// ══════════════════════════════════════════════════
+function parsePct(val) {
+  // handles "5.23%" or "0.0523" or "5.23"
+  const s = (val||'').toString().replace('%','').trim();
+  const n = parseFloat(s);
+  if (isNaN(n)) return 0;
+  // if value looks like a decimal fraction (< 1), convert to percent
+  return n < 1 ? n * 100 : n;
+}
+function parseNum(val) { return parseFloat((val||'').toString().replace(/[^0-9.-]/g,'')) || 0; }
+
+function processAds(file) {
+  const statusEl = document.getElementById('adsStatus');
+  statusEl.className = 'import-status';
+  Papa.parse(file, {
+    skipEmptyLines: true,
+    complete(results) {
+      try {
+        const rows = results.data;
+
+        // Find all header rows (rows where col A = "Day" and col C = "Campaign")
+        // Then collect data rows that follow each header
+        const c1 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
+        const c2 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
+
+        let headerFound = false;
+        let colDay=0, colCampaign=2, colClicks=9, colCTR=10, colCPC=11, colImpr=12, colCost=13, colConv=14, colPhone=16;
+
+        for (const row of rows) {
+          const cell0 = (row[0]||'').toString().trim();
+          const cell2 = (row[2]||'').toString().trim();
+
+          // Detect header row
+          if (cell0 === 'Day' && cell2 === 'Campaign') {
+            // Map columns dynamically from this header row
+            for (let i = 0; i < row.length; i++) {
+              const h = (row[i]||'').toString().trim().toLowerCase();
+              if (h === 'day')               colDay      = i;
+              if (h === 'campaign')          colCampaign = i;
+              if (h === 'clicks')            colClicks   = i;
+              if (h === 'ctr')               colCTR      = i;
+              if (h === 'avg. cpc')          colCPC      = i;
+              if (h === 'impr.')             colImpr     = i;
+              if (h === 'cost')              colCost     = i;
+              if (h.startsWith('conv.'))     colConv     = i;
+              if (h.includes('phone'))       colPhone    = i;
+            }
+            headerFound = true;
+            continue;
+          }
+
+          // Skip non-data rows
+          if (!headerFound) continue;
+          if (!cell0 || cell0 === 'Total: Account') continue;
+
+          const campaign = (row[colCampaign]||'').toString().trim().toLowerCase();
+          const isSearch = campaign.includes('generic') || campaign.includes('search');
+          const isDSA    = campaign.includes('dsa') || campaign.includes('wellspring_ad');
+
+          if (!isSearch && !isDSA) continue;
+
+          const target = isSearch ? c1 : c2;
+          target.clicks += parseNum(row[colClicks]);
+          target.impr   += parseNum(row[colImpr]);
+          target.cost   += parseNum(row[colCost]);
+          target.conv   += parseNum(row[colConv]);
+          target.phone  += parseNum(row[colPhone]);
+        }
+
+        // Derived metrics
+        const c1ctr = c1.impr ? (c1.clicks / c1.impr * 100) : 0;
+        const c2ctr = c2.impr ? (c2.clicks / c2.impr * 100) : 0;
+        const c1cpc = c1.clicks ? (c1.cost / c1.clicks) : 0;
+        const c2cpc = c2.clicks ? (c2.cost / c2.clicks) : 0;
+        const c1cvr = c1.clicks ? (c1.conv / c1.clicks * 100) : 0;
+        const c2cvr = c2.clicks ? (c2.conv / c2.clicks * 100) : 0;
+
+        const sf = (id, val, decimals=2) => {
+          const el = document.getElementById(id);
+          if (el) { el.value = parseFloat(val.toFixed(decimals)); el.classList.add('auto-filled'); }
+        };
+
+        sf('c1_conv',   c1.conv, 0); sf('c1_phone', c1.phone, 0);
+        sf('c1_clicks', c1.clicks, 0); sf('c1_impr', c1.impr, 0);
+        sf('c1_cpc',    c1cpc);  sf('c1_cost', c1.cost);
+        sf('c1_cvr',    c1cvr);  sf('c1_ctr',  c1ctr);
+
+        sf('c2_conv',   c2.conv, 0); sf('c2_phone', c2.phone, 0);
+        sf('c2_clicks', c2.clicks, 0); sf('c2_impr', c2.impr, 0);
+        sf('c2_cpc',    c2cpc);  sf('c2_cost', c2.cost);
+        sf('c2_cvr',    c2cvr);  sf('c2_ctr',  c2ctr);
+
+        const totalCost = c1.cost + c2.cost;
+        statusEl.className = 'import-status success';
+        statusEl.innerHTML = `✓ Ads data imported
+          <div class="import-stats">
+            <div class="import-stat"><div class="import-stat-val">${c1.clicks+c2.clicks}</div><div class="import-stat-label">Clicks</div></div>
+            <div class="import-stat"><div class="import-stat-val">$${Math.round(totalCost)}</div><div class="import-stat-label">Spend</div></div>
+            <div class="import-stat"><div class="import-stat-val">${c1.conv+c2.conv}</div><div class="import-stat-label">Conv.</div></div>
+            <div class="import-stat"><div class="import-stat-val">${c1.impr+c2.impr}</div><div class="import-stat-label">Impr.</div></div>
+          </div>
+          <div class="import-breakdown"><strong>Generic Search:</strong> ${c1.clicks} clicks · $${c1.cost.toFixed(2)} · ${c1.conv} conv &nbsp;·&nbsp; <strong>DSA:</strong> ${c2.clicks} clicks · $${c2.cost.toFixed(2)} · ${c2.conv} conv</div>`;
+      } catch(e) {
+        statusEl.className = 'import-status error';
+        statusEl.textContent = 'Error reading Ads CSV: ' + e.message;
+      }
+    }
+  });
+}
+
+// ══════════════════════════════════════════════════
+//  FORM HELPERS
+// ══════════════════════════════════════════════════
+function v(id) { const el=document.getElementById(id); if(!el) return ''; return el.type==='checkbox'?el.checked:(el.value||''); }
+function n(id,fb=0) { const val=v(id); if(val===''||val===null||val===undefined) return fb; const p=parseFloat(val); return isNaN(p)?fb:p; }
+function pct(a,b) { return b?((a/b)*100).toFixed(1):'0.0'; }
+function fmt(num) { return '$'+num.toFixed(2); }
+function fmtN(num) { return num.toLocaleString(); }
+function showForm() { document.getElementById('form-view').style.display='block'; document.getElementById('dashboard-view').style.display='none'; Chart.helpers.each(Chart.instances,c=>c.destroy()); }
+
+// ══════════════════════════════════════════════════
+//  DASHBOARD GENERATOR
+// ══════════════════════════════════════════════════
+function generateDashboard() {
+  const weekRange  = v('weekRange')||'This Week';
+  const preparedBy = v('preparedBy')||'Damco Digital';
+
+  const c1 = { conv:n('c1_conv'), phone:n('c1_phone'), clicks:n('c1_clicks'), impr:n('c1_impr'), cpc:n('c1_cpc'), cost:n('c1_cost'), cvr:n('c1_cvr'), ctr:n('c1_ctr') };
+  const c2 = { conv:n('c2_conv'), phone:n('c2_phone'), clicks:n('c2_clicks'), impr:n('c2_impr'), cpc:n('c2_cpc'), cost:n('c2_cost'), cvr:n('c2_cvr'), ctr:n('c2_ctr') };
+
+  const totalPhone = c1.phone+c2.phone;
+  const totalClicks = c1.clicks+c2.clicks;
+  const totalImpr   = c1.impr+c2.impr;
+  const totalCost   = c1.cost+c2.cost;
+  const totalCTR    = totalImpr ? (totalClicks/totalImpr*100).toFixed(2) : '0.00';
+  const totalCVR    = totalClicks ? ((c1.conv+c2.conv)/totalClicks*100).toFixed(2) : '0.00';
+  const totalCostPerConv = (c1.conv+c2.conv) ? totalCost/(c1.conv+c2.conv) : 0;
+  const c1CostPerConv = c1.conv ? c1.cost/c1.conv : 0;
+  const c2CostPerConv = c2.conv ? c2.cost/c2.conv : 0;
+
+  const totalLeads     = n('totalLeads');
+  const lastWeekLeads  = n('lastWeekLeads');
+  const scheduledLeads = n('scheduledLeads');
+  const notScheduled   = totalLeads-scheduledLeads;
+  const scheduledPct   = pct(scheduledLeads,totalLeads);
+  const leadDiff       = totalLeads-lastWeekLeads;
+  const leadDiffPct    = pct(Math.abs(leadDiff),lastWeekLeads);
+
+  const reasons = [
+    { label:"Didn't Answer Consult Call", count:n('r_noanswer'), color:'var(--red)' },
+    { label:'Incomplete Inquiry',         count:n('r_incomplete'), color:'var(--red)' },
+    { label:'HAP Insurance / Financial',  count:n('r_hap'), color:'var(--amber)' },
+    { label:'Service Not Offered (ESA)',  count:n('r_esa'), color:'var(--amber)' },
+    { label:'No Provider Available',      count:n('r_noprovider'), color:'var(--amber)' },
+    { label:'Testing Waitlist',           count:n('r_waitlist'), color:'var(--amber)' },
+    { label:'Other / Unspecified',        count:n('r_other'), color:'#A0A0A0' }
+  ].filter(r=>r.count>0);
+
+  const totalNotSched = reasons.reduce((a,r)=>a+r.count,0)||1;
+
+  const services = [
+    { label:'Psychotherapy',         count:n('s_psycho'),  color:'#5C4E9E' },
+    { label:'Unknown',               count:n('s_unknown'), color:'#9E9589' },
+    { label:'Medication Management', count:n('s_med'),     color:'#3D8A60' },
+    { label:'Testing',               count:n('s_testing'), color:'#C25B3F' },
+    { label:"Couple's Therapy",      count:n('s_couples'), color:'#C4527A' },
+    { label:'Other Service',         count:n('s_other'),   color:'#8899AA' }
+  ].filter(s=>s.count>0).sort((a,b)=>b.count-a.count);
+
+  const totalSvcLeads = services.reduce((a,s)=>a+s.count,0)||1;
+  const topService    = services[0]||{label:'Psychotherapy',count:0};
+  const topSvcPct     = pct(topService.count,totalSvcLeads);
+
+  const showHAP    = v('showHAPFlag');
+  const customFlag = v('customFlag');
+  const customObs  = v('customObs');
+
+  const flagSection = (showHAP||customFlag) ? `
+    <div class="flag-card"><div class="flag-icon">⚑</div><div class="flag-text">
+      <strong>Key Question for the Wellspring Team:</strong>
+      ${showHAP?`We've noticed that <strong>HAP insurance leads are not being accepted.</strong> Could you confirm whether HAP falls under the same category as Medicare and Medicaid? This is contributing to ${pct(n('r_hap'),totalNotSched)}% of lost leads.`:''}
+      ${customFlag?`<br>${customFlag}`:''}
+    </div></div>` : '';
+
+  const obsSection = customObs
+    ? `<div class="insight-card"><strong>This week's observations:</strong> ${customObs}</div>`
+    : `<div class="insight-card"><strong>Conversions are trending in the right direction.</strong> We moved from ${lastWeekLeads} to ${totalLeads} conversions week-on-week (${leadDiff>=0?'+':''}${leadDiffPct}%) without increasing spend.</div>
+       <div class="insight-card amber"><strong>DSA is our strongest performer this week.</strong> Cost per conversion of ${fmt(c2CostPerConv)} on DSA vs. ${fmt(c1CostPerConv)} on Search, with CTR of ${c2.ctr.toFixed(2)}% confirming strong intent match.</div>
+       <div class="insight-card rust"><strong>${scheduledPct}% of leads scheduled — the drop-off has structural causes.</strong> Several leads could not convert due to service or provider gaps. We recommend the Wellspring team reviews capacity as a parallel action.</div>
+       <div class="insight-card amber"><strong>${topService.label} is driving most inbound volume at ${topSvcPct}%.</strong> We plan to test copy redirecting ADHD, Anxiety, and ADD queries toward medication management to shift the inbound mix.</div>
+       <div class="insight-card"><strong>${n('r_noanswer')} lead(s) went uncontacted after the consult call.</strong> Whether that's tightening timing, refining messaging, or aligning with ad-side signals — we'd like to explore improving the re-contact rate together.</div>`;
+
+  const reasonBars = reasons.map(r => {
+    const pv = pct(r.count,totalNotSched);
+    const fw = Math.max(15,(r.count/totalNotSched)*100);
+    return `<div class="hbar-row"><div class="hbar-label">${r.label}</div><div class="hbar-track"><div class="hbar-fill" style="width:${fw}%;background:${r.color};"><span class="hbar-pct">${pv}%</span></div></div><div class="hbar-count">${r.count}</div></div>`;
+  }).join('');
+
+  document.getElementById('dashboardContent').innerHTML = `
+    <div class="header">
+      <div><div class="logo-name">Wellspring</div><div class="logo-sub">Therapeutic Partners</div></div>
+      <div class="header-meta">
+        <div class="report-label">Weekly Performance Report</div>
+        <div class="report-week">Week of ${weekRange}</div>
+        <div class="report-prepared">Prepared by ${preparedBy} &nbsp;·&nbsp; Google Ads</div>
+      </div>
+    </div>
+    ${flagSection}
+    <div class="section-label">Platform Overview: Google Ads</div>
+    <div class="kpi-grid">
+      <div class="kpi-card"><div class="kpi-label">Total Conversions</div><div class="kpi-value">${totalLeads}</div><div class="kpi-sub">vs. ${lastWeekLeads} last week</div><span class="kpi-badge ${leadDiff>=0?'badge-up':'badge-warn'}">${leadDiff>=0?'↑ +':'↓ '}${leadDiffPct}%</span></div>
+      <div class="kpi-card amber"><div class="kpi-label">Scheduled</div><div class="kpi-value">${scheduledLeads}</div><div class="kpi-sub">${scheduledPct}% of leads</div><span class="kpi-badge badge-up">Quality leads</span></div>
+      <div class="kpi-card violet"><div class="kpi-label">Total Spend</div><div class="kpi-value">$${Math.round(totalCost)}</div><div class="kpi-sub">This week</div><span class="kpi-badge badge-neutral">Budget on track</span></div>
+      <div class="kpi-card green"><div class="kpi-label">Conv. Rate</div><div class="kpi-value">${totalCVR}%</div><div class="kpi-sub">${totalClicks} clicks</div><span class="kpi-badge badge-up">Healthy</span></div>
+      <div class="kpi-card rust"><div class="kpi-label">Cost / Conv.</div><div class="kpi-value">$${Math.round(totalCostPerConv)}</div><div class="kpi-sub">DSA: ${fmt(c2CostPerConv)}</div><span class="kpi-badge badge-up">↓ DSA efficient</span></div>
+      <div class="kpi-card pink"><div class="kpi-label">Avg. CTR</div><div class="kpi-value">${totalCTR}%</div><div class="kpi-sub">${fmtN(totalImpr)} impressions</div><span class="kpi-badge badge-up">Strong</span></div>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title"><span class="dot"></span> Campaign Performance</div>
+        <table class="campaign-table">
+          <thead><tr><th>Campaign</th><th>Conv.</th><th>Ph. Conv.</th><th>Clicks</th><th>CTR</th><th>CPC</th><th>Cost</th><th>Cost/Conv.</th></tr></thead>
+          <tbody>
+            <tr>
+              <td><div class="campaign-name"><strong>Generic Search</strong>Damco_WS_Generic_Search<span class="badge-tag tag-search">Search</span></div></td>
+              <td>${c1.conv}</td><td>${c1.phone}</td><td>${c1.clicks}</td>
+              <td><span class="metric-highlight">${c1.ctr.toFixed(2)}%</span></td>
+              <td>${fmt(c1.cpc)}</td><td>${fmt(c1.cost)}</td><td>${fmt(c1CostPerConv)}</td>
+            </tr>
+            <tr>
+              <td><div class="campaign-name"><strong>DSA Campaign</strong>Damco_DSA_Wellspring<span class="badge-tag tag-dsa">DSA</span></div></td>
+              <td>${c2.conv}</td><td>${c2.phone}</td><td>${c2.clicks}</td>
+              <td><span class="metric-highlight">${c2.ctr.toFixed(2)}%</span></td>
+              <td>${fmt(c2.cpc)}</td><td>${fmt(c2.cost)}</td>
+              <td class="highlight-green">${fmt(c2CostPerConv)}</td>
+            </tr>
+            <tr class="total-row">
+              <td><strong>Total</strong></td>
+              <td><strong>${c1.conv+c2.conv}</strong></td><td><strong>${totalPhone}</strong></td><td><strong>${totalClicks}</strong></td>
+              <td><strong>${totalCTR}%</strong></td><td><strong>${fmt(c1.cpc+c2.cpc)}</strong></td>
+              <td><strong>${fmt(totalCost)}</strong></td><td><strong>${fmt(totalCostPerConv)}</strong></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Lead Scheduling Breakdown</div>
+        <div style="display:flex;align-items:center;gap:16px;">
+          <div style="width:140px;flex-shrink:0;"><canvas id="scheduleDonut"></canvas></div>
+          <div style="flex:1;">
+            <div style="margin-bottom:10px;">
+              <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;"><div style="width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div><span style="font-size:11.5px;">Scheduled</span><strong style="margin-left:auto;">${scheduledLeads} &nbsp;(${scheduledPct}%)</strong></div>
+              <div style="display:flex;align-items:center;gap:6px;"><div style="width:10px;height:10px;border-radius:50%;background:var(--rust);flex-shrink:0;"></div><span style="font-size:11.5px;">Not Scheduled</span><strong style="margin-left:auto;">${notScheduled} &nbsp;(${pct(notScheduled,totalLeads)}%)</strong></div>
+            </div>
+            <div style="background:var(--teal-pale);border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.6;"><strong>${scheduledPct}%</strong> of leads confirmed an appointment, indicating strong lead quality from paid campaigns.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="two-col">
+      <div class="panel">
+        <div class="panel-title"><span class="dot" style="background:var(--rust)"></span> Reason Not Scheduled (${totalNotSched} leads)</div>
+        ${reasonBars||'<p style="font-size:12px;color:var(--warm-mid);">No reasons recorded this week.</p>'}
+      </div>
+      <div class="panel">
+        <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Lead Service Type</div>
+        <canvas id="serviceBar" style="max-height:230px;"></canvas>
+      </div>
+    </div>
+    <hr class="divider">
+    <div class="two-col">
+      <div><div class="section-label">Key Observations</div>${obsSection}</div>
+      <div>
+        <div class="section-label">Actions and Recommendations</div>
+        <div class="next-step"><div class="step-num">1</div><div class="step-text"><strong>Increase budget allocation toward DSA.</strong> At ${fmt(c2CostPerConv)} CPA and ${c2.ctr.toFixed(2)}% CTR, DSA is significantly outperforming Search. Shifting budget here will drive more volume at a lower cost per lead.</div></div>
+        <div class="next-step"><div class="step-num">2</div><div class="step-text"><strong>Improve the missed-call follow-up process.</strong> With ${n('r_noanswer')} lead(s) uncontacted, we'd like to review timing, channel, and messaging with the Wellspring team to improve re-contact rate.</div></div>
+        <div class="next-step"><div class="step-num">3</div><div class="step-text"><strong>Add ESA-related negative keywords.</strong> Searches for ESA letters are reaching the form but cannot be served. Adding "ESA letter" and "emotional support animal letter" as negatives will reduce wasted spend.</div></div>
+        <div class="next-step"><div class="step-num">4</div><div class="step-text"><strong>Build condition-specific ad copy and landing page assets.</strong> Lead with ADHD, Anxiety, and ADD messaging to shift the inbound mix toward higher-value medication management leads.</div></div>
+        <div class="next-step"><div class="step-num">5</div><div class="step-text"><strong>Review re-engagement sequence together.</strong> We can bring intent signals, query patterns, and peak response windows from the ad side to sharpen the timing and messaging for better conversion on missed calls.</div></div>
+      </div>
+    </div>
+    <div class="footer">
+      <div class="footer-left">Prepared by <strong>${preparedBy}</strong> &nbsp;·&nbsp; Confidential: For Wellspring Team Use Only<br>Data source: Google Ads + CRM &nbsp;·&nbsp; Week of ${weekRange}</div>
+      <div class="footer-right">Wellspring Therapeutic Partners</div>
+    </div>`;
+
+  document.getElementById('form-view').style.display = 'none';
+  document.getElementById('dashboard-view').style.display = 'block';
+  window.scrollTo(0,0);
+
+  setTimeout(() => {
+    new Chart(document.getElementById('scheduleDonut').getContext('2d'), {
+      type:'doughnut',
+      data:{ labels:['Scheduled','Not Scheduled'], datasets:[{ data:[scheduledLeads,notScheduled], backgroundColor:['#3D7A72','#C25B3F'], borderWidth:0, hoverOffset:4 }] },
+      options:{ cutout:'70%', plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}`}} } }
+    });
+    if (services.length) {
+      new Chart(document.getElementById('serviceBar').getContext('2d'), {
+        type:'bar',
+        data:{ labels:services.map(s=>s.label), datasets:[{ label:'Leads', data:services.map(s=>s.count), backgroundColor:services.map(s=>s.color), borderRadius:5, borderSkipped:false }] },
+        options:{ indexAxis:'y', plugins:{legend:{display:false},tooltip:{callbacks:{label:ctx=>` ${ctx.raw} leads`}}}, scales:{ x:{grid:{color:'#EDE7DC'},ticks:{font:{family:'DM Sans',size:11},color:'#6B6460'}}, y:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#1C1C1A'}} } }
+      });
+    }
+  }, 100);
+}
+</script>
+</body>
+</html>

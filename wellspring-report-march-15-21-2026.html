@@ -1,0 +1,329 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wellspring — Weekly Report · March 15–21, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root {
+    --cream: #F7F3EE;
+    --cream-dark: #EDE7DC;
+    --charcoal: #1C1C1A;
+    --warm-mid: #6B6460;
+    --teal: #3D7A72;
+    --teal-light: #5A9E95;
+    --teal-pale: #EAF3F2;
+    --rust: #C25B3F;
+    --amber: #C9882A;
+    --violet: #5C4E9E;
+    --green: #3D8A60;
+    --pink: #C4527A;
+    --red: #C44040;
+    --border: #DDD5C8;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { background: #f0ece6; font-family: 'DM Sans', sans-serif; color: var(--charcoal); font-size: 13px; line-height: 1.6; }
+  .page { max-width: 1100px; margin: 0 auto; padding: 36px 40px 48px; background: var(--cream); min-height: 100vh; }
+  .header { display: flex; align-items: flex-start; justify-content: space-between; padding-bottom: 18px; border-bottom: 1.5px solid var(--border); margin-bottom: 20px; }
+  .logo-name { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 500; letter-spacing: -0.5px; color: var(--charcoal); line-height: 1; }
+  .logo-sub { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--rust); margin-top: 5px; font-weight: 500; }
+  .header-meta { text-align: right; }
+  .report-label { font-size: 10px; text-transform: uppercase; letter-spacing: 2px; color: var(--warm-mid); font-weight: 500; }
+  .report-week { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 600; color: var(--charcoal); margin-top: 2px; }
+  .report-prepared { font-size: 11px; color: var(--warm-mid); margin-top: 4px; }
+  .section-label { font-size: 9px; text-transform: uppercase; letter-spacing: 3px; color: var(--teal); font-weight: 500; margin-bottom: 10px; }
+  .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
+  .kpi-card { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; position: relative; overflow: hidden; }
+  .kpi-card::before { content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px; border-radius: 10px 10px 0 0; }
+  .kpi-card.teal::before   { background: var(--teal); }
+  .kpi-card.amber::before  { background: var(--amber); }
+  .kpi-card.violet::before { background: var(--violet); }
+  .kpi-card.green::before  { background: var(--green); }
+  .kpi-card.rust::before   { background: var(--rust); }
+  .kpi-card.pink::before   { background: var(--pink); }
+  .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--warm-mid); font-weight: 500; margin-bottom: 5px; }
+  .kpi-value { font-family: 'Cormorant Garamond', serif; font-size: 44px; font-weight: 600; color: var(--charcoal); line-height: 1; }
+  .kpi-sub { font-size: 11.5px; color: var(--warm-mid); margin-top: 5px; }
+  .kpi-badge { display: inline-block; font-size: 9.5px; padding: 2px 8px; border-radius: 20px; margin-top: 5px; font-weight: 500; }
+  .badge-up      { background: #E8F5EC; color: #2E7D4F; }
+  .badge-neutral { background: #F0EDE8; color: #6B6460; }
+  .badge-warn    { background: #FDF6EC; color: #C9882A; }
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 14px; }
+  .panel { background: #fff; border: 1px solid var(--border); border-radius: 12px; padding: 18px 20px; }
+  .panel-title { font-family: 'Cormorant Garamond', serif; font-size: 17px; font-weight: 600; color: var(--charcoal); margin-bottom: 12px; display: flex; align-items: center; gap: 8px; }
+  .panel-title .dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; background: var(--teal); }
+  .campaign-table { width: 100%; border-collapse: collapse; }
+  .campaign-table th { font-size: 9px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--warm-mid); font-weight: 500; padding: 8px 10px; text-align: right; border-bottom: 1px solid var(--border); white-space: nowrap; }
+  .campaign-table th:first-child { text-align: left; }
+  .campaign-table td { padding: 11px 10px; font-size: 12.5px; text-align: right; border-bottom: 1px solid #F0EDE8; color: var(--charcoal); }
+  .campaign-table td:first-child { text-align: left; }
+  .campaign-table tr.total-row td { border-bottom: none; font-weight: 500; background: var(--teal-pale); }
+  .campaign-table tr.total-row td:first-child { border-radius: 6px 0 0 6px; }
+  .campaign-table tr.total-row td:last-child  { border-radius: 0 6px 6px 0; }
+  .campaign-name { font-size: 11px; color: var(--warm-mid); max-width: 180px; line-height: 1.3; }
+  .campaign-name strong { display: block; font-size: 12px; color: var(--charcoal); font-weight: 500; }
+  .badge-tag { display: inline-block; font-size: 8.5px; padding: 2px 6px; border-radius: 4px; font-weight: 500; margin-top: 3px; }
+  .tag-search { background: #EAF0FF; color: #3D5FA0; }
+  .tag-dsa    { background: #EEF9EC; color: #2E7D4F; }
+  .metric-highlight { display: inline-block; background: var(--teal-pale); color: var(--teal); font-weight: 500; border-radius: 4px; padding: 1px 6px; font-size: 12px; }
+  .highlight-green { color: var(--green); font-weight: 600; }
+  .donut-wrap { display: flex; align-items: center; gap: 18px; }
+  .donut-canvas-wrap { width: 130px; flex-shrink: 0; }
+  .legend-item { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; font-size: 12px; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 50%; flex-shrink: 0; }
+  .legend-val { margin-left: auto; font-weight: 600; font-size: 12px; }
+  .sched-note { background: var(--teal-pale); border-radius: 8px; padding: 10px 12px; font-size: 11.5px; line-height: 1.6; margin-top: 10px; }
+  .hbar-row { display: flex; align-items: center; gap: 10px; margin-bottom: 10px; }
+  .hbar-label { font-size: 11.5px; color: var(--charcoal); min-width: 185px; flex-shrink: 0; }
+  .hbar-track { flex: 1; background: var(--cream-dark); border-radius: 4px; height: 26px; }
+  .hbar-fill { height: 100%; border-radius: 4px; display: flex; align-items: center; justify-content: flex-end; padding-right: 8px; min-width: 44px; }
+  .hbar-pct { font-size: 11px; font-weight: 600; color: #fff; white-space: nowrap; }
+  .hbar-count { font-size: 12px; color: var(--warm-mid); min-width: 20px; text-align: right; font-weight: 600; }
+  .insight-card { border-left: 3px solid var(--teal); padding: 9px 13px; margin-bottom: 8px; background: var(--teal-pale); border-radius: 0 8px 8px 0; font-size: 12px; line-height: 1.6; }
+  .insight-card.amber { border-left-color: var(--amber); background: #FDF6EC; }
+  .insight-card.rust  { border-left-color: var(--rust);  background: #FDF1EE; }
+  .insight-card strong { font-weight: 500; }
+  .next-step { display: flex; gap: 10px; align-items: flex-start; margin-bottom: 9px; }
+  .step-num  { width: 22px; height: 22px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 10px; font-weight: 500; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px; }
+  .step-text { font-size: 12px; line-height: 1.6; }
+  .step-text strong { font-weight: 500; }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 16px 0; }
+  .footer { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+  .footer-left  { font-size: 10.5px; color: var(--warm-mid); line-height: 1.8; }
+  .footer-right { font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 500; color: var(--teal); }
+  canvas { max-height: 220px; }
+  @media print { body { background: white; } .page { padding: 16px 20px; } }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <div class="header">
+    <div>
+      <div class="logo-name">Wellspring</div>
+      <div class="logo-sub">Therapeutic Partners</div>
+    </div>
+    <div class="header-meta">
+      <div class="report-label">Weekly Performance Report</div>
+      <div class="report-week">Week of March 15 – March 21</div>
+      <div class="report-prepared">Prepared by Damco Digital &nbsp;·&nbsp; Google Ads</div>
+    </div>
+  </div>
+
+  <!-- FLAG -->
+  <div class="flag-card" style="background:#FDF6EC;border:1px solid #F0D9B5;border-radius:10px;padding:13px 18px;display:flex;gap:12px;align-items:flex-start;margin-bottom:18px;">
+    <div style="font-size:15px;flex-shrink:0;margin-top:1px;">⚑</div>
+    <div style="font-size:12px;line-height:1.7;color:var(--charcoal);">
+      <strong style="font-weight:500;">Key Question for the Wellspring Team:</strong><br>
+      Incomplete Forms: What exactly do these represent? Are users starting the form and dropping off midway? If so, are we able to capture any partial data from these submissions?
+    </div>
+  </div>
+
+  <div class="section-label">Platform Overview: Google Ads</div>
+  <div class="kpi-grid">
+    <div class="kpi-card teal">
+      <div class="kpi-label">Total Conversions</div>
+      <div class="kpi-value">10</div>
+      <div class="kpi-sub">vs. 11 last week</div>
+      <span class="kpi-badge badge-warn">↓ −9.1%</span>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Scheduled</div>
+      <div class="kpi-value">5</div>
+      <div class="kpi-sub">50.0% of leads</div>
+      <span class="kpi-badge badge-up">Quality leads</span>
+    </div>
+    <div class="kpi-card violet">
+      <div class="kpi-label">Total Spend</div>
+      <div class="kpi-value">$454</div>
+      <div class="kpi-sub">This week</div>
+      <span class="kpi-badge badge-neutral">Budget on track</span>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Conv. Rate</div>
+      <div class="kpi-value">5.71%</div>
+      <div class="kpi-sub">105 clicks</div>
+      <span class="kpi-badge badge-up">Healthy</span>
+    </div>
+    <div class="kpi-card rust">
+      <div class="kpi-label">Cost / Conv.</div>
+      <div class="kpi-value">$76</div>
+      <div class="kpi-sub">DSA: $57.55</div>
+      <span class="kpi-badge badge-up">↓ DSA efficient</span>
+    </div>
+    <div class="kpi-card pink">
+      <div class="kpi-label">Avg. CTR</div>
+      <div class="kpi-value">14.87%</div>
+      <div class="kpi-sub">1,515 impressions</div>
+      <span class="kpi-badge badge-up">Strong</span>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span> Campaign Performance</div>
+      <table class="campaign-table">
+        <thead>
+          <tr>
+            <th>Campaign</th><th>Conv.</th><th>Ph. Conv.</th><th>Clicks</th>
+            <th>CTR</th><th>CPC</th><th>Cost</th><th>Cost/Conv.</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><div class="campaign-name"><strong>Generic Search</strong>Damco_WS_Generic_Search<span class="badge-tag tag-search">Search</span></div></td>
+            <td>4</td><td>0</td><td>66</td>
+            <td><span class="metric-highlight">6.20%</span></td>
+            <td>$5.13</td><td>$338.71</td><td>$84.68</td>
+          </tr>
+          <tr>
+            <td><div class="campaign-name"><strong>DSA Campaign</strong>Damco_DSA_Wellspring<span class="badge-tag tag-dsa">DSA</span></div></td>
+            <td>2</td><td>4</td><td>39</td>
+            <td><span class="metric-highlight">8.67%</span></td>
+            <td>$2.95</td><td>$115.09</td>
+            <td class="highlight-green">$57.55</td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>Total</strong></td>
+            <td><strong>6</strong></td><td><strong>4</strong></td><td><strong>105</strong></td>
+            <td><strong>14.87%</strong></td><td><strong>$8.08</strong></td>
+            <td><strong>$453.80</strong></td><td><strong>$75.63</strong></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Lead Scheduling Breakdown</div>
+      <div class="donut-wrap">
+        <div class="donut-canvas-wrap"><canvas id="scheduleDonut"></canvas></div>
+        <div style="flex:1;">
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--teal)"></div>
+            <span>Scheduled</span>
+            <span class="legend-val">5 &nbsp;(50.0%)</span>
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot" style="background:var(--rust)"></div>
+            <span>Not Scheduled</span>
+            <span class="legend-val">5 &nbsp;(50.0%)</span>
+          </div>
+          <div class="sched-note">
+            <strong>50.0%</strong> of leads confirmed an appointment, indicating strong lead quality from paid campaigns.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--rust)"></span> Reason Not Scheduled (5 leads)</div>
+      <div class="hbar-row">
+        <div class="hbar-label">Incomplete Inquiry</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:60%;background:var(--red)"><span class="hbar-pct">60%</span></div></div>
+        <div class="hbar-count">3</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">Didn't Answer Consult Call</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:40%;background:var(--red)"><span class="hbar-pct">40%</span></div></div>
+        <div class="hbar-count">2</div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Lead Service Type</div>
+      <canvas id="serviceBar" style="max-height:230px;"></canvas>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <div class="two-col">
+    <div>
+      <div class="section-label">Key Observations</div>
+      <div class="insight-card">
+        <strong>Conversions are trending in the right direction.</strong> We moved from 11 to 10 conversions week-on-week (−9.1%) without increasing spend. The campaigns are becoming more efficient and we will continue to optimise toward this trajectory.
+      </div>
+      <div class="insight-card amber">
+        <strong>DSA is our strongest performer this week.</strong> We are seeing a cost per conversion of $57.55 on DSA vs. $84.68 on Search, with a CTR of 8.67% confirming the intent match is working well. We will be looking to shift more budget weight here in the coming week.
+      </div>
+      <div class="insight-card rust">
+        <strong>50.0% of leads scheduled — and the drop-off has structural causes.</strong> Several leads could not convert due to service or provider gaps. We cannot recover these through ad changes alone and would recommend the Wellspring team reviews capacity and service scope as a parallel action.
+      </div>
+      <div class="insight-card amber">
+        <strong>Psychotherapy is driving most inbound volume at 60.0%.</strong> We plan to test copy and creative assets that redirect condition-specific queries (ADHD, Anxiety, ADD) toward medication management. These conditions convert at higher value and we want to shift the inbound mix accordingly.
+      </div>
+      <div class="insight-card">
+        <strong>2 lead(s) went uncontacted after the consult call.</strong> We know the Wellspring team has a follow-up process in place — the question is how we can make it work harder together. Whether that's tightening the timing, refining the messaging, or aligning it with what we're seeing on the ad side, we'd like to explore where we can improve the re-contact rate.
+      </div>
+    </div>
+
+    <div>
+      <div class="section-label">Actions and Recommendations</div>
+      <div class="next-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>We will increase budget allocation toward DSA.</strong> DSA is significantly outperforming Search on CPA. We recommend shifting a portion of the Search budget to DSA this week to drive more volume at a lower cost per lead.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>We will increase budget allocation toward DSA.</strong> At $57.55 CPA and 8.67% CTR, DSA is significantly outperforming Search. We recommend shifting a portion of the Search budget to DSA this week to drive more volume at a lower cost per lead.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>How can we make the missed-call follow-up process more effective?</strong> With 2 lead(s) uncontacted this week, we'd like to work with the Wellspring team to review what's currently in place and identify whether adjustments to timing, channel, or messaging could improve the re-contact rate.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>We will add ESA-related negative keywords to both campaigns.</strong> Searches for ESA letters are reaching the form but cannot be served. We will suppress these upstream by adding terms like "ESA letter" and "emotional support animal letter" as negatives to reduce wasted spend.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">5</div>
+        <div class="step-text"><strong>Let's look at the re-engagement sequence together.</strong> We can bring in what we're seeing from the ad side — intent signals, query patterns, peak response windows — to help sharpen the timing and messaging for better conversion on missed calls.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">6</div>
+        <div class="step-text"><strong>We will build out condition-specific ad copy and landing page assets.</strong> Our recommendation is to lead with ADHD, Anxiety, and ADD messaging, as these conditions convert naturally into medication management. We will draft new copy variants and share for review before going live.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="footer-left">
+      Prepared by <strong>Damco Digital</strong> &nbsp;·&nbsp; Confidential: For Wellspring Team Use Only<br>
+      Data source: Google Ads platform &nbsp;·&nbsp; Week of March 15 – March 21, 2026
+    </div>
+    <div class="footer-right">Wellspring Therapeutic Partners</div>
+  </div>
+
+</div>
+<script>
+  new Chart(document.getElementById('scheduleDonut').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Scheduled', 'Not Scheduled'],
+      datasets: [{ data: [5, 5], backgroundColor: ['#3D7A72', '#C25B3F'], borderWidth: 0, hoverOffset: 4 }]
+    },
+    options: { cutout: '70%', plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } } } }
+  });
+
+  new Chart(document.getElementById('serviceBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Psychotherapy', 'Unknown', 'Medication Mgmt', 'Testing'],
+      datasets: [{ label: 'Leads', data: [9, 3, 2, 1], backgroundColor: ['#5C4E9E', '#9E9589', '#3D8A60', '#C25B3F'], borderRadius: 5, borderSkipped: false }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw} leads` } } },
+      scales: {
+        x: { grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460' } },
+        y: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#1C1C1A' } }
+      }
+    }
+  });
+</script>
+</body>
+</html>
