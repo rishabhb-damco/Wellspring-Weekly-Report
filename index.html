@@ -194,8 +194,8 @@
 
   <input type="hidden" id="c1_platform_conv" value="0" />
   <input type="hidden" id="c2_platform_conv" value="0" />
-  <input type="hidden" id="googleLeads" value="0" />
-  <input type="hidden" id="googleSched" value="0" />
+  <input type="hidden" id="googleLeads" value="-1" />
+  <input type="hidden" id="googleSched" value="-1" />
 
   <!-- ===== STEP 2: REPORT DETAILS ===== -->
   <div class="form-section">
@@ -353,16 +353,27 @@ function handleAds(e) { if (e.target.files[0]) processAds(e.target.files[0]); }
 // ══════════════════════════════════════════════════
 //  CRM CSV PROCESSING
 // ══════════════════════════════════════════════════
-const CRM_COL = { SOURCE:9, SERVICE:12, SCHEDULED:15, REASON:16 };
+// CRM column indices
+const CRM_COL = { HEAR:9, SOURCE:10, SERVICE:12, SCHEDULED:15, REASON:16 };
 
-function classifySource(raw) {
-  const v = (raw||'').toString().trim().toLowerCase();
-  const internal = ['internal','current patient','previous pt','previous patient','daughter was pt','son was pt','jamie'];
-  const google   = ['google','other','online','insurance','damco',''];
-  const psychToday = ['psychology today'];
-  if (internal.some(k => v===k || v.includes(k)))   return 'Internal';
-  if (psychToday.some(k => v.includes(k)))           return 'Psychology Today';
-  if (google.some(k => v===k || v.includes(k)))      return 'Google';
+// Accepts full row — checks col K (Source) first, then col J (How did you hear)
+function classifySource(row) {
+  const hear   = (row[CRM_COL.HEAR]  ||'').toString().trim().toLowerCase();
+  const source = (row[CRM_COL.SOURCE]||'').toString().trim().toLowerCase();
+
+  // 1. Source column explicitly says Internal
+  if (source === 'internal') return 'Internal';
+
+  // 2. Source column or Hear column explicitly says Google
+  if (source === 'google ads' || hear === 'google') return 'Google';
+
+  // 3. Hear column is blank / dash / generic → Google (no referral info = came via Google)
+  if (hear === '' || hear === '-' || hear === 'other' || hear === 'online') return 'Google';
+
+  // 4. Psychology Today
+  if (hear.includes('psychology today')) return 'Psychology Today';
+
+  // 5. Everything else = named person / external referral
   return 'Referral';
 }
 function normaliseServices(raw) {
@@ -400,7 +411,10 @@ function processCRM(file) {
     complete(results) {
       try {
         const rows      = results.data;
-        const dataRows  = rows.slice(1).filter(r => r[0] && r[0].toString().trim() !== '');
+        const dataRows  = rows.slice(1).filter(r =>
+          r[0] && r[0].toString().trim() !== '' &&
+          ((r[CRM_COL.HEAR]||'').toString().trim() !== '' || (r[CRM_COL.SOURCE]||'').toString().trim() !== '')
+        );
         let total = 0, sched = 0, googleLeads = 0, googleSched = 0;
         const sources  = { Google:0, Internal:0, Referral:0, 'Psychology Today':0 };
         const services = { Psychotherapy:0, 'Medication Management':0, "Couple's Therapy":0, Testing:0, Unknown:0, Other:0 };
@@ -410,9 +424,8 @@ function processCRM(file) {
           total++;
           const isScheduled = (row[CRM_COL.SCHEDULED]||'').toString().trim().toLowerCase() === 'yes';
           if (isScheduled) sched++;
-          const src = classifySource(row[CRM_COL.SOURCE]);
+          const src = classifySource(row);
           sources[src] = (sources[src]||0) + 1;
-          // Track Google leads separately for KPI cards
           if (src === 'Google') {
             googleLeads++;
             if (isScheduled) googleSched++;
@@ -479,15 +492,15 @@ function processAds(file) {
         const c2 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
 
         let headerFound = false;
-        let colDay=0, colCampaign=2, colClicks=9, colCTR=10, colCPC=11, colImpr=12, colCost=13, colConv=16, colPhone=17;
+        // Correct defaults based on actual sheet structure:
+        // Col O(14)=Conv.(Platform Comparable), Col P(15)=Cost/Conv., Col Q(16)=Phone calls
+        let colDay=0, colCampaign=2, colClicks=9, colCTR=10, colCPC=11, colImpr=12, colCost=13, colConv=14, colPhone=16;
 
         for (const row of rows) {
           const cell0 = (row[0]||'').toString().trim();
           const cell2 = (row[2]||'').toString().trim();
 
-          // Detect header row
           if (cell0 === 'Day' && cell2 === 'Campaign') {
-            // Map columns dynamically from this header row
             for (let i = 0; i < row.length; i++) {
               const h = (row[i]||'').toString().trim().toLowerCase();
               if (h === 'day')               colDay      = i;
@@ -497,8 +510,9 @@ function processAds(file) {
               if (h === 'avg. cpc')          colCPC      = i;
               if (h === 'impr.')             colImpr     = i;
               if (h === 'cost')              colCost     = i;
-              if (h === 'conversions')        colConv     = i;
-              if (h.includes('phone'))         colPhone    = i;
+              // Match "Conv. (Platform Comparable)" or any conv column that isn't Cost/Conv
+              if (h.startsWith('conv.') && !h.includes('cost') && !h.includes('/')) colConv = i;
+              if (h.includes('phone'))       colPhone    = i;
             }
             headerFound = true;
             continue;
@@ -597,11 +611,15 @@ function generateDashboard() {
   const totalCost   = c1.cost+c2.cost;
   const totalCTR    = totalImpr ? (totalClicks/totalImpr*100).toFixed(2) : '0.00';
 
-  const totalLeads     = n('totalLeads');      // all CRM leads (used for internal reference)
+  const totalLeads     = n('totalLeads');
   const lastWeekLeads  = n('lastWeekLeads');
-  const googleLeads    = n('googleLeads') || totalLeads;  // Google-source leads only (KPI cards)
-  const googleSched    = n('googleSched') || n('scheduledLeads'); // scheduled among Google leads
-  const scheduledLeads = n('scheduledLeads');  // all scheduled (used for donut chart)
+  // -1 means CRM CSV not uploaded yet → fall back to all leads
+  // Any other value (including 0) = real Google-only count from CSV
+  const _googleLeads = n('googleLeads', -1);
+  const _googleSched = n('googleSched', -1);
+  const googleLeads  = _googleLeads === -1 ? totalLeads : _googleLeads;
+  const googleSched  = _googleSched === -1 ? n('scheduledLeads') : _googleSched;
+  const scheduledLeads = n('scheduledLeads');
   const notScheduled   = googleLeads - googleSched;
   const scheduledPct   = pct(googleSched, googleLeads);
   const leadDiff       = googleLeads - lastWeekLeads;
@@ -611,8 +629,8 @@ function generateDashboard() {
   const c1totalConv = n('c1_platform_conv') || (c1.conv + c1.phone);
   const c2totalConv = n('c2_platform_conv') || (c2.conv + c2.phone);
   const totalAllConv = c1totalConv + c2totalConv;
-  // Conv Rate = CRM leads ÷ clicks
-  const totalCVR    = totalClicks ? (googleLeads / totalClicks * 100).toFixed(2) : '0.00';
+  // Conv Rate = platform conversions (Ads) ÷ clicks
+  const totalCVR    = totalClicks ? (totalAllConv / totalClicks * 100).toFixed(2) : '0.00';
   // Cost/Conv = total spend ÷ platform conversions
   const totalCostPerConv = totalAllConv ? totalCost / totalAllConv : 0;
   const c1CostPerConv = c1totalConv ? c1.cost / c1totalConv : 0;
@@ -680,7 +698,7 @@ function generateDashboard() {
     ${flagSection}
     <div class="section-label">Platform Overview: Google Ads</div>
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">Google Leads</div><div class="kpi-value">${googleLeads}</div><div class="kpi-sub">Platform: ${totalAllConv} conv &nbsp;·&nbsp; vs. ${lastWeekLeads} last week</div><span class="kpi-badge ${leadDiff>=0?'badge-up':'badge-warn'}">${leadDiff>=0?'↑ +':'↓ '}${leadDiffPct}%</span></div>
+      <div class="kpi-card"><div class="kpi-label">Total Conversions</div><div class="kpi-value">${googleLeads}</div><div class="kpi-sub">Ads platform conv: ${totalAllConv} &nbsp;·&nbsp; vs. ${lastWeekLeads} last week</div><span class="kpi-badge ${leadDiff>=0?'badge-up':'badge-warn'}">${leadDiff>=0?'↑ +':'↓ '}${leadDiffPct}%</span></div>
       <div class="kpi-card amber"><div class="kpi-label">Scheduled (Google)</div><div class="kpi-value">${googleSched}</div><div class="kpi-sub">${scheduledPct}% of Google leads</div><span class="kpi-badge badge-up">Quality leads</span></div>
       <div class="kpi-card violet"><div class="kpi-label">Total Spend</div><div class="kpi-value">$${Math.round(totalCost)}</div><div class="kpi-sub">This week</div><span class="kpi-badge badge-neutral">Budget on track</span></div>
       <div class="kpi-card green"><div class="kpi-label">Conv. Rate</div><div class="kpi-value">${totalCVR}%</div><div class="kpi-sub">${totalClicks} clicks</div><span class="kpi-badge badge-up">Healthy</span></div>
