@@ -343,10 +343,20 @@
   <!-- OBSERVATIONS -->
   <div class="form-section">
     <div class="form-section-title"><span class="fsec-dot" style="background:var(--teal)"></span> Key Observations (optional override)</div>
-    <p style="margin-bottom:10px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate, or type custom observations.</p>
+    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate. To add multiple observations, put each on a new line. Prefix with <strong>!</strong> for amber, <strong>!!</strong> for red/rust highlight.</p>
     <div class="field">
       <label>Custom Observations</label>
-      <textarea id="customObs" rows="4" placeholder="e.g. DSA campaign is outperforming Search on CPA this week..."></textarea>
+      <textarea id="customObs" rows="6" placeholder="DSA is our strongest performer this week.&#10;!60% of leads went unscheduled — structural causes.&#10;!!Missed call rate increased vs last week."></textarea>
+    </div>
+  </div>
+
+  <!-- ACTIONS -->
+  <div class="form-section">
+    <div class="form-section-title"><span class="fsec-dot" style="background:var(--amber)"></span> Actions &amp; Recommendations (optional override)</div>
+    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate from data. Each line becomes one action item. Start with <strong>bold text</strong> using **double asterisks**.</p>
+    <div class="field">
+      <label>Custom Actions</label>
+      <textarea id="customActions" rows="6" placeholder="**Increase DSA budget.** DSA is significantly outperforming Search on CPA this week.&#10;**Follow up on missed calls.** 2 leads went uncontacted — review timing with the team.&#10;**Add ESA negative keywords.** Reduce wasted spend from ESA-related searches."></textarea>
     </div>
   </div>
 
@@ -881,7 +891,8 @@ function generateDashboard() {
 
   const showHAP    = v('showHAPFlag');
   const customFlag = v('customFlag');
-  const customObs  = v('customObs');
+  const customObs  = v('customObs').trim();
+  const customActions = v('customActions').trim();
 
   const flagSection = (showHAP||customFlag) ? `
     <div class="flag-card"><div class="flag-icon">⚑</div><div class="flag-text">
@@ -894,13 +905,48 @@ function generateDashboard() {
     ? `We moved from ${prevGoogleLeads} to ${googleLeads} Google-sourced leads period-on-period.`
     : `${googleLeads} Google-sourced leads this period.`;
 
+  // Parse manual observations — each line = one card
+  // Prefix !!  = rust/red highlight
+  // Prefix !   = amber highlight
+  // No prefix  = default teal
+  function parseObsCards(text) {
+    return text.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
+      let cls = '';
+      if (line.startsWith('!!'))      { cls = 'rust';  line = line.slice(2).trim(); }
+      else if (line.startsWith('!'))  { cls = 'amber'; line = line.slice(1).trim(); }
+      // Bold everything up to and including the first full stop
+      const dot = line.indexOf('.');
+      const html = dot > 0
+        ? `<strong>${line.slice(0, dot+1)}</strong>${line.slice(dot+1)}`
+        : `<strong>${line}</strong>`;
+      return `<div class="insight-card ${cls}">${html}</div>`;
+    }).join('');
+  }
+
+  // Parse manual actions — each line = one numbered step
+  // **text** becomes <strong>text</strong>
+  function parseActionsCards(text) {
+    return text.split('\n').map(l => l.trim()).filter(Boolean).map((line, i) => {
+      const html = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
+      return `<div class="next-step"><div class="step-num">${i+1}</div><div class="step-text">${html}</div></div>`;
+    }).join('');
+  }
+
   const obsSection = customObs
-    ? `<div class="insight-card"><strong>Observations:</strong> ${customObs}</div>`
+    ? parseObsCards(customObs)
     : `<div class="insight-card"><strong>Conversions are trending in the right direction.</strong> ${prevInsight} Without increasing spend, the campaigns are becoming more efficient.</div>
        <div class="insight-card amber"><strong>DSA is our strongest performer this period.</strong> Cost per conversion of ${fmt(c2CostPerConv)} on DSA vs. ${fmt(c1CostPerConv)} on Search, with CTR of ${c2.ctr.toFixed(2)}% confirming strong intent match.</div>
        <div class="insight-card rust"><strong>${scheduledPct}% of Google leads scheduled.</strong> Several leads could not convert due to service or provider gaps. We recommend the Wellspring team reviews capacity as a parallel action.</div>
        <div class="insight-card amber"><strong>${topService.label} is driving most inbound volume at ${topSvcPct}%.</strong> We plan to test copy redirecting ADHD, Anxiety, and ADD queries toward medication management.</div>
        <div class="insight-card"><strong>${n('r_noanswer')} lead(s) went uncontacted after the consult call.</strong> We'd like to explore improving the re-contact rate together.</div>`;
+
+  const actionsSection = customActions
+    ? parseActionsCards(customActions)
+    : `<div class="next-step"><div class="step-num">1</div><div class="step-text"><strong>Increase budget allocation toward DSA.</strong> At ${fmt(c2CostPerConv)} CPA and ${c2.ctr.toFixed(2)}% CTR, DSA is significantly outperforming Search.</div></div>
+       <div class="next-step"><div class="step-num">2</div><div class="step-text"><strong>Improve the missed-call follow-up process.</strong> With ${n('r_noanswer')} lead(s) uncontacted, review timing, channel, and messaging to improve re-contact rate.</div></div>
+       <div class="next-step"><div class="step-num">3</div><div class="step-text"><strong>Add ESA-related negative keywords.</strong> Adding "ESA letter" as a negative will reduce wasted spend on leads that cannot be served.</div></div>
+       <div class="next-step"><div class="step-num">4</div><div class="step-text"><strong>Build condition-specific ad copy and landing page assets.</strong> Lead with ADHD, Anxiety, and ADD messaging to shift the mix toward higher-value leads.</div></div>
+       <div class="next-step"><div class="step-num">5</div><div class="step-text"><strong>Review re-engagement sequence together.</strong> Bring intent signals, query patterns, and peak response windows to sharpen timing for better conversion on missed calls.</div></div>`;
 
   const reasonBars = reasons.map(r => {
     const pv = pct(r.count,totalNotSched);
@@ -989,11 +1035,7 @@ function generateDashboard() {
       <div><div class="section-label">Key Observations</div>${obsSection}</div>
       <div>
         <div class="section-label">Actions and Recommendations</div>
-        <div class="next-step"><div class="step-num">1</div><div class="step-text"><strong>Increase budget allocation toward DSA.</strong> At ${fmt(c2CostPerConv)} CPA and ${c2.ctr.toFixed(2)}% CTR, DSA is significantly outperforming Search.</div></div>
-        <div class="next-step"><div class="step-num">2</div><div class="step-text"><strong>Improve the missed-call follow-up process.</strong> With ${n('r_noanswer')} lead(s) uncontacted, review timing, channel, and messaging to improve re-contact rate.</div></div>
-        <div class="next-step"><div class="step-num">3</div><div class="step-text"><strong>Add ESA-related negative keywords.</strong> Adding "ESA letter" as a negative will reduce wasted spend on leads that cannot be served.</div></div>
-        <div class="next-step"><div class="step-num">4</div><div class="step-text"><strong>Build condition-specific ad copy and landing page assets.</strong> Lead with ADHD, Anxiety, and ADD messaging to shift the mix toward higher-value leads.</div></div>
-        <div class="next-step"><div class="step-num">5</div><div class="step-text"><strong>Review re-engagement sequence together.</strong> Bring intent signals, query patterns, and peak response windows to sharpen timing for better conversion on missed calls.</div></div>
+        ${actionsSection}
       </div>
     </div>
     <div class="footer">
