@@ -9,137 +9,145 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
 <style>
   :root {
-    --cream: #F7F3EE; --cream-dark: #EDE7DC; --charcoal: #1C1C1A; --warm-mid: #6B6460;
-    --teal: #3D7A72; --teal-light: #5A9E95; --teal-pale: #EAF3F2;
-    --rust: #C25B3F; --amber: #C9882A; --violet: #5C4E9E;
-    --green: #3D8A60; --pink: #C4527A; --red: #C44040; --border: #DDD5C8;
+    --cream:#F7F3EE; --cream-dark:#EDE7DC; --charcoal:#1C1C1A; --warm-mid:#6B6460;
+    --teal:#3D7A72; --teal-light:#5A9E95; --teal-pale:#EAF3F2;
+    --rust:#C25B3F; --amber:#C9882A; --violet:#5C4E9E;
+    --green:#3D8A60; --pink:#C4527A; --red:#C44040; --border:#DDD5C8;
   }
-  * { margin:0; padding:0; box-sizing:border-box; }
-  body { background:#f0ece6; font-family:'DM Sans',sans-serif; color:var(--charcoal); font-size:13px; line-height:1.6; }
-
-  #form-view { max-width:820px; margin:0 auto; padding:36px 28px; }
-  .form-header { display:flex; align-items:flex-end; justify-content:space-between; margin-bottom:28px; padding-bottom:18px; border-bottom:1.5px solid var(--border); }
-  .form-logo { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:500; line-height:1; }
-  .form-logo span { display:block; font-family:'DM Sans',sans-serif; font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--rust); margin-top:3px; }
-  .form-title { font-size:11px; color:var(--warm-mid); text-align:right; line-height:1.8; }
-
-  .form-section { background:#fff; border:1px solid var(--border); border-radius:12px; padding:20px 22px; margin-bottom:14px; }
-  .form-section-title { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:600; color:var(--charcoal); margin-bottom:14px; padding-bottom:10px; border-bottom:1px solid var(--cream-dark); display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
-  .fsec-dot { width:7px; height:7px; border-radius:50%; background:var(--teal); flex-shrink:0; }
-  .auto-tag { font-size:11px; font-family:'DM Sans',sans-serif; font-weight:400; color:var(--teal); margin-left:4px; }
-
-  .form-grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:12px; }
-  .form-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:12px; }
-  .form-grid-4 { display:grid; grid-template-columns:1fr 1fr 1fr 1fr; gap:10px; }
-
-  .field { display:flex; flex-direction:column; gap:4px; }
-  .field label { font-size:9.5px; text-transform:uppercase; letter-spacing:1.5px; color:var(--warm-mid); font-weight:500; }
-  .field input, .field textarea { background:var(--cream); border:1px solid var(--border); border-radius:7px; padding:8px 10px; font-family:'DM Sans',sans-serif; font-size:12.5px; color:var(--charcoal); outline:none; transition:border-color 0.15s; }
-  .field input:focus, .field textarea:focus { border-color:var(--teal); background:#fff; }
-  .field textarea { resize:vertical; min-height:70px; line-height:1.5; }
-  .field input.auto-filled { border-color:var(--teal); background:var(--teal-pale); }
-
-  .campaign-row { background:var(--cream); border:1px solid var(--border); border-radius:8px; padding:12px 14px; margin-bottom:10px; }
-  .campaign-row-title { font-size:11px; font-weight:500; color:var(--teal); margin-bottom:10px; text-transform:uppercase; letter-spacing:1px; }
-  .reason-row { display:grid; grid-template-columns:2fr 80px 60px; gap:8px; align-items:center; margin-bottom:8px; }
-  .reason-row label { font-size:12px; color:var(--charcoal); }
-  .reason-row input.auto-filled { border-color:var(--teal); background:var(--teal-pale); }
-
-  .generate-btn { width:100%; background:var(--teal); color:#fff; border:none; border-radius:10px; padding:14px; font-family:'DM Sans',sans-serif; font-size:14px; font-weight:500; cursor:pointer; transition:background 0.15s; margin-top:6px; }
-  .generate-btn:hover { background:var(--teal-light); }
-  .flag-toggle { display:flex; align-items:center; gap:10px; margin-top:8px; }
-  .flag-toggle input[type=checkbox] { width:15px; height:15px; accent-color:var(--amber); }
-  .flag-toggle label { font-size:12px; color:var(--charcoal); }
-
-  /* ── IMPORT CARDS ── */
-  .import-grid { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:14px; }
-  .import-card { background:#fff; border:2px dashed var(--border); border-radius:12px; padding:18px 20px; transition:border-color 0.2s; }
-  .import-card.drag-over { border-color:var(--teal); background:var(--teal-pale); }
-  .import-card-title { font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:600; color:var(--charcoal); margin-bottom:4px; display:flex; align-items:center; gap:8px; }
-  .import-card-hint { font-size:10.5px; color:var(--warm-mid); margin-bottom:12px; line-height:1.6; }
-  .drop-zone { border:1.5px dashed var(--border); border-radius:8px; padding:18px 12px; text-align:center; cursor:pointer; transition:all 0.15s; background:var(--cream); }
-  .drop-zone:hover { border-color:var(--teal); background:var(--teal-pale); }
-  .drop-icon { font-size:22px; margin-bottom:6px; }
-  .drop-text { font-size:11.5px; color:var(--warm-mid); }
-  .drop-text strong { color:var(--teal); }
-  .import-status { margin-top:10px; border-radius:8px; padding:10px 12px; font-size:11.5px; display:none; }
-  .import-status.success { display:block; background:var(--teal-pale); border:1px solid #b2d8d4; color:var(--teal); }
-  .import-status.error   { display:block; background:#FDF1EE; border:1px solid #f0b4a4; color:var(--rust); }
-  .import-stats { display:grid; grid-template-columns:1fr 1fr; gap:6px; margin-top:8px; }
-  .import-stat { background:#fff; border-radius:6px; padding:7px 10px; text-align:center; border:1px solid var(--border); }
-  .import-stat-val { font-family:'Cormorant Garamond',serif; font-size:22px; font-weight:600; color:var(--charcoal); line-height:1; }
-  .import-stat-label { font-size:9px; text-transform:uppercase; letter-spacing:1px; color:var(--warm-mid); margin-top:2px; }
-  .import-breakdown { font-size:10.5px; color:var(--warm-mid); margin-top:8px; line-height:1.8; }
-  .import-breakdown strong { color:var(--charcoal); }
-
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#f0ece6;font-family:'DM Sans',sans-serif;color:var(--charcoal);font-size:13px;line-height:1.6;}
+  #form-view{max-width:820px;margin:0 auto;padding:36px 28px;}
+  .form-header{display:flex;align-items:flex-end;justify-content:space-between;margin-bottom:28px;padding-bottom:18px;border-bottom:1.5px solid var(--border);}
+  .form-logo{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;line-height:1;}
+  .form-logo span{display:block;font-family:'DM Sans',sans-serif;font-size:9px;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-top:3px;}
+  .form-title{font-size:11px;color:var(--warm-mid);text-align:right;line-height:1.8;}
+  .form-section{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px;}
+  .form-section-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--charcoal);margin-bottom:14px;padding-bottom:10px;border-bottom:1px solid var(--cream-dark);display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
+  .fsec-dot{width:7px;height:7px;border-radius:50%;background:var(--teal);flex-shrink:0;}
+  .auto-tag{font-size:11px;font-family:'DM Sans',sans-serif;font-weight:400;color:var(--teal);margin-left:4px;}
+  .form-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;}
+  .form-grid-2{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+  .form-grid-4{display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;}
+  .field{display:flex;flex-direction:column;gap:4px;}
+  .field label{font-size:9.5px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;}
+  .field input,.field textarea{background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:8px 10px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--charcoal);outline:none;transition:border-color 0.15s;}
+  .field input:focus,.field textarea:focus{border-color:var(--teal);background:#fff;}
+  .field textarea{resize:vertical;min-height:70px;line-height:1.5;}
+  .field input.auto-filled{border-color:var(--teal);background:var(--teal-pale);}
+  .campaign-row{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:12px 14px;margin-bottom:10px;}
+  .campaign-row-title{font-size:11px;font-weight:500;color:var(--teal);margin-bottom:10px;text-transform:uppercase;letter-spacing:1px;}
+  .reason-row{display:grid;grid-template-columns:2fr 80px 60px;gap:8px;align-items:center;margin-bottom:8px;}
+  .reason-row label{font-size:12px;color:var(--charcoal);}
+  .reason-row input.auto-filled{border-color:var(--teal);background:var(--teal-pale);}
+  .generate-btn{width:100%;background:var(--teal);color:#fff;border:none;border-radius:10px;padding:14px;font-family:'DM Sans',sans-serif;font-size:14px;font-weight:500;cursor:pointer;transition:background 0.15s;margin-top:6px;}
+  .generate-btn:hover{background:var(--teal-light);}
+  .flag-toggle{display:flex;align-items:center;gap:10px;margin-top:8px;}
+  .flag-toggle input[type=checkbox]{width:15px;height:15px;accent-color:var(--amber);}
+  .flag-toggle label{font-size:12px;color:var(--charcoal);}
+  /* ── IMPORT ── */
+  .import-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
+  .import-card{background:#fff;border:2px dashed var(--border);border-radius:12px;padding:18px 20px;transition:border-color 0.2s;}
+  .import-card.drag-over{border-color:var(--teal);background:var(--teal-pale);}
+  .import-card-title{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:600;color:var(--charcoal);margin-bottom:4px;display:flex;align-items:center;gap:8px;}
+  .import-card-hint{font-size:10.5px;color:var(--warm-mid);margin-bottom:12px;line-height:1.6;}
+  .drop-zone{border:1.5px dashed var(--border);border-radius:8px;padding:18px 12px;text-align:center;cursor:pointer;transition:all 0.15s;background:var(--cream);}
+  .drop-zone:hover{border-color:var(--teal);background:var(--teal-pale);}
+  .drop-icon{font-size:22px;margin-bottom:6px;}
+  .drop-text{font-size:11.5px;color:var(--warm-mid);}
+  .drop-text strong{color:var(--teal);}
+  .import-status{margin-top:10px;border-radius:8px;padding:10px 12px;font-size:11.5px;display:none;}
+  .import-status.success{display:block;background:var(--teal-pale);border:1px solid #b2d8d4;color:var(--teal);}
+  .import-status.error{display:block;background:#FDF1EE;border:1px solid #f0b4a4;color:var(--rust);}
+  .import-stats{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;}
+  .import-stat{background:#fff;border-radius:6px;padding:7px 10px;text-align:center;border:1px solid var(--border);}
+  .import-stat-val{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--charcoal);line-height:1;}
+  .import-stat-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--warm-mid);margin-top:2px;}
+  .import-breakdown{font-size:10.5px;color:var(--warm-mid);margin-top:8px;line-height:1.8;}
+  .import-breakdown strong{color:var(--charcoal);}
+  /* ── DATE FILTER ── */
+  .date-filter-section{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px;}
+  .filter-mode-tabs{display:flex;gap:6px;margin-bottom:14px;}
+  .filter-tab{padding:6px 16px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--cream);color:var(--warm-mid);transition:all 0.15s;}
+  .filter-tab.active{background:var(--teal);color:#fff;border-color:var(--teal);}
+  .filter-panel{display:none;}
+  .filter-panel.active{display:block;}
+  .filter-week-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
+  .filter-week-row label{font-size:11px;color:var(--warm-mid);font-weight:500;}
+  .filter-week-row input[type=week],.filter-date-row input[type=date]{background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--charcoal);outline:none;}
+  .filter-date-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+  .filter-date-row label{font-size:11px;color:var(--warm-mid);font-weight:500;min-width:32px;}
+  .filter-badge{display:inline-block;background:var(--teal-pale);border:1px solid #b2d8d4;border-radius:8px;padding:8px 14px;font-size:12px;color:var(--teal);margin-top:10px;line-height:1.6;}
+  .filter-badge strong{font-weight:500;}
+  .apply-filter-btn{background:var(--teal);color:#fff;border:none;border-radius:7px;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background 0.15s;}
+  .apply-filter-btn:hover{background:var(--teal-light);}
   /* ── DASHBOARD ── */
-  #dashboard-view { display:none; }
-  .dash-actions { background:var(--teal); color:#fff; display:flex; align-items:center; justify-content:space-between; padding:10px 24px; gap:12px; font-size:12.5px; }
-  .dash-actions button { background:rgba(255,255,255,0.2); color:#fff; border:1px solid rgba(255,255,255,0.4); border-radius:6px; padding:6px 14px; font-family:'DM Sans',sans-serif; font-size:12px; cursor:pointer; transition:background 0.15s; }
-  .dash-actions button:hover { background:rgba(255,255,255,0.35); }
-  .dash-actions-left { display:flex; gap:8px; }
-  .page { max-width:1100px; margin:0 auto; padding:28px 32px; background:var(--cream); min-height:100vh; }
-  .header { display:flex; align-items:flex-start; justify-content:space-between; padding-bottom:16px; border-bottom:1.5px solid var(--border); margin-bottom:16px; }
-  .logo-name { font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:500; letter-spacing:-0.5px; color:var(--charcoal); line-height:1; }
-  .logo-sub { font-size:10px; letter-spacing:3px; text-transform:uppercase; color:var(--rust); margin-top:4px; font-weight:500; }
-  .header-meta { text-align:right; }
-  .header-meta .report-label { font-size:10px; text-transform:uppercase; letter-spacing:2px; color:var(--warm-mid); font-weight:500; }
-  .header-meta .report-week { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:600; color:var(--charcoal); margin-top:2px; }
-  .header-meta .report-prepared { font-size:11px; color:var(--warm-mid); margin-top:4px; }
-  .section-label { font-size:9px; text-transform:uppercase; letter-spacing:3px; color:var(--teal); font-weight:500; margin-bottom:8px; }
-  .kpi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:10px; margin-bottom:16px; }
-  .kpi-card { background:#fff; border:1px solid var(--border); border-radius:10px; padding:14px 18px; position:relative; overflow:visible; }
-  .kpi-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:var(--teal); border-radius:10px 10px 0 0; }
-  .kpi-card.amber::before { background:var(--amber); } .kpi-card.violet::before { background:var(--violet); }
-  .kpi-card.green::before { background:var(--green); } .kpi-card.rust::before { background:var(--rust); }
-  .kpi-card.pink::before { background:var(--pink); }
-  .kpi-label { font-size:10px; text-transform:uppercase; letter-spacing:1.5px; color:var(--warm-mid); font-weight:500; margin-bottom:4px; }
-  .kpi-value { font-family:'Cormorant Garamond',serif; font-size:42px; font-weight:600; color:var(--charcoal); line-height:1; }
-  .kpi-sub { font-size:11.5px; color:var(--warm-mid); margin-top:4px; }
-  .kpi-badge { display:inline-block; font-size:9.5px; padding:2px 7px; border-radius:20px; margin-top:4px; font-weight:500; }
-  .badge-up { background:#E8F5EC; color:#2E7D4F; } .badge-neutral { background:#F0EDE8; color:#6B6460; } .badge-warn { background:#FDF6EC; color:#C9882A; }
-  .two-col { display:grid; grid-template-columns:1fr 1fr; gap:12px; margin-bottom:12px; }
-  .panel { background:#fff; border:1px solid var(--border); border-radius:12px; padding:16px 18px; }
-  .panel-title { font-family:'Cormorant Garamond',serif; font-size:16px; font-weight:600; color:var(--charcoal); margin-bottom:10px; display:flex; align-items:center; gap:8px; }
-  .panel-title .dot { width:8px; height:8px; border-radius:50%; background:var(--teal); flex-shrink:0; }
-  .campaign-table { width:100%; border-collapse:collapse; }
-  .campaign-table th { font-size:9px; text-transform:uppercase; letter-spacing:1.5px; color:var(--warm-mid); font-weight:500; padding:8px 10px; text-align:right; border-bottom:1px solid var(--border); white-space:nowrap; }
-  .campaign-table th:first-child { text-align:left; }
-  .campaign-table td { padding:11px 10px; font-size:12.5px; text-align:right; border-bottom:1px solid #F0EDE8; color:var(--charcoal); }
-  .campaign-table td:first-child { text-align:left; }
-  .campaign-table tr.total-row td { border-bottom:none; font-weight:500; background:var(--teal-pale); }
-  .campaign-table tr.total-row td:first-child { border-radius:6px 0 0 6px; }
-  .campaign-table tr.total-row td:last-child { border-radius:0 6px 6px 0; }
-  .campaign-name { font-size:11px; color:var(--warm-mid); max-width:180px; line-height:1.3; }
-  .campaign-name strong { display:block; font-size:12px; color:var(--charcoal); font-weight:500; }
-  .badge-tag { display:inline-block; font-size:8.5px; padding:2px 6px; border-radius:4px; font-weight:500; margin-top:3px; }
-  .tag-search { background:#EAF0FF; color:#3D5FA0; } .tag-dsa { background:#EEF9EC; color:#2E7D4F; }
-  .metric-highlight { display:inline-block; background:var(--teal-pale); color:var(--teal); font-weight:500; border-radius:4px; padding:1px 6px; font-size:12px; }
-  .highlight-green { color:var(--green); font-weight:600; }
-  .hbar-row { display:flex; align-items:center; gap:10px; margin-bottom:11px; }
-  .hbar-label { font-size:11.5px; color:var(--charcoal); min-width:190px; flex-shrink:0; }
-  .hbar-track { flex:1; background:var(--cream-dark); border-radius:4px; height:26px; }
-  .hbar-fill { height:100%; border-radius:4px; display:flex; align-items:center; justify-content:flex-end; padding-right:8px; min-width:48px; }
-  .hbar-pct { font-size:11px; font-weight:600; color:#fff; white-space:nowrap; }
-  .hbar-count { font-size:12px; color:var(--warm-mid); min-width:20px; text-align:right; font-weight:600; }
-  .insight-card { border-left:3px solid var(--teal); padding:8px 12px; margin-bottom:7px; background:var(--teal-pale); border-radius:0 8px 8px 0; font-size:12px; line-height:1.5; }
-  .insight-card.amber { border-left-color:var(--amber); background:#FDF6EC; }
-  .insight-card.rust  { border-left-color:var(--rust);  background:#FDF1EE; }
-  .insight-card strong { font-weight:500; color:var(--charcoal); }
-  .next-step { display:flex; gap:10px; align-items:flex-start; margin-bottom:8px; }
-  .step-num { width:22px; height:22px; border-radius:50%; background:var(--teal); color:#fff; font-size:10px; font-weight:500; display:flex; align-items:center; justify-content:center; flex-shrink:0; margin-top:1px; }
-  .step-text { font-size:12px; line-height:1.6; color:var(--charcoal); }
-  .step-text strong { font-weight:500; }
-  .flag-card { background:#FDF6EC; border:1px solid #F0D9B5; border-radius:10px; padding:12px 16px; display:flex; gap:12px; align-items:flex-start; margin-bottom:14px; }
-  .flag-icon { font-size:16px; flex-shrink:0; }
-  .flag-text { font-size:12px; line-height:1.6; }
-  .flag-text strong { font-weight:500; color:var(--charcoal); }
-  .footer { margin-top:20px; padding-top:14px; border-top:1px solid var(--border); display:flex; justify-content:space-between; align-items:center; }
-  .footer-left { font-size:10.5px; color:var(--warm-mid); line-height:1.7; }
-  .footer-right { font-family:'Cormorant Garamond',serif; font-size:15px; font-weight:500; color:var(--teal); }
-  .divider { border:none; border-top:1px solid var(--border); margin:14px 0; }
-  canvas { max-height:220px; }
-  @media print { .dash-actions { display:none !important; } body { background:white; } .page { padding:16px 20px; } }
+  #dashboard-view{display:none;}
+  .dash-actions{background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;gap:12px;font-size:12.5px;}
+  .dash-actions button{background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.4);border-radius:6px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:background 0.15s;}
+  .dash-actions button:hover{background:rgba(255,255,255,0.35);}
+  .dash-actions-left{display:flex;gap:8px;}
+  .page{max-width:1100px;margin:0 auto;padding:28px 32px;background:var(--cream);min-height:100vh;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:1.5px solid var(--border);margin-bottom:16px;}
+  .logo-name{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:500;letter-spacing:-0.5px;color:var(--charcoal);line-height:1;}
+  .logo-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-top:4px;font-weight:500;}
+  .header-meta{text-align:right;}
+  .header-meta .report-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--warm-mid);font-weight:500;}
+  .header-meta .report-week{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--charcoal);margin-top:2px;}
+  .header-meta .report-prepared{font-size:11px;color:var(--warm-mid);margin-top:4px;}
+  .section-label{font-size:9px;text-transform:uppercase;letter-spacing:3px;color:var(--teal);font-weight:500;margin-bottom:8px;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;position:relative;overflow:visible;}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);border-radius:10px 10px 0 0;}
+  .kpi-card.amber::before{background:var(--amber);}.kpi-card.violet::before{background:var(--violet);}
+  .kpi-card.green::before{background:var(--green);}.kpi-card.rust::before{background:var(--rust);}
+  .kpi-card.pink::before{background:var(--pink);}
+  .kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-bottom:4px;}
+  .kpi-value{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;color:var(--charcoal);line-height:1;}
+  .kpi-sub{font-size:11.5px;color:var(--warm-mid);margin-top:4px;}
+  .kpi-badge{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500;}
+  .badge-up{background:#E8F5EC;color:#2E7D4F;}.badge-neutral{background:#F0EDE8;color:#6B6460;}.badge-warn{background:#FDF6EC;color:#C9882A;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+  .panel-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--charcoal);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .panel-title .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;}
+  .campaign-table{width:100%;border-collapse:collapse;}
+  .campaign-table th{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .campaign-table th:first-child{text-align:left;}
+  .campaign-table td{padding:11px 10px;font-size:12.5px;text-align:right;border-bottom:1px solid #F0EDE8;color:var(--charcoal);}
+  .campaign-table td:first-child{text-align:left;}
+  .campaign-table tr.total-row td{border-bottom:none;font-weight:500;background:var(--teal-pale);}
+  .campaign-table tr.total-row td:first-child{border-radius:6px 0 0 6px;}
+  .campaign-table tr.total-row td:last-child{border-radius:0 6px 6px 0;}
+  .campaign-name{font-size:11px;color:var(--warm-mid);max-width:180px;line-height:1.3;}
+  .campaign-name strong{display:block;font-size:12px;color:var(--charcoal);font-weight:500;}
+  .badge-tag{display:inline-block;font-size:8.5px;padding:2px 6px;border-radius:4px;font-weight:500;margin-top:3px;}
+  .tag-search{background:#EAF0FF;color:#3D5FA0;}.tag-dsa{background:#EEF9EC;color:#2E7D4F;}
+  .metric-highlight{display:inline-block;background:var(--teal-pale);color:var(--teal);font-weight:500;border-radius:4px;padding:1px 6px;font-size:12px;}
+  .highlight-green{color:var(--green);font-weight:600;}
+  .hbar-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+  .hbar-label{font-size:11.5px;color:var(--charcoal);min-width:190px;flex-shrink:0;}
+  .hbar-track{flex:1;background:var(--cream-dark);border-radius:4px;height:26px;}
+  .hbar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-width:48px;}
+  .hbar-pct{font-size:11px;font-weight:600;color:#fff;white-space:nowrap;}
+  .hbar-count{font-size:12px;color:var(--warm-mid);min-width:20px;text-align:right;font-weight:600;}
+  .insight-card{border-left:3px solid var(--teal);padding:8px 12px;margin-bottom:7px;background:var(--teal-pale);border-radius:0 8px 8px 0;font-size:12px;line-height:1.5;}
+  .insight-card.amber{border-left-color:var(--amber);background:#FDF6EC;}
+  .insight-card.rust{border-left-color:var(--rust);background:#FDF1EE;}
+  .insight-card strong{font-weight:500;color:var(--charcoal);}
+  .next-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
+  .step-num{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+  .step-text{font-size:12px;line-height:1.6;color:var(--charcoal);}
+  .step-text strong{font-weight:500;}
+  .flag-card{background:#FDF6EC;border:1px solid #F0D9B5;border-radius:10px;padding:12px 16px;display:flex;gap:12px;align-items:flex-start;margin-bottom:14px;}
+  .flag-icon{font-size:16px;flex-shrink:0;}
+  .flag-text{font-size:12px;line-height:1.6;}
+  .flag-text strong{font-weight:500;color:var(--charcoal);}
+  .footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .footer-left{font-size:10.5px;color:var(--warm-mid);line-height:1.7;}
+  .footer-right{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:500;color:var(--teal);}
+  .divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+  canvas{max-height:220px;}
+  @media print{.dash-actions{display:none !important;}body{background:white;}.page{padding:16px 20px;}}
 </style>
 </head>
 <body>
@@ -147,23 +155,16 @@
 <div id="form-view">
   <div class="form-header">
     <div><div class="form-logo">Wellspring <span>Therapeutic Partners</span></div></div>
-    <div class="form-title">Weekly Dashboard Generator<br>Upload both CSVs → Generate in seconds</div>
+    <div class="form-title">Weekly Dashboard Generator<br>Upload CSVs → Filter by date → Generate</div>
   </div>
 
-  <!-- ===== STEP 1: BOTH CSV IMPORTS SIDE BY SIDE ===== -->
+  <!-- STEP 1: UPLOAD -->
   <div class="form-section">
-    <div class="form-section-title"><span class="fsec-dot"></span> Step 1 — Upload CSVs (auto-fills everything)</div>
+    <div class="form-section-title"><span class="fsec-dot"></span> Step 1 — Upload CSVs</div>
     <div class="import-grid">
-
-      <!-- CRM CSV -->
       <div class="import-card" id="crmCard">
-        <div class="import-card-title">
-          <span class="fsec-dot" style="background:var(--amber)"></span> CRM Data
-        </div>
-        <div class="import-card-hint">
-          Download the weekly tab from the CRM sheet:<br>
-          <strong>File → Download → CSV</strong>
-        </div>
+        <div class="import-card-title"><span class="fsec-dot" style="background:var(--amber)"></span> CRM / Lead Sheet</div>
+        <div class="import-card-hint">Download the full sheet (monthly or weekly):<br><strong>File → Download → CSV</strong></div>
         <div class="drop-zone" id="crmDrop" onclick="document.getElementById('crmInput').click()">
           <div class="drop-icon">📋</div>
           <div class="drop-text"><strong>Drop CRM CSV here</strong><br>or click to browse</div>
@@ -171,16 +172,9 @@
         </div>
         <div class="import-status" id="crmStatus"></div>
       </div>
-
-      <!-- ADS CSV -->
       <div class="import-card" id="adsCard">
-        <div class="import-card-title">
-          <span class="fsec-dot" style="background:var(--violet)"></span> Google Ads Data
-        </div>
-        <div class="import-card-hint">
-          Download from your Ads performance sheet:<br>
-          <strong>File → Download → CSV</strong>
-        </div>
+        <div class="import-card-title"><span class="fsec-dot" style="background:var(--violet)"></span> Google Ads Sheet</div>
+        <div class="import-card-hint">Download from your Ads performance sheet:<br><strong>File → Download → CSV</strong></div>
         <div class="drop-zone" id="adsDrop" onclick="document.getElementById('adsInput').click()">
           <div class="drop-icon">📊</div>
           <div class="drop-text"><strong>Drop Ads CSV here</strong><br>or click to browse</div>
@@ -188,25 +182,65 @@
         </div>
         <div class="import-status" id="adsStatus"></div>
       </div>
-
     </div>
   </div>
 
+  <!-- STEP 2: DATE FILTER -->
+  <div class="date-filter-section">
+    <div class="form-section-title" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--cream-dark);">
+      <span class="fsec-dot" style="background:var(--violet)"></span> Step 2 — Select Date Range
+      <span class="auto-tag">Filters both CSVs · auto-calculates previous period</span>
+    </div>
+    <div class="filter-mode-tabs">
+      <div class="filter-tab active" id="tab-week" onclick="switchTab('week')">Week Picker</div>
+      <div class="filter-tab" id="tab-custom" onclick="switchTab('custom')">Custom Range</div>
+      <div class="filter-tab" id="tab-all" onclick="switchTab('all')">All Data</div>
+    </div>
+
+    <!-- Week picker -->
+    <div class="filter-panel active" id="panel-week">
+      <div class="filter-week-row">
+        <label>Select week</label>
+        <input type="week" id="weekPicker" onchange="applyWeekFilter()" />
+        <span style="font-size:11px;color:var(--warm-mid);">Mon – Sun</span>
+      </div>
+    </div>
+
+    <!-- Custom range -->
+    <div class="filter-panel" id="panel-custom">
+      <div class="filter-date-row">
+        <label>From</label>
+        <input type="date" id="dateStart" onchange="applyCustomFilter()" />
+        <label>To</label>
+        <input type="date" id="dateEnd" onchange="applyCustomFilter()" />
+      </div>
+    </div>
+
+    <!-- All data -->
+    <div class="filter-panel" id="panel-all">
+      <p style="font-size:12px;color:var(--warm-mid);padding-top:4px;">Using all data from the uploaded CSVs — no date filtering applied.</p>
+    </div>
+
+    <div id="filterSummary" style="display:none;" class="filter-badge"></div>
+  </div>
+
+  <!-- Hidden fields -->
   <input type="hidden" id="c1_platform_conv" value="0" />
   <input type="hidden" id="c2_platform_conv" value="0" />
   <input type="hidden" id="googleLeads" value="-1" />
   <input type="hidden" id="googleSched" value="-1" />
+  <input type="hidden" id="prevGoogleLeads" value="-1" />
 
-  <!-- ===== STEP 2: REPORT DETAILS ===== -->
+  <!-- STEP 3: REPORT DETAILS -->
   <div class="form-section">
-    <div class="form-section-title"><span class="fsec-dot"></span> Step 2 — Report Details</div>
+    <div class="form-section-title"><span class="fsec-dot"></span> Step 3 — Report Details</div>
     <div class="form-grid-2">
-      <div class="field"><label>Week Date Range</label><input type="text" id="weekRange" placeholder="e.g. March 15 – March 21, 2026" /></div>
+      <div class="field"><label>Date Range Label</label><input type="text" id="weekRange" placeholder="e.g. March 15 – March 21, 2026" /></div>
       <div class="field"><label>Prepared By</label><input type="text" id="preparedBy" value="Damco Digital" /></div>
     </div>
   </div>
 
-  <!-- ===== CAMPAIGN 1 (auto-filled from Ads CSV) ===== -->
+  <!-- CAMPAIGN 1 -->
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--violet)"></span> Campaign 1 — Generic Search
@@ -227,7 +261,7 @@
     </div>
   </div>
 
-  <!-- ===== CAMPAIGN 2 (auto-filled from Ads CSV) ===== -->
+  <!-- CAMPAIGN 2 -->
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--green)"></span> Campaign 2 — DSA
@@ -248,20 +282,20 @@
     </div>
   </div>
 
-  <!-- ===== LEAD SCHEDULING (auto-filled from CRM CSV) ===== -->
+  <!-- LEAD SCHEDULING -->
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--amber)"></span> Lead Scheduling
       <span class="auto-tag">← auto-filled from CRM CSV</span>
     </div>
     <div class="form-grid">
-      <div class="field"><label>Total Leads This Week</label><input type="number" id="totalLeads" placeholder="0" /></div>
-      <div class="field"><label>Total Leads Last Week</label><input type="number" id="lastWeekLeads" placeholder="0" /></div>
+      <div class="field"><label>Total Leads (filtered period)</label><input type="number" id="totalLeads" placeholder="0" /></div>
       <div class="field"><label>Scheduled Leads</label><input type="number" id="scheduledLeads" placeholder="0" /></div>
+      <div class="field"><label>Previous Period Google Leads</label><input type="number" id="prevLeadsDisplay" placeholder="auto" /></div>
     </div>
   </div>
 
-  <!-- ===== REASON NOT SCHEDULED (auto-filled from CRM CSV) ===== -->
+  <!-- REASON NOT SCHEDULED -->
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--rust)"></span> Reason Not Scheduled
@@ -277,7 +311,7 @@
     <div class="reason-row"><label>Other / Unspecified</label><input type="number" id="r_other" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
   </div>
 
-  <!-- ===== SERVICE TYPE (auto-filled from CRM CSV) ===== -->
+  <!-- SERVICE TYPE -->
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--violet)"></span> Lead Service Type
@@ -293,7 +327,7 @@
     </div>
   </div>
 
-  <!-- ===== FLAGS ===== -->
+  <!-- FLAGS -->
   <div class="form-section">
     <div class="form-section-title"><span class="fsec-dot" style="background:var(--amber)"></span> Key Question for Wellspring Team</div>
     <div class="flag-toggle" style="margin-bottom:10px;">
@@ -306,7 +340,7 @@
     </div>
   </div>
 
-  <!-- ===== OBSERVATIONS ===== -->
+  <!-- OBSERVATIONS -->
   <div class="form-section">
     <div class="form-section-title"><span class="fsec-dot" style="background:var(--teal)"></span> Key Observations (optional override)</div>
     <p style="margin-bottom:10px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate, or type custom observations.</p>
@@ -316,13 +350,13 @@
     </div>
   </div>
 
-  <button class="generate-btn" onclick="generateDashboard()">Generate Weekly Dashboard →</button>
+  <button class="generate-btn" onclick="generateDashboard()">Generate Dashboard →</button>
 </div>
 
-<!-- ===== DASHBOARD VIEW ===== -->
+<!-- DASHBOARD VIEW -->
 <div id="dashboard-view">
   <div class="dash-actions">
-    <span>✦ Wellspring Weekly Dashboard: Ready to share</span>
+    <span>✦ Wellspring Dashboard: Ready to share</span>
     <div class="dash-actions-left">
       <button onclick="window.print()">Print / Save as PDF</button>
       <button onclick="showForm()">← Edit Data</button>
@@ -332,6 +366,164 @@
 </div>
 
 <script>
+// ══════════════════════════════════════════════════
+//  GLOBAL RAW DATA STORAGE
+// ══════════════════════════════════════════════════
+let rawCRMRows = null;   // all parsed CRM data rows (excluding header)
+let rawAdsRows = null;   // all parsed Ads data rows
+let adsHeaderCols = {};  // column index map from Ads header
+
+// CRM date column: index 1 (Date Opportunity/Lead was Generated)
+const CRM_DATE_COL = 1;
+const CRM_COL = { HEAR:9, SOURCE:10, SERVICE:12, SCHEDULED:15, REASON:16 };
+
+// ══════════════════════════════════════════════════
+//  DATE HELPERS
+// ══════════════════════════════════════════════════
+function parseCRMDate(str) {
+  // Format: "3/22/2026" (M/D/YYYY)
+  if (!str || str.trim() === '-' || str.trim() === '') return null;
+  const parts = str.trim().split('/');
+  if (parts.length !== 3) return null;
+  const m = parseInt(parts[0]), d = parseInt(parts[1]), y = parseInt(parts[2]);
+  if (isNaN(m)||isNaN(d)||isNaN(y)) return null;
+  const dt = new Date(y, m-1, d);
+  dt.setHours(0,0,0,0);
+  return dt;
+}
+
+function parseAdsDate(str) {
+  // Format: "2026-03-25" (YYYY-MM-DD)
+  if (!str || str.trim() === '') return null;
+  const dt = new Date(str.trim() + 'T00:00:00');
+  return isNaN(dt.getTime()) ? null : dt;
+}
+
+function dateToYMD(dt) {
+  return dt.toISOString().slice(0,10);
+}
+
+function formatDateLabel(dt) {
+  return dt.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
+}
+
+// Get Mon-Sun range from a week input value ("2026-W12")
+function weekPickerToRange(weekStr) {
+  if (!weekStr) return null;
+  const [yearStr, weekStr2] = weekStr.split('-W');
+  const year = parseInt(yearStr), week = parseInt(weekStr2);
+  // Jan 4 is always in week 1
+  const jan4 = new Date(year, 0, 4);
+  jan4.setHours(0,0,0,0);
+  const dow = jan4.getDay() || 7; // Mon=1 ... Sun=7
+  const weekStart = new Date(jan4);
+  weekStart.setDate(jan4.getDate() - dow + 1 + (week-1)*7);
+  const weekEnd = new Date(weekStart);
+  weekEnd.setDate(weekStart.getDate() + 6);
+  return { start: weekStart, end: weekEnd };
+}
+
+// ══════════════════════════════════════════════════
+//  DATE FILTER TAB SWITCHING
+// ══════════════════════════════════════════════════
+let currentFilterMode = 'week';
+
+function switchTab(mode) {
+  currentFilterMode = mode;
+  ['week','custom','all'].forEach(m => {
+    document.getElementById('tab-'+m).classList.toggle('active', m===mode);
+    document.getElementById('panel-'+m).classList.toggle('active', m===mode);
+  });
+  if (mode === 'all') applyAllDataFilter();
+}
+
+function applyWeekFilter() {
+  const wval = document.getElementById('weekPicker').value;
+  if (!wval) return;
+  const range = weekPickerToRange(wval);
+  if (!range) return;
+  applyDateFilter(range.start, range.end);
+}
+
+function applyCustomFilter() {
+  const s = document.getElementById('dateStart').value;
+  const e = document.getElementById('dateEnd').value;
+  if (!s || !e) return;
+  const start = new Date(s+'T00:00:00');
+  const end   = new Date(e+'T00:00:00');
+  if (start > end) return;
+  applyDateFilter(start, end);
+}
+
+function applyAllDataFilter() {
+  if (!rawCRMRows && !rawAdsRows) return;
+  processCRMRows(rawCRMRows || []);
+  processAdsRows(rawAdsRows || []);
+  document.getElementById('filterSummary').style.display = 'none';
+  // Clear weekRange so user can type manually
+  document.getElementById('weekRange').value = 'All Data';
+  // No previous period comparison possible
+  document.getElementById('prevGoogleLeads').value = -1;
+  document.getElementById('prevLeadsDisplay').value = '';
+}
+
+// ══════════════════════════════════════════════════
+//  MAIN DATE FILTER APPLY
+// ══════════════════════════════════════════════════
+function applyDateFilter(startDate, endDate) {
+  if (!startDate || !endDate) return;
+
+  // ── Filter CRM rows ──────────────────────────────
+  const filteredCRM = (rawCRMRows||[]).filter(row => {
+    const dt = parseCRMDate(row[CRM_DATE_COL]);
+    if (!dt) return false;
+    return dt >= startDate && dt <= endDate;
+  });
+
+  // ── Filter Ads rows ──────────────────────────────
+  const filteredAds = (rawAdsRows||[]).filter(row => {
+    const dt = parseAdsDate(row[0]);
+    if (!dt) return false;
+    return dt >= startDate && dt <= endDate;
+  });
+
+  // ── Previous period (same number of days before start) ──
+  const durationMs = endDate.getTime() - startDate.getTime();
+  const prevEnd   = new Date(startDate.getTime() - 86400000); // day before start
+  const prevStart = new Date(prevEnd.getTime() - durationMs);
+
+  const prevCRM = (rawCRMRows||[]).filter(row => {
+    const dt = parseCRMDate(row[CRM_DATE_COL]);
+    if (!dt) return false;
+    return dt >= prevStart && dt <= prevEnd;
+  });
+
+  // Count Google leads in previous period
+  let prevGoogleLeads = 0;
+  for (const row of prevCRM) {
+    if (classifySource(row) === 'Google') prevGoogleLeads++;
+  }
+  document.getElementById('prevGoogleLeads').value = prevGoogleLeads;
+  document.getElementById('prevLeadsDisplay').value = prevGoogleLeads;
+
+  // ── Process filtered data ────────────────────────
+  processCRMRows(filteredCRM);
+  processAdsRows(filteredAds);
+
+  // ── Update weekRange label ───────────────────────
+  const label = `${formatDateLabel(startDate)} – ${formatDateLabel(endDate)}`;
+  document.getElementById('weekRange').value = label;
+
+  // ── Show filter summary ──────────────────────────
+  const prevLabel = `${formatDateLabel(prevStart)} – ${formatDateLabel(prevEnd)}`;
+  const summaryEl = document.getElementById('filterSummary');
+  summaryEl.style.display = 'block';
+  summaryEl.innerHTML =
+    `<strong>Showing:</strong> ${label} &nbsp;·&nbsp; ` +
+    `${filteredCRM.length} CRM leads · ${filteredAds.length} Ads rows<br>` +
+    `<strong>Previous period:</strong> ${prevLabel} &nbsp;·&nbsp; ${prevGoogleLeads} Google leads`;
+}
+
 // ══════════════════════════════════════════════════
 //  DRAG & DROP WIRING
 // ══════════════════════════════════════════════════
@@ -345,52 +537,39 @@ function wireDrop(dropId, cardId, handler) {
     const f = e.dataTransfer.files[0]; if (f) handler(f);
   });
 }
-wireDrop('crmDrop', 'crmCard', processCRM);
-wireDrop('adsDrop', 'adsCard', processAds);
+wireDrop('crmDrop','crmCard', processCRM);
+wireDrop('adsDrop','adsCard', processAds);
 function handleCRM(e) { if (e.target.files[0]) processCRM(e.target.files[0]); }
 function handleAds(e) { if (e.target.files[0]) processAds(e.target.files[0]); }
 
 // ══════════════════════════════════════════════════
-//  CRM CSV PROCESSING
+//  CLASSIFICATION HELPERS
 // ══════════════════════════════════════════════════
-// CRM column indices
-const CRM_COL = { HEAR:9, SOURCE:10, SERVICE:12, SCHEDULED:15, REASON:16 };
-
-// Accepts full row — checks col K (Source) first, then col J (How did you hear)
 function classifySource(row) {
   const hear   = (row[CRM_COL.HEAR]  ||'').toString().trim().toLowerCase();
   const source = (row[CRM_COL.SOURCE]||'').toString().trim().toLowerCase();
-
-  // 1. Source column explicitly says Internal
   if (source === 'internal') return 'Internal';
-
-  // 2. Source column or Hear column explicitly says Google
   if (source === 'google ads' || hear === 'google') return 'Google';
-
-  // 3. Hear column is blank / dash / generic → Google (no referral info = came via Google)
   if (hear === '' || hear === '-' || hear === 'other' || hear === 'online') return 'Google';
-
-  // 4. Psychology Today
   if (hear.includes('psychology today')) return 'Psychology Today';
-
-  // 5. Everything else = named person / external referral
   return 'Referral';
 }
+
 function normaliseServices(raw) {
   if (!raw) return ['Unknown'];
   const v = raw.toString().trim().toLowerCase();
   if (!v) return ['Unknown'];
-  const parts = v.split(',').map(s => s.trim());
-  const out = parts.map(p => {
+  return [...new Set(v.split(',').map(p => {
+    p = p.trim();
     if (p.includes('psychotherapy'))                 return 'Psychotherapy';
     if (p.includes('medication'))                    return 'Medication Management';
     if (p.includes('couple')||p.includes('couples')) return "Couple's Therapy";
     if (p.includes('testing'))                       return 'Testing';
     if (p.includes('unknown')||!p)                   return 'Unknown';
     return 'Other';
-  });
-  return [...new Set(out)];
+  }))];
 }
+
 function classifyReason(raw) {
   const v = (raw||'').toString().trim().toLowerCase();
   if (!v) return null;
@@ -403,6 +582,9 @@ function classifyReason(raw) {
   return 'r_other';
 }
 
+// ══════════════════════════════════════════════════
+//  CRM CSV PARSE (stores raw, then processes)
+// ══════════════════════════════════════════════════
 function processCRM(file) {
   const statusEl = document.getElementById('crmStatus');
   statusEl.className = 'import-status';
@@ -410,52 +592,15 @@ function processCRM(file) {
     skipEmptyLines: true,
     complete(results) {
       try {
-        const rows      = results.data;
-        const dataRows  = rows.slice(1).filter(r =>
+        const rows = results.data;
+        rawCRMRows = rows.slice(1).filter(r =>
           r[0] && r[0].toString().trim() !== '' &&
           ((r[CRM_COL.HEAR]||'').toString().trim() !== '' || (r[CRM_COL.SOURCE]||'').toString().trim() !== '')
         );
-        let total = 0, sched = 0, googleLeads = 0, googleSched = 0;
-        const sources  = { Google:0, Internal:0, Referral:0, 'Psychology Today':0 };
-        const services = { Psychotherapy:0, 'Medication Management':0, "Couple's Therapy":0, Testing:0, Unknown:0, Other:0 };
-        const reasons  = { r_noanswer:0, r_incomplete:0, r_hap:0, r_esa:0, r_noprovider:0, r_waitlist:0, r_other:0 };
-
-        for (const row of dataRows) {
-          total++;
-          const isScheduled = (row[CRM_COL.SCHEDULED]||'').toString().trim().toLowerCase() === 'yes';
-          if (isScheduled) sched++;
-          const src = classifySource(row);
-          sources[src] = (sources[src]||0) + 1;
-          if (src === 'Google') {
-            googleLeads++;
-            if (isScheduled) googleSched++;
-          }
-          for (const s of normaliseServices(row[CRM_COL.SERVICE])) { if(services[s]!==undefined) services[s]++; else services.Other++; }
-          if (!isScheduled) { const rk = classifyReason(row[CRM_COL.REASON]); if(rk) reasons[rk]++; }
-        }
-
-        const sf = (id, val) => { const el = document.getElementById(id); if(el){ el.value=val; el.classList.add('auto-filled'); } };
-        sf('totalLeads', total); sf('scheduledLeads', sched);
-        sf('googleLeads', googleLeads); sf('googleSched', googleSched);
-        sf('r_noanswer', reasons.r_noanswer); sf('r_incomplete', reasons.r_incomplete);
-        sf('r_hap', reasons.r_hap); sf('r_esa', reasons.r_esa);
-        sf('r_noprovider', reasons.r_noprovider); sf('r_waitlist', reasons.r_waitlist); sf('r_other', reasons.r_other);
-        sf('s_psycho', services.Psychotherapy); sf('s_unknown', services.Unknown);
-        sf('s_med', services['Medication Management']); sf('s_testing', services.Testing);
-        sf('s_couples', services["Couple's Therapy"]); sf('s_other', services.Other);
-
-        const schedPct = total ? ((sched/total)*100).toFixed(1) : 0;
-        const googleSchedPct = googleLeads ? ((googleSched/googleLeads)*100).toFixed(1) : 0;
-        const srcSummary = Object.entries(sources).filter(([,v])=>v>0).map(([k,v])=>`<strong>${k}:</strong> ${v}`).join(' · ');
         statusEl.className = 'import-status success';
-        statusEl.innerHTML = `✓ ${total} leads imported (${googleLeads} from Google)
-          <div class="import-stats">
-            <div class="import-stat"><div class="import-stat-val">${googleLeads}</div><div class="import-stat-label">Google Leads</div></div>
-            <div class="import-stat"><div class="import-stat-val">${googleSched}</div><div class="import-stat-label">Google Sched.</div></div>
-            <div class="import-stat"><div class="import-stat-val">${total-googleLeads}</div><div class="import-stat-label">Other Sources</div></div>
-            <div class="import-stat"><div class="import-stat-val">${googleSchedPct}%</div><div class="import-stat-label">Google Rate</div></div>
-          </div>
-          <div class="import-breakdown">${srcSummary}</div>`;
+        statusEl.innerHTML = `✓ CRM file loaded — ${rawCRMRows.length} leads. Now select a date range above to filter.`;
+        // Auto-apply current filter if dates already set
+        reapplyCurrentFilter();
       } catch(e) {
         statusEl.className = 'import-status error';
         statusEl.textContent = 'Error: ' + e.message;
@@ -465,18 +610,8 @@ function processCRM(file) {
 }
 
 // ══════════════════════════════════════════════════
-//  ADS CSV PROCESSING
+//  ADS CSV PARSE (stores raw, then processes)
 // ══════════════════════════════════════════════════
-function parsePct(val) {
-  // handles "5.23%" or "0.0523" or "5.23"
-  const s = (val||'').toString().replace('%','').trim();
-  const n = parseFloat(s);
-  if (isNaN(n)) return 0;
-  // if value looks like a decimal fraction (< 1), convert to percent
-  return n < 1 ? n * 100 : n;
-}
-function parseNum(val) { return parseFloat((val||'').toString().replace(/[^0-9.-]/g,'')) || 0; }
-
 function processAds(file) {
   const statusEl = document.getElementById('adsStatus');
   statusEl.className = 'import-status';
@@ -485,104 +620,169 @@ function processAds(file) {
     complete(results) {
       try {
         const rows = results.data;
-
-        // Find all header rows (rows where col A = "Day" and col C = "Campaign")
-        // Then collect data rows that follow each header
-        const c1 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
-        const c2 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
-
-        let headerFound = false;
-        // Correct defaults based on actual sheet structure:
-        // Col O(14)=Conv.(Platform Comparable), Col P(15)=Cost/Conv., Col Q(16)=Phone calls
-        let colDay=0, colCampaign=2, colClicks=9, colCTR=10, colCPC=11, colImpr=12, colCost=13, colConv=14, colPhone=16;
-
-        for (const row of rows) {
-          const cell0 = (row[0]||'').toString().trim();
-          const cell2 = (row[2]||'').toString().trim();
-
-          if (cell0 === 'Day' && cell2 === 'Campaign') {
-            for (let i = 0; i < row.length; i++) {
-              const h = (row[i]||'').toString().trim().toLowerCase();
-              if (h === 'day')               colDay      = i;
-              if (h === 'campaign')          colCampaign = i;
-              if (h === 'clicks')            colClicks   = i;
-              if (h === 'ctr')               colCTR      = i;
-              if (h === 'avg. cpc')          colCPC      = i;
-              if (h === 'impr.')             colImpr     = i;
-              if (h === 'cost')              colCost     = i;
-              // Match "Conv. (Platform Comparable)" or any conv column that isn't Cost/Conv
-              if (h.startsWith('conv.') && !h.includes('cost') && !h.includes('/')) colConv = i;
-              if (h.includes('phone'))       colPhone    = i;
+        // Find header and store column map
+        adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:14, colPhone:16, colCampaign:2 };
+        let dataStartIdx = 0;
+        for (let i = 0; i < rows.length; i++) {
+          if ((rows[i][0]||'').toString().trim() === 'Day' && (rows[i][2]||'').toString().trim() === 'Campaign') {
+            const h = rows[i];
+            for (let j = 0; j < h.length; j++) {
+              const hv = (h[j]||'').toString().trim().toLowerCase();
+              if (hv === 'clicks')                                          adsHeaderCols.colClicks = j;
+              if (hv === 'ctr')                                             adsHeaderCols.colCTR    = j;
+              if (hv === 'avg. cpc')                                        adsHeaderCols.colCPC    = j;
+              if (hv === 'impr.')                                           adsHeaderCols.colImpr   = j;
+              if (hv === 'cost')                                            adsHeaderCols.colCost   = j;
+              if (hv.startsWith('conv.') && !hv.includes('cost') && !hv.includes('/')) adsHeaderCols.colConv = j;
+              if (hv.includes('phone'))                                     adsHeaderCols.colPhone  = j;
+              if (hv === 'campaign')                                        adsHeaderCols.colCampaign = j;
             }
-            headerFound = true;
-            continue;
+            dataStartIdx = i + 1;
           }
-
-          // Skip non-data rows
-          if (!headerFound) continue;
-          if (!cell0 || cell0 === 'Total: Account') continue;
-
-          const campaign = (row[colCampaign]||'').toString().trim().toLowerCase();
-          const isSearch = campaign.includes('generic') || campaign.includes('search');
-          const isDSA    = campaign.includes('dsa') || campaign.includes('wellspring_ad');
-
-          if (!isSearch && !isDSA) continue;
-
-          const target = isSearch ? c1 : c2;
-          target.clicks += parseNum(row[colClicks]);
-          target.impr   += parseNum(row[colImpr]);
-          target.cost   += parseNum(row[colCost]);
-          target.conv   += parseNum(row[colConv]);
-          target.phone  += parseNum(row[colPhone]);
         }
-
-        // Derived metrics
-        const c1ctr = c1.impr ? (c1.clicks / c1.impr * 100) : 0;
-        const c2ctr = c2.impr ? (c2.clicks / c2.impr * 100) : 0;
-        const c1cpc = c1.clicks ? (c1.cost / c1.clicks) : 0;
-        const c2cpc = c2.clicks ? (c2.cost / c2.clicks) : 0;
-        // Total conversions = platform conv + phone call conv
-        const c1totalConv = c1.conv + c1.phone;
-        const c2totalConv = c2.conv + c2.phone;
-        const c1cvr = c1.clicks ? (c1totalConv / c1.clicks * 100) : 0;
-        const c2cvr = c2.clicks ? (c2totalConv / c2.clicks * 100) : 0;
-
-        const sf = (id, val, decimals=2) => {
-          const el = document.getElementById(id);
-          if (el) { el.value = parseFloat(val.toFixed(decimals)); el.classList.add('auto-filled'); }
-        };
-
-        sf('c1_conv',   c1.conv, 0); sf('c1_phone', c1.phone, 0);
-        sf('c1_clicks', c1.clicks, 0); sf('c1_impr', c1.impr, 0);
-        sf('c1_cpc',    c1cpc);  sf('c1_cost', c1.cost);
-        sf('c1_cvr',    c1cvr);  sf('c1_ctr',  c1ctr);
-
-        sf('c2_conv',   c2.conv, 0); sf('c2_phone', c2.phone, 0);
-        sf('c2_clicks', c2.clicks, 0); sf('c2_impr', c2.impr, 0);
-        sf('c2_cpc',    c2cpc);  sf('c2_cost', c2.cost);
-        sf('c2_cvr',    c2cvr);  sf('c2_ctr',  c2ctr);
-
-        // Store platform conv totals in hidden fields for generateDashboard
-        sf('c1_platform_conv', c1totalConv, 0);
-        sf('c2_platform_conv', c2totalConv, 0);
-
-        const totalCost = c1.cost + c2.cost;
-        const totalPlatformConv = c1totalConv + c2totalConv;
+        // Store only data rows (skip header/blank/total rows)
+        rawAdsRows = rows.slice(dataStartIdx).filter(r => {
+          const cell0 = (r[0]||'').toString().trim();
+          return cell0 && cell0 !== '' && cell0 !== 'Total: Account' && cell0 !== 'Day';
+        });
         statusEl.className = 'import-status success';
-        statusEl.innerHTML = `✓ Ads data imported
-          <div class="import-stats">
-            <div class="import-stat"><div class="import-stat-val">${c1.clicks+c2.clicks}</div><div class="import-stat-label">Clicks</div></div>
-            <div class="import-stat"><div class="import-stat-val">$${Math.round(totalCost)}</div><div class="import-stat-label">Spend</div></div>
-            <div class="import-stat"><div class="import-stat-val">${totalPlatformConv}</div><div class="import-stat-label">Platform Conv.</div></div>
-            <div class="import-stat"><div class="import-stat-val">${c1.impr+c2.impr}</div><div class="import-stat-label">Impr.</div></div>
-          </div>
-          <div class="import-breakdown"><strong>Generic Search:</strong> ${c1.clicks} clicks · $${c1.cost.toFixed(2)} · ${c1.conv} conv &nbsp;·&nbsp; <strong>DSA:</strong> ${c2.clicks} clicks · $${c2.cost.toFixed(2)} · ${c2.conv} conv</div>`;
+        statusEl.innerHTML = `✓ Ads file loaded — ${rawAdsRows.length} daily rows. Date filter will be applied automatically.`;
+        reapplyCurrentFilter();
       } catch(e) {
         statusEl.className = 'import-status error';
         statusEl.textContent = 'Error reading Ads CSV: ' + e.message;
       }
     }
   });
+}
+
+// Re-applies whatever filter is currently active after a new upload
+function reapplyCurrentFilter() {
+  if (currentFilterMode === 'week') {
+    const wval = document.getElementById('weekPicker').value;
+    if (wval) applyWeekFilter();
+    else if (rawCRMRows) { processCRMRows(rawCRMRows); }
+    if (rawAdsRows) { processAdsRows(rawAdsRows); }
+  } else if (currentFilterMode === 'custom') {
+    const s = document.getElementById('dateStart').value;
+    const e = document.getElementById('dateEnd').value;
+    if (s && e) applyCustomFilter();
+    else {
+      if (rawCRMRows) processCRMRows(rawCRMRows);
+      if (rawAdsRows) processAdsRows(rawAdsRows);
+    }
+  } else {
+    applyAllDataFilter();
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  PROCESS CRM ROWS (after filtering)
+// ══════════════════════════════════════════════════
+function processCRMRows(dataRows) {
+  let total = 0, sched = 0, googleLeads = 0, googleSched = 0;
+  const sources  = { Google:0, Internal:0, Referral:0, 'Psychology Today':0 };
+  const services = { Psychotherapy:0, 'Medication Management':0, "Couple's Therapy":0, Testing:0, Unknown:0, Other:0 };
+  const reasons  = { r_noanswer:0, r_incomplete:0, r_hap:0, r_esa:0, r_noprovider:0, r_waitlist:0, r_other:0 };
+
+  for (const row of dataRows) {
+    total++;
+    const isScheduled = (row[CRM_COL.SCHEDULED]||'').toString().trim().toLowerCase() === 'yes';
+    if (isScheduled) sched++;
+    const src = classifySource(row);
+    sources[src] = (sources[src]||0) + 1;
+    if (src === 'Google') { googleLeads++; if (isScheduled) googleSched++; }
+    for (const s of normaliseServices(row[CRM_COL.SERVICE])) { if(services[s]!==undefined) services[s]++; else services.Other++; }
+    if (!isScheduled) { const rk = classifyReason(row[CRM_COL.REASON]); if(rk) reasons[rk]++; }
+  }
+
+  const sf = (id, val) => { const el = document.getElementById(id); if(el){ el.value=val; el.classList.add('auto-filled'); } };
+  sf('totalLeads', total); sf('scheduledLeads', sched);
+  sf('googleLeads', googleLeads); sf('googleSched', googleSched);
+  sf('r_noanswer', reasons.r_noanswer); sf('r_incomplete', reasons.r_incomplete);
+  sf('r_hap', reasons.r_hap); sf('r_esa', reasons.r_esa);
+  sf('r_noprovider', reasons.r_noprovider); sf('r_waitlist', reasons.r_waitlist); sf('r_other', reasons.r_other);
+  sf('s_psycho', services.Psychotherapy); sf('s_unknown', services.Unknown);
+  sf('s_med', services['Medication Management']); sf('s_testing', services.Testing);
+  sf('s_couples', services["Couple's Therapy"]); sf('s_other', services.Other);
+
+  const googleSchedPct = googleLeads ? ((googleSched/googleLeads)*100).toFixed(1) : 0;
+  const srcSummary = Object.entries(sources).filter(([,v])=>v>0).map(([k,v])=>`<strong>${k}:</strong> ${v}`).join(' · ');
+
+  // Update CRM status if already shown
+  const statusEl = document.getElementById('crmStatus');
+  if (statusEl.classList.contains('success')) {
+    statusEl.innerHTML = `✓ ${total} leads in period (${googleLeads} Google)
+      <div class="import-stats">
+        <div class="import-stat"><div class="import-stat-val">${googleLeads}</div><div class="import-stat-label">Google Leads</div></div>
+        <div class="import-stat"><div class="import-stat-val">${googleSched}</div><div class="import-stat-label">Google Sched.</div></div>
+        <div class="import-stat"><div class="import-stat-val">${total-googleLeads}</div><div class="import-stat-label">Other Sources</div></div>
+        <div class="import-stat"><div class="import-stat-val">${googleSchedPct}%</div><div class="import-stat-label">Google Rate</div></div>
+      </div>
+      <div class="import-breakdown">${srcSummary}</div>`;
+  }
+}
+
+// ══════════════════════════════════════════════════
+//  PROCESS ADS ROWS (after filtering)
+// ══════════════════════════════════════════════════
+function parseNum(val) { return parseFloat((val||'').toString().replace(/[^0-9.-]/g,'')) || 0; }
+
+function processAdsRows(dataRows) {
+  const { colClicks, colCTR, colCPC, colImpr, colCost, colConv, colPhone, colCampaign } = adsHeaderCols;
+  const c1 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
+  const c2 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
+
+  for (const row of dataRows) {
+    const campaign = (row[colCampaign]||'').toString().trim().toLowerCase();
+    const isSearch = campaign.includes('generic') || campaign.includes('search');
+    const isDSA    = campaign.includes('dsa') || campaign.includes('wellspring_ad');
+    if (!isSearch && !isDSA) continue;
+    const target = isSearch ? c1 : c2;
+    target.clicks += parseNum(row[colClicks]);
+    target.impr   += parseNum(row[colImpr]);
+    target.cost   += parseNum(row[colCost]);
+    target.conv   += parseNum(row[colConv]);
+    target.phone  += parseNum(row[colPhone]);
+  }
+
+  const c1ctr = c1.impr ? (c1.clicks/c1.impr*100) : 0;
+  const c2ctr = c2.impr ? (c2.clicks/c2.impr*100) : 0;
+  const c1cpc = c1.clicks ? (c1.cost/c1.clicks) : 0;
+  const c2cpc = c2.clicks ? (c2.cost/c2.clicks) : 0;
+  const c1totalConv = c1.conv + c1.phone;
+  const c2totalConv = c2.conv + c2.phone;
+  const c1cvr = c1.clicks ? (c1totalConv/c1.clicks*100) : 0;
+  const c2cvr = c2.clicks ? (c2totalConv/c2.clicks*100) : 0;
+
+  const sf = (id, val, decimals=2) => {
+    const el = document.getElementById(id);
+    if (el) { el.value = parseFloat(val.toFixed(decimals)); el.classList.add('auto-filled'); }
+  };
+  sf('c1_conv', c1.conv, 0); sf('c1_phone', c1.phone, 0);
+  sf('c1_clicks', c1.clicks, 0); sf('c1_impr', c1.impr, 0);
+  sf('c1_cpc', c1cpc); sf('c1_cost', c1.cost);
+  sf('c1_cvr', c1cvr); sf('c1_ctr', c1ctr);
+  sf('c2_conv', c2.conv, 0); sf('c2_phone', c2.phone, 0);
+  sf('c2_clicks', c2.clicks, 0); sf('c2_impr', c2.impr, 0);
+  sf('c2_cpc', c2cpc); sf('c2_cost', c2.cost);
+  sf('c2_cvr', c2cvr); sf('c2_ctr', c2ctr);
+  sf('c1_platform_conv', c1totalConv, 0);
+  sf('c2_platform_conv', c2totalConv, 0);
+
+  const totalCost = c1.cost + c2.cost;
+  const totalPlatformConv = c1totalConv + c2totalConv;
+  const statusEl = document.getElementById('adsStatus');
+  if (statusEl.classList.contains('success')) {
+    statusEl.innerHTML = `✓ Ads data for period: ${c1.clicks+c2.clicks} clicks · $${Math.round(totalCost)} spend · ${totalPlatformConv} platform conv
+      <div class="import-stats">
+        <div class="import-stat"><div class="import-stat-val">${c1.clicks+c2.clicks}</div><div class="import-stat-label">Clicks</div></div>
+        <div class="import-stat"><div class="import-stat-val">$${Math.round(totalCost)}</div><div class="import-stat-label">Spend</div></div>
+        <div class="import-stat"><div class="import-stat-val">${totalPlatformConv}</div><div class="import-stat-label">Platform Conv.</div></div>
+        <div class="import-stat"><div class="import-stat-val">${c1.impr+c2.impr}</div><div class="import-stat-label">Impr.</div></div>
+      </div>
+      <div class="import-breakdown"><strong>Generic Search:</strong> ${c1.clicks} clicks · $${c1.cost.toFixed(2)} · ${c1totalConv} conv &nbsp;·&nbsp; <strong>DSA:</strong> ${c2.clicks} clicks · $${c2.cost.toFixed(2)} · ${c2totalConv} conv</div>`;
+  }
 }
 
 // ══════════════════════════════════════════════════
@@ -599,42 +799,54 @@ function showForm() { document.getElementById('form-view').style.display='block'
 //  DASHBOARD GENERATOR
 // ══════════════════════════════════════════════════
 function generateDashboard() {
-  const weekRange  = v('weekRange')||'This Week';
-  const preparedBy = v('preparedBy')||'Damco Digital';
+  const weekRange  = v('weekRange') || 'This Period';
+  const preparedBy = v('preparedBy') || 'Damco Digital';
 
   const c1 = { conv:n('c1_conv'), phone:n('c1_phone'), clicks:n('c1_clicks'), impr:n('c1_impr'), cpc:n('c1_cpc'), cost:n('c1_cost'), cvr:n('c1_cvr'), ctr:n('c1_ctr') };
   const c2 = { conv:n('c2_conv'), phone:n('c2_phone'), clicks:n('c2_clicks'), impr:n('c2_impr'), cpc:n('c2_cpc'), cost:n('c2_cost'), cvr:n('c2_cvr'), ctr:n('c2_ctr') };
 
-  const totalPhone = c1.phone+c2.phone;
-  const totalClicks = c1.clicks+c2.clicks;
-  const totalImpr   = c1.impr+c2.impr;
-  const totalCost   = c1.cost+c2.cost;
+  const totalPhone  = c1.phone + c2.phone;
+  const totalClicks = c1.clicks + c2.clicks;
+  const totalImpr   = c1.impr + c2.impr;
+  const totalCost   = c1.cost + c2.cost;
   const totalCTR    = totalImpr ? (totalClicks/totalImpr*100).toFixed(2) : '0.00';
 
-  const totalLeads     = n('totalLeads');
-  const lastWeekLeads  = n('lastWeekLeads');
-  // -1 means CRM CSV not uploaded yet → fall back to all leads
-  // Any other value (including 0) = real Google-only count from CSV
-  const _googleLeads = n('googleLeads', -1);
-  const _googleSched = n('googleSched', -1);
-  const googleLeads  = _googleLeads === -1 ? totalLeads : _googleLeads;
-  const googleSched  = _googleSched === -1 ? n('scheduledLeads') : _googleSched;
-  const scheduledLeads = n('scheduledLeads');
-  const notScheduled   = googleLeads - googleSched;
-  const scheduledPct   = pct(googleSched, googleLeads);
-  const leadDiff       = googleLeads - lastWeekLeads;
-  const leadDiffPct    = pct(Math.abs(leadDiff), lastWeekLeads);
+  // Google leads from CRM (current period)
+  const totalLeads  = n('totalLeads');
+  const _gl = n('googleLeads', -1);
+  const _gs = n('googleSched', -1);
+  const googleLeads = _gl === -1 ? totalLeads : _gl;
+  const googleSched = _gs === -1 ? n('scheduledLeads') : _gs;
 
-  // Platform conversions = Col Q (Conversions) + Col R (Phone calls) from Ads sheet
-  const c1totalConv = n('c1_platform_conv') || (c1.conv + c1.phone);
-  const c2totalConv = n('c2_platform_conv') || (c2.conv + c2.phone);
+  // Previous period Google leads (auto-calculated from date filter)
+  const _prev = n('prevGoogleLeads', -1);
+  const prevGoogleLeads = _prev === -1 ? null : _prev;
+
+  const notScheduled = googleLeads - googleSched;
+  const scheduledPct = pct(googleSched, googleLeads);
+
+  // Comparison: only show if previous period was calculated
+  let comparisonBadge = '';
+  let comparisonSubtext = '';
+  if (prevGoogleLeads !== null) {
+    const diff    = googleLeads - prevGoogleLeads;
+    const diffPct = prevGoogleLeads > 0 ? ((Math.abs(diff)/prevGoogleLeads)*100).toFixed(1) : '—';
+    const badgeCls = diff >= 0 ? 'badge-up' : 'badge-warn';
+    const arrow    = diff >= 0 ? '↑ +' : '↓ ';
+    comparisonBadge   = `<span class="kpi-badge ${badgeCls}">${arrow}${diffPct}% vs prev. period</span>`;
+    comparisonSubtext = `vs. ${prevGoogleLeads} prev. period`;
+  }
+
+  // Platform conversions from Ads CSV
+  const c1totalConv  = n('c1_platform_conv') !== -1 ? n('c1_platform_conv') : (c1.conv + c1.phone);
+  const c2totalConv  = n('c2_platform_conv') !== -1 ? n('c2_platform_conv') : (c2.conv + c2.phone);
   const totalAllConv = c1totalConv + c2totalConv;
-  // Conv Rate = platform conversions (Ads) ÷ clicks
-  const totalCVR    = totalClicks ? (totalAllConv / totalClicks * 100).toFixed(2) : '0.00';
-  // Cost/Conv = total spend ÷ platform conversions
-  const totalCostPerConv = totalAllConv ? totalCost / totalAllConv : 0;
-  const c1CostPerConv = c1totalConv ? c1.cost / c1totalConv : 0;
-  const c2CostPerConv = c2totalConv ? c2.cost / c2totalConv : 0;
+
+  // Metrics
+  const totalCVR        = totalClicks ? (totalAllConv/totalClicks*100).toFixed(2) : '0.00';
+  const totalCostPerConv = totalAllConv ? totalCost/totalAllConv : 0;
+  const c1CostPerConv   = c1totalConv ? c1.cost/c1totalConv : 0;
+  const c2CostPerConv   = c2totalConv ? c2.cost/c2totalConv : 0;
 
   const reasons = [
     { label:"Didn't Answer Consult Call", count:n('r_noanswer'), color:'var(--red)' },
@@ -645,7 +857,6 @@ function generateDashboard() {
     { label:'Testing Waitlist',           count:n('r_waitlist'), color:'var(--amber)' },
     { label:'Other / Unspecified',        count:n('r_other'), color:'#A0A0A0' }
   ].filter(r=>r.count>0);
-
   const totalNotSched = reasons.reduce((a,r)=>a+r.count,0)||1;
 
   const services = [
@@ -656,7 +867,6 @@ function generateDashboard() {
     { label:"Couple's Therapy",      count:n('s_couples'), color:'#C4527A' },
     { label:'Other Service',         count:n('s_other'),   color:'#8899AA' }
   ].filter(s=>s.count>0).sort((a,b)=>b.count-a.count);
-
   const totalSvcLeads = services.reduce((a,s)=>a+s.count,0)||1;
   const topService    = services[0]||{label:'Psychotherapy',count:0};
   const topSvcPct     = pct(topService.count,totalSvcLeads);
@@ -672,13 +882,17 @@ function generateDashboard() {
       ${customFlag?`<br>${customFlag}`:''}
     </div></div>` : '';
 
+  const prevInsight = prevGoogleLeads !== null
+    ? `We moved from ${prevGoogleLeads} to ${googleLeads} Google-sourced leads period-on-period.`
+    : `${googleLeads} Google-sourced leads this period.`;
+
   const obsSection = customObs
-    ? `<div class="insight-card"><strong>This week's observations:</strong> ${customObs}</div>`
-    : `<div class="insight-card"><strong>Conversions are trending in the right direction.</strong> We moved from ${lastWeekLeads} to ${googleLeads} Google-sourced leads week-on-week (${leadDiff>=0?'+':''}${leadDiffPct}%) without increasing spend.</div>
-       <div class="insight-card amber"><strong>DSA is our strongest performer this week.</strong> Cost per conversion of ${fmt(c2CostPerConv)} on DSA vs. ${fmt(c1CostPerConv)} on Search, with CTR of ${c2.ctr.toFixed(2)}% confirming strong intent match.</div>
-       <div class="insight-card rust"><strong>${scheduledPct}% of leads scheduled — the drop-off has structural causes.</strong> Several leads could not convert due to service or provider gaps. We recommend the Wellspring team reviews capacity as a parallel action.</div>
-       <div class="insight-card amber"><strong>${topService.label} is driving most inbound volume at ${topSvcPct}%.</strong> We plan to test copy redirecting ADHD, Anxiety, and ADD queries toward medication management to shift the inbound mix.</div>
-       <div class="insight-card"><strong>${n('r_noanswer')} lead(s) went uncontacted after the consult call.</strong> Whether that's tightening timing, refining messaging, or aligning with ad-side signals — we'd like to explore improving the re-contact rate together.</div>`;
+    ? `<div class="insight-card"><strong>Observations:</strong> ${customObs}</div>`
+    : `<div class="insight-card"><strong>Conversions are trending in the right direction.</strong> ${prevInsight} Without increasing spend, the campaigns are becoming more efficient.</div>
+       <div class="insight-card amber"><strong>DSA is our strongest performer this period.</strong> Cost per conversion of ${fmt(c2CostPerConv)} on DSA vs. ${fmt(c1CostPerConv)} on Search, with CTR of ${c2.ctr.toFixed(2)}% confirming strong intent match.</div>
+       <div class="insight-card rust"><strong>${scheduledPct}% of Google leads scheduled.</strong> Several leads could not convert due to service or provider gaps. We recommend the Wellspring team reviews capacity as a parallel action.</div>
+       <div class="insight-card amber"><strong>${topService.label} is driving most inbound volume at ${topSvcPct}%.</strong> We plan to test copy redirecting ADHD, Anxiety, and ADD queries toward medication management.</div>
+       <div class="insight-card"><strong>${n('r_noanswer')} lead(s) went uncontacted after the consult call.</strong> We'd like to explore improving the re-contact rate together.</div>`;
 
   const reasonBars = reasons.map(r => {
     const pv = pct(r.count,totalNotSched);
@@ -690,17 +904,22 @@ function generateDashboard() {
     <div class="header">
       <div><div class="logo-name">Wellspring</div><div class="logo-sub">Therapeutic Partners</div></div>
       <div class="header-meta">
-        <div class="report-label">Weekly Performance Report</div>
-        <div class="report-week">Week of ${weekRange}</div>
+        <div class="report-label">Performance Report</div>
+        <div class="report-week">${weekRange}</div>
         <div class="report-prepared">Prepared by ${preparedBy} &nbsp;·&nbsp; Google Ads</div>
       </div>
     </div>
     ${flagSection}
     <div class="section-label">Platform Overview: Google Ads</div>
     <div class="kpi-grid">
-      <div class="kpi-card"><div class="kpi-label">Total Conversions</div><div class="kpi-value">${googleLeads}</div><div class="kpi-sub">Ads platform conv: ${totalAllConv} &nbsp;·&nbsp; vs. ${lastWeekLeads} last week</div><span class="kpi-badge ${leadDiff>=0?'badge-up':'badge-warn'}">${leadDiff>=0?'↑ +':'↓ '}${leadDiffPct}%</span></div>
+      <div class="kpi-card">
+        <div class="kpi-label">Total Conversions</div>
+        <div class="kpi-value">${googleLeads}</div>
+        <div class="kpi-sub">Ads platform conv: ${totalAllConv} &nbsp;·&nbsp; ${comparisonSubtext}</div>
+        ${comparisonBadge}
+      </div>
       <div class="kpi-card amber"><div class="kpi-label">Scheduled (Google)</div><div class="kpi-value">${googleSched}</div><div class="kpi-sub">${scheduledPct}% of Google leads</div><span class="kpi-badge badge-up">Quality leads</span></div>
-      <div class="kpi-card violet"><div class="kpi-label">Total Spend</div><div class="kpi-value">$${Math.round(totalCost)}</div><div class="kpi-sub">This week</div><span class="kpi-badge badge-neutral">Budget on track</span></div>
+      <div class="kpi-card violet"><div class="kpi-label">Total Spend</div><div class="kpi-value">$${Math.round(totalCost)}</div><div class="kpi-sub">This period</div><span class="kpi-badge badge-neutral">Budget on track</span></div>
       <div class="kpi-card green"><div class="kpi-label">Conv. Rate</div><div class="kpi-value">${totalCVR}%</div><div class="kpi-sub">${totalClicks} clicks</div><span class="kpi-badge badge-up">Healthy</span></div>
       <div class="kpi-card rust"><div class="kpi-label">Cost / Conv.</div><div class="kpi-value">$${Math.round(totalCostPerConv)}</div><div class="kpi-sub">DSA: ${fmt(c2CostPerConv)}</div><span class="kpi-badge badge-up">↓ DSA efficient</span></div>
       <div class="kpi-card pink"><div class="kpi-label">Avg. CTR</div><div class="kpi-value">${totalCTR}%</div><div class="kpi-sub">${fmtN(totalImpr)} impressions</div><span class="kpi-badge badge-up">Strong</span></div>
@@ -750,7 +969,7 @@ function generateDashboard() {
     <div class="two-col">
       <div class="panel">
         <div class="panel-title"><span class="dot" style="background:var(--rust)"></span> Reason Not Scheduled (${totalNotSched} leads)</div>
-        ${reasonBars||'<p style="font-size:12px;color:var(--warm-mid);">No reasons recorded this week.</p>'}
+        ${reasonBars||'<p style="font-size:12px;color:var(--warm-mid);">No reasons recorded for this period.</p>'}
       </div>
       <div class="panel">
         <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Lead Service Type</div>
@@ -762,15 +981,15 @@ function generateDashboard() {
       <div><div class="section-label">Key Observations</div>${obsSection}</div>
       <div>
         <div class="section-label">Actions and Recommendations</div>
-        <div class="next-step"><div class="step-num">1</div><div class="step-text"><strong>Increase budget allocation toward DSA.</strong> At ${fmt(c2CostPerConv)} CPA and ${c2.ctr.toFixed(2)}% CTR, DSA is significantly outperforming Search. Shifting budget here will drive more volume at a lower cost per lead.</div></div>
-        <div class="next-step"><div class="step-num">2</div><div class="step-text"><strong>Improve the missed-call follow-up process.</strong> With ${n('r_noanswer')} lead(s) uncontacted, we'd like to review timing, channel, and messaging with the Wellspring team to improve re-contact rate.</div></div>
-        <div class="next-step"><div class="step-num">3</div><div class="step-text"><strong>Add ESA-related negative keywords.</strong> Searches for ESA letters are reaching the form but cannot be served. Adding "ESA letter" and "emotional support animal letter" as negatives will reduce wasted spend.</div></div>
-        <div class="next-step"><div class="step-num">4</div><div class="step-text"><strong>Build condition-specific ad copy and landing page assets.</strong> Lead with ADHD, Anxiety, and ADD messaging to shift the inbound mix toward higher-value medication management leads.</div></div>
-        <div class="next-step"><div class="step-num">5</div><div class="step-text"><strong>Review re-engagement sequence together.</strong> We can bring intent signals, query patterns, and peak response windows from the ad side to sharpen the timing and messaging for better conversion on missed calls.</div></div>
+        <div class="next-step"><div class="step-num">1</div><div class="step-text"><strong>Increase budget allocation toward DSA.</strong> At ${fmt(c2CostPerConv)} CPA and ${c2.ctr.toFixed(2)}% CTR, DSA is significantly outperforming Search.</div></div>
+        <div class="next-step"><div class="step-num">2</div><div class="step-text"><strong>Improve the missed-call follow-up process.</strong> With ${n('r_noanswer')} lead(s) uncontacted, review timing, channel, and messaging to improve re-contact rate.</div></div>
+        <div class="next-step"><div class="step-num">3</div><div class="step-text"><strong>Add ESA-related negative keywords.</strong> Adding "ESA letter" as a negative will reduce wasted spend on leads that cannot be served.</div></div>
+        <div class="next-step"><div class="step-num">4</div><div class="step-text"><strong>Build condition-specific ad copy and landing page assets.</strong> Lead with ADHD, Anxiety, and ADD messaging to shift the mix toward higher-value leads.</div></div>
+        <div class="next-step"><div class="step-num">5</div><div class="step-text"><strong>Review re-engagement sequence together.</strong> Bring intent signals, query patterns, and peak response windows to sharpen timing for better conversion on missed calls.</div></div>
       </div>
     </div>
     <div class="footer">
-      <div class="footer-left">Prepared by <strong>${preparedBy}</strong> &nbsp;·&nbsp; Confidential: For Wellspring Team Use Only<br>Data source: Google Ads + CRM &nbsp;·&nbsp; Week of ${weekRange}</div>
+      <div class="footer-left">Prepared by <strong>${preparedBy}</strong> &nbsp;·&nbsp; Confidential: For Wellspring Team Use Only<br>Data source: Google Ads + CRM &nbsp;·&nbsp; ${weekRange}</div>
       <div class="footer-right">Wellspring Therapeutic Partners</div>
     </div>`;
 
@@ -781,7 +1000,7 @@ function generateDashboard() {
   setTimeout(() => {
     new Chart(document.getElementById('scheduleDonut').getContext('2d'), {
       type:'doughnut',
-      data:{ labels:['Scheduled','Not Scheduled'], datasets:[{ data:[googleSched, notScheduled], backgroundColor:['#3D7A72','#C25B3F'], borderWidth:0, hoverOffset:4 }] },
+      data:{ labels:['Scheduled','Not Scheduled'], datasets:[{ data:[googleSched,notScheduled], backgroundColor:['#3D7A72','#C25B3F'], borderWidth:0, hoverOffset:4 }] },
       options:{ cutout:'70%', plugins:{ legend:{display:false}, tooltip:{callbacks:{label:ctx=>` ${ctx.label}: ${ctx.raw}`}} } }
     });
     if (services.length) {
