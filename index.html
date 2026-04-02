@@ -900,14 +900,6 @@ function generateDashboard() {
   // Comparison: only show if previous period was calculated
   let comparisonBadge = '';
   let comparisonSubtext = '';
-  if (prevGoogleLeads !== null) {
-    const diff    = googleLeads - prevGoogleLeads;
-    const diffPct = prevGoogleLeads > 0 ? ((Math.abs(diff)/prevGoogleLeads)*100).toFixed(1) : '—';
-    const badgeCls = diff >= 0 ? 'badge-up' : 'badge-warn';
-    const arrow    = diff >= 0 ? '↑ +' : '↓ ';
-    comparisonBadge   = `<span class="kpi-badge ${badgeCls}">${arrow}${diffPct}% vs prev. period</span>`;
-    comparisonSubtext = `vs. ${prevGoogleLeads} prev. period`;
-  }
 
   // Platform conversions from Ads CSV
   const c1totalConv  = n('c1_platform_conv') !== -1 ? n('c1_platform_conv') : (c1.conv + c1.phone);
