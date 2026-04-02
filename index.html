@@ -621,21 +621,29 @@ function processAds(file) {
       try {
         const rows = results.data;
         // Find header and store column map
-        adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:14, colPhone:16, colCampaign:2 };
+        adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
+        let convExactFound = false;
         let dataStartIdx = 0;
         for (let i = 0; i < rows.length; i++) {
           if ((rows[i][0]||'').toString().trim() === 'Day' && (rows[i][2]||'').toString().trim() === 'Campaign') {
             const h = rows[i];
             for (let j = 0; j < h.length; j++) {
               const hv = (h[j]||'').toString().trim().toLowerCase();
-              if (hv === 'clicks')                                          adsHeaderCols.colClicks = j;
-              if (hv === 'ctr')                                             adsHeaderCols.colCTR    = j;
-              if (hv === 'avg. cpc')                                        adsHeaderCols.colCPC    = j;
-              if (hv === 'impr.')                                           adsHeaderCols.colImpr   = j;
-              if (hv === 'cost')                                            adsHeaderCols.colCost   = j;
-              if (hv.startsWith('conv.') && !hv.includes('cost') && !hv.includes('/')) adsHeaderCols.colConv = j;
-              if (hv.includes('phone'))                                     adsHeaderCols.colPhone  = j;
-              if (hv === 'campaign')                                        adsHeaderCols.colCampaign = j;
+              if (hv === 'day')          adsHeaderCols.colDay      = j;
+              if (hv === 'campaign')     adsHeaderCols.colCampaign = j;
+              if (hv === 'clicks')       adsHeaderCols.colClicks   = j;
+              if (hv === 'ctr')          adsHeaderCols.colCTR      = j;
+              if (hv === 'avg. cpc')     adsHeaderCols.colCPC      = j;
+              if (hv === 'impr.')        adsHeaderCols.colImpr     = j;
+              if (hv === 'cost')         adsHeaderCols.colCost     = j;
+              if (hv.includes('phone'))  adsHeaderCols.colPhone    = j;
+              // Prioritise exact "conversions" column; fall back to "conv. (platform...)" if not found
+              if (hv === 'conversions') {
+                adsHeaderCols.colConv = j;
+                convExactFound = true;
+              } else if (!convExactFound && hv.startsWith('conv.') && !hv.includes('cost') && !hv.includes('/')) {
+                adsHeaderCols.colConv = j;
+              }
             }
             dataStartIdx = i + 1;
           }
@@ -915,7 +923,7 @@ function generateDashboard() {
       <div class="kpi-card">
         <div class="kpi-label">Total Conversions</div>
         <div class="kpi-value">${googleLeads}</div>
-        <div class="kpi-sub">Ads platform conv: ${totalAllConv} &nbsp;·&nbsp; ${comparisonSubtext}</div>
+        <div class="kpi-sub">Ads platform conv: ${totalAllConv}</div>
         ${comparisonBadge}
       </div>
       <div class="kpi-card amber"><div class="kpi-label">Scheduled (Google)</div><div class="kpi-value">${googleSched}</div><div class="kpi-sub">${scheduledPct}% of Google leads</div><span class="kpi-badge badge-up">Quality leads</span></div>
