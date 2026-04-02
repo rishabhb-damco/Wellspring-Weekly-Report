@@ -368,6 +368,7 @@
   <div class="dash-actions">
     <span>✦ Wellspring Dashboard: Ready to share</span>
     <div class="dash-actions-left">
+      <button onclick="downloadReport()" style="background:rgba(255,255,255,0.35);font-weight:500;">⬇ Download Report</button>
       <button onclick="window.print()">Print / Save as PDF</button>
       <button onclick="showForm()">← Edit Data</button>
     </div>
@@ -812,6 +813,59 @@ function pct(a,b) { return b?((a/b)*100).toFixed(1):'0.0'; }
 function fmt(num) { return '$'+num.toFixed(2); }
 function fmtN(num) { return num.toLocaleString(); }
 function showForm() { document.getElementById('form-view').style.display='block'; document.getElementById('dashboard-view').style.display='none'; Chart.helpers.each(Chart.instances,c=>c.destroy()); }
+
+// ══════════════════════════════════════════════════
+//  DOWNLOAD REPORT AS STANDALONE HTML
+// ══════════════════════════════════════════════════
+function downloadReport() {
+  // Convert any canvas charts to static images first
+  document.querySelectorAll('#dashboardContent canvas').forEach(canvas => {
+    const img = document.createElement('img');
+    img.src = canvas.toDataURL('image/png');
+    img.style.cssText = canvas.style.cssText;
+    img.style.maxHeight = '220px';
+    img.style.width = '100%';
+    canvas.parentNode.replaceChild(img, canvas);
+  });
+
+  const content   = document.getElementById('dashboardContent').innerHTML;
+  const weekRange = document.querySelector('.report-week')
+    ? document.querySelector('.report-week').textContent.trim()
+    : 'report';
+
+  // Collect all CSS
+  const css = Array.from(document.styleSheets)
+    .map(ss => { try { return Array.from(ss.cssRules).map(r => r.cssText).join('\n'); } catch(e) { return ''; } })
+    .join('\n');
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wellspring — ${weekRange}</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+${css}
+body { background: #f0ece6 !important; }
+.page { max-width: 1100px; margin: 0 auto; padding: 28px 32px; background: var(--cream, #F7F3EE); min-height: 100vh; }
+</style>
+</head>
+<body>
+<div class="page">
+${content}
+</div>
+</body>
+</html>`;
+
+  const slug     = weekRange.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase().replace(/^-|-$/g, '');
+  const filename = `wellspring-report-${slug}.html`;
+  const blob     = new Blob([html], { type: 'text/html' });
+  const url      = URL.createObjectURL(blob);
+  const a        = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  URL.revokeObjectURL(url);
+}
 
 // ══════════════════════════════════════════════════
 //  DASHBOARD GENERATOR
