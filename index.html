@@ -1032,13 +1032,13 @@ function generateDashboard() {
           <tbody>
             <tr>
               <td><div class="campaign-name"><strong>Generic Search</strong>Damco_WS_Generic_Search<span class="badge-tag tag-search">Search</span></div></td>
-              <td>${c1totalConv}</td><td>${c1.phone}</td><td>${c1.clicks}</td>
+              <td>${c1.conv}</td><td>${c1.phone}</td><td>${c1.clicks}</td>
               <td><span class="metric-highlight">${c1.ctr.toFixed(2)}%</span></td>
               <td>${fmt(c1.cpc)}</td><td>${fmt(c1.cost)}</td><td>${fmt(c1CostPerConv)}</td>
             </tr>
             <tr>
               <td><div class="campaign-name"><strong>DSA Campaign</strong>Damco_DSA_Wellspring<span class="badge-tag tag-dsa">DSA</span></div></td>
-              <td>${c2totalConv}</td><td>${c2.phone}</td><td>${c2.clicks}</td>
+              <td>${c2.conv}</td><td>${c2.phone}</td><td>${c2.clicks}</td>
               <td><span class="metric-highlight">${c2.ctr.toFixed(2)}%</span></td>
               <td>${fmt(c2.cpc)}</td><td>${fmt(c2.cost)}</td>
               <td class="highlight-green">${fmt(c2CostPerConv)}</td>
