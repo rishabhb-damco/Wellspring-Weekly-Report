@@ -6,14 +6,9 @@
 <title>Wellspring Dashboard Generator</title>
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 <style>
-  :root {
-    --cream:#F7F3EE; --cream-dark:#EDE7DC; --charcoal:#1C1C1A; --warm-mid:#6B6460;
-    --teal:#3D7A72; --teal-light:#5A9E95; --teal-pale:#EAF3F2;
-    --rust:#C25B3F; --amber:#C9882A; --violet:#5C4E9E;
-    --green:#3D8A60; --pink:#C4527A; --red:#C44040; --border:#DDD5C8;
-  }
+  :root{--cream:#F7F3EE;--cream-dark:#EDE7DC;--charcoal:#1C1C1A;--warm-mid:#6B6460;--teal:#3D7A72;--teal-light:#5A9E95;--teal-pale:#EAF3F2;--rust:#C25B3F;--amber:#C9882A;--violet:#5C4E9E;--green:#3D8A60;--pink:#C4527A;--red:#C44040;--border:#DDD5C8;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:#f0ece6;font-family:'DM Sans',sans-serif;color:var(--charcoal);font-size:13px;line-height:1.6;}
   #form-view{max-width:820px;margin:0 auto;padding:36px 28px;}
@@ -44,7 +39,6 @@
   .flag-toggle{display:flex;align-items:center;gap:10px;margin-top:8px;}
   .flag-toggle input[type=checkbox]{width:15px;height:15px;accent-color:var(--amber);}
   .flag-toggle label{font-size:12px;color:var(--charcoal);}
-  /* ── IMPORT ── */
   .import-grid{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:14px;}
   .import-card{background:#fff;border:2px dashed var(--border);border-radius:12px;padding:18px 20px;transition:border-color 0.2s;}
   .import-card.drag-over{border-color:var(--teal);background:var(--teal-pale);}
@@ -64,7 +58,6 @@
   .import-stat-label{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--warm-mid);margin-top:2px;}
   .import-breakdown{font-size:10.5px;color:var(--warm-mid);margin-top:8px;line-height:1.8;}
   .import-breakdown strong{color:var(--charcoal);}
-  /* ── DATE FILTER ── */
   .date-filter-section{background:#fff;border:1px solid var(--border);border-radius:12px;padding:20px 22px;margin-bottom:14px;}
   .filter-mode-tabs{display:flex;gap:6px;margin-bottom:14px;}
   .filter-tab{padding:6px 16px;border-radius:20px;font-size:12px;cursor:pointer;border:1px solid var(--border);background:var(--cream);color:var(--warm-mid);transition:all 0.15s;}
@@ -72,15 +65,12 @@
   .filter-panel{display:none;}
   .filter-panel.active{display:block;}
   .filter-week-row{display:flex;align-items:center;gap:12px;flex-wrap:wrap;}
-  .filter-week-row label{font-size:11px;color:var(--warm-mid);font-weight:500;}
+  .filter-week-row label,.filter-date-row label{font-size:11px;color:var(--warm-mid);font-weight:500;}
   .filter-week-row input[type=week],.filter-date-row input[type=date]{background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:7px 10px;font-family:'DM Sans',sans-serif;font-size:12.5px;color:var(--charcoal);outline:none;}
   .filter-date-row{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
-  .filter-date-row label{font-size:11px;color:var(--warm-mid);font-weight:500;min-width:32px;}
+  .filter-date-row label{min-width:32px;}
   .filter-badge{display:inline-block;background:var(--teal-pale);border:1px solid #b2d8d4;border-radius:8px;padding:8px 14px;font-size:12px;color:var(--teal);margin-top:10px;line-height:1.6;}
   .filter-badge strong{font-weight:500;}
-  .apply-filter-btn{background:var(--teal);color:#fff;border:none;border-radius:7px;padding:7px 16px;font-family:'DM Sans',sans-serif;font-size:12px;font-weight:500;cursor:pointer;transition:background 0.15s;}
-  .apply-filter-btn:hover{background:var(--teal-light);}
-  /* ── DASHBOARD ── */
   #dashboard-view{display:none;}
   .dash-actions{background:var(--teal);color:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 24px;gap:12px;font-size:12.5px;}
   .dash-actions button{background:rgba(255,255,255,0.2);color:#fff;border:1px solid rgba(255,255,255,0.4);border-radius:6px;padding:6px 14px;font-family:'DM Sans',sans-serif;font-size:12px;cursor:pointer;transition:background 0.15s;}
@@ -96,16 +86,23 @@
   .header-meta .report-prepared{font-size:11px;color:var(--warm-mid);margin-top:4px;}
   .section-label{font-size:9px;text-transform:uppercase;letter-spacing:3px;color:var(--teal);font-weight:500;margin-bottom:8px;}
   .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
-  .kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;position:relative;overflow:visible;}
+  .kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:12px 16px;position:relative;overflow:hidden;}
   .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);border-radius:10px 10px 0 0;}
   .kpi-card.amber::before{background:var(--amber);}.kpi-card.violet::before{background:var(--violet);}
   .kpi-card.green::before{background:var(--green);}.kpi-card.rust::before{background:var(--rust);}
   .kpi-card.pink::before{background:var(--pink);}
+  .kpi-top{display:flex;justify-content:space-between;align-items:flex-start;}
+  .kpi-left{flex:1;}
   .kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-bottom:4px;}
-  .kpi-value{font-family:'Cormorant Garamond',serif;font-size:42px;font-weight:600;color:var(--charcoal);line-height:1;}
-  .kpi-sub{font-size:11.5px;color:var(--warm-mid);margin-top:4px;}
+  .kpi-value{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:var(--charcoal);line-height:1;}
+  .kpi-sub{font-size:11px;color:var(--warm-mid);margin-top:3px;}
   .kpi-badge{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500;}
   .badge-up{background:#E8F5EC;color:#2E7D4F;}.badge-neutral{background:#F0EDE8;color:#6B6460;}.badge-warn{background:#FDF6EC;color:#C9882A;}
+  .badge-cpl-ok{background:#E8F5EC;color:#2E7D4F;font-size:9px;padding:1px 6px;border-radius:10px;display:inline-block;margin-top:2px;}
+  .badge-cpl-over{background:#FDF1EE;color:#C25B3F;font-size:9px;padding:1px 6px;border-radius:10px;display:inline-block;margin-top:2px;}
+  .spark-wrap{width:72px;flex-shrink:0;margin-left:8px;}
+  .spark-labels{display:flex;justify-content:space-between;margin-top:4px;}
+  .spark-lbl{font-size:8px;color:var(--warm-mid);}
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
   .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
   .panel-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--charcoal);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
@@ -155,30 +152,30 @@
 <div id="form-view">
   <div class="form-header">
     <div><div class="form-logo">Wellspring <span>Therapeutic Partners</span></div></div>
-    <div class="form-title">Weekly Dashboard Generator<br>Upload CSVs → Filter by date → Generate</div>
+    <div class="form-title">Weekly Dashboard Generator<br>Upload Excel files → Pick week → Generate</div>
   </div>
 
   <!-- STEP 1: UPLOAD -->
   <div class="form-section">
-    <div class="form-section-title"><span class="fsec-dot"></span> Step 1 — Upload CSVs</div>
+    <div class="form-section-title"><span class="fsec-dot"></span> Step 1 — Upload Excel Files</div>
     <div class="import-grid">
       <div class="import-card" id="crmCard">
         <div class="import-card-title"><span class="fsec-dot" style="background:var(--amber)"></span> CRM / Lead Sheet</div>
-        <div class="import-card-hint">Download the full sheet (monthly or weekly):<br><strong>File → Download → CSV</strong></div>
+        <div class="import-card-hint">Download full sheet as Excel:<br><strong>File → Download → Microsoft Excel (.xlsx)</strong><br>All weekly tabs included automatically.</div>
         <div class="drop-zone" id="crmDrop" onclick="document.getElementById('crmInput').click()">
           <div class="drop-icon">📋</div>
-          <div class="drop-text"><strong>Drop CRM CSV here</strong><br>or click to browse</div>
-          <input type="file" id="crmInput" style="display:none" accept=".csv" onchange="handleCRM(event)" />
+          <div class="drop-text"><strong>Drop CRM .xlsx here</strong><br>or click to browse</div>
+          <input type="file" id="crmInput" style="display:none" accept=".xlsx,.xls,.csv" onchange="handleCRM(event)" />
         </div>
         <div class="import-status" id="crmStatus"></div>
       </div>
       <div class="import-card" id="adsCard">
         <div class="import-card-title"><span class="fsec-dot" style="background:var(--violet)"></span> Google Ads Sheet</div>
-        <div class="import-card-hint">Download from your Ads performance sheet:<br><strong>File → Download → CSV</strong></div>
+        <div class="import-card-hint">Download full Ads sheet as Excel:<br><strong>File → Download → Microsoft Excel (.xlsx)</strong><br>All weekly data included automatically.</div>
         <div class="drop-zone" id="adsDrop" onclick="document.getElementById('adsInput').click()">
           <div class="drop-icon">📊</div>
-          <div class="drop-text"><strong>Drop Ads CSV here</strong><br>or click to browse</div>
-          <input type="file" id="adsInput" style="display:none" accept=".csv" onchange="handleAds(event)" />
+          <div class="drop-text"><strong>Drop Ads .xlsx here</strong><br>or click to browse</div>
+          <input type="file" id="adsInput" style="display:none" accept=".xlsx,.xls,.csv" onchange="handleAds(event)" />
         </div>
         <div class="import-status" id="adsStatus"></div>
       </div>
@@ -188,16 +185,14 @@
   <!-- STEP 2: DATE FILTER -->
   <div class="date-filter-section">
     <div class="form-section-title" style="margin-bottom:10px;padding-bottom:10px;border-bottom:1px solid var(--cream-dark);">
-      <span class="fsec-dot" style="background:var(--violet)"></span> Step 2 — Select Date Range
-      <span class="auto-tag">Filters both CSVs · auto-calculates previous period</span>
+      <span class="fsec-dot" style="background:var(--violet)"></span> Step 2 — Select Week
+      <span class="auto-tag">Auto-finds current + 3 previous weeks for sparklines</span>
     </div>
     <div class="filter-mode-tabs">
       <div class="filter-tab active" id="tab-week" onclick="switchTab('week')">Week Picker</div>
       <div class="filter-tab" id="tab-custom" onclick="switchTab('custom')">Custom Range</div>
       <div class="filter-tab" id="tab-all" onclick="switchTab('all')">All Data</div>
     </div>
-
-    <!-- Week picker -->
     <div class="filter-panel active" id="panel-week">
       <div class="filter-week-row">
         <label>Select week</label>
@@ -205,38 +200,33 @@
         <span style="font-size:11px;color:var(--warm-mid);">Mon – Sun</span>
       </div>
     </div>
-
-    <!-- Custom range -->
     <div class="filter-panel" id="panel-custom">
       <div class="filter-date-row">
-        <label>From</label>
-        <input type="date" id="dateStart" onchange="applyCustomFilter()" />
-        <label>To</label>
-        <input type="date" id="dateEnd" onchange="applyCustomFilter()" />
+        <label>From</label><input type="date" id="dateStart" onchange="applyCustomFilter()" />
+        <label>To</label><input type="date" id="dateEnd" onchange="applyCustomFilter()" />
       </div>
     </div>
-
-    <!-- All data -->
     <div class="filter-panel" id="panel-all">
-      <p style="font-size:12px;color:var(--warm-mid);padding-top:4px;">Using all data from the uploaded CSVs — no date filtering applied.</p>
+      <p style="font-size:12px;color:var(--warm-mid);padding-top:4px;">Using all data — no date filtering applied. Sparklines will not be available.</p>
     </div>
-
     <div id="filterSummary" style="display:none;" class="filter-badge"></div>
   </div>
 
-  <!-- Hidden fields -->
+  <!-- HIDDEN FIELDS -->
   <input type="hidden" id="c1_platform_conv" value="0" />
   <input type="hidden" id="c2_platform_conv" value="0" />
   <input type="hidden" id="googleLeads" value="-1" />
   <input type="hidden" id="googleSched" value="-1" />
-  <input type="hidden" id="prevGoogleLeads" value="-1" />
 
   <!-- STEP 3: REPORT DETAILS -->
   <div class="form-section">
     <div class="form-section-title"><span class="fsec-dot"></span> Step 3 — Report Details</div>
     <div class="form-grid-2">
-      <div class="field"><label>Date Range Label</label><input type="text" id="weekRange" placeholder="e.g. March 15 – March 21, 2026" /></div>
+      <div class="field"><label>Date Range Label</label><input type="text" id="weekRange" placeholder="e.g. April 5 – April 11, 2026" /></div>
       <div class="field"><label>Prepared By</label><input type="text" id="preparedBy" value="Damco Digital" /></div>
+    </div>
+    <div style="margin-top:12px;">
+      <div class="field"><label>CPL Benchmark ($) — shows target line on Cost/Conv. sparkline</label><input type="number" id="cplBenchmark" value="100" min="0" step="1" style="max-width:160px;" /></div>
     </div>
   </div>
 
@@ -244,7 +234,7 @@
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--violet)"></span> Campaign 1 — Generic Search
-      <span class="auto-tag">← auto-filled from Ads CSV</span>
+      <span class="auto-tag">← auto-filled from Ads Excel</span>
     </div>
     <div class="campaign-row">
       <div class="campaign-row-title">Generic Search Campaign</div>
@@ -265,7 +255,7 @@
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--green)"></span> Campaign 2 — DSA
-      <span class="auto-tag">← auto-filled from Ads CSV</span>
+      <span class="auto-tag">← auto-filled from Ads Excel</span>
     </div>
     <div class="campaign-row">
       <div class="campaign-row-title">DSA Campaign</div>
@@ -286,12 +276,11 @@
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--amber)"></span> Lead Scheduling
-      <span class="auto-tag">← auto-filled from CRM CSV</span>
+      <span class="auto-tag">← auto-filled from CRM Excel</span>
     </div>
     <div class="form-grid">
       <div class="field"><label>Total Leads (filtered period)</label><input type="number" id="totalLeads" placeholder="0" /></div>
       <div class="field"><label>Scheduled Leads</label><input type="number" id="scheduledLeads" placeholder="0" /></div>
-      <div class="field"><label>Previous Period Google Leads</label><input type="number" id="prevLeadsDisplay" placeholder="auto" /></div>
     </div>
   </div>
 
@@ -299,9 +288,9 @@
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--rust)"></span> Reason Not Scheduled
-      <span class="auto-tag">← auto-filled from CRM CSV</span>
+      <span class="auto-tag">← auto-filled from CRM Excel</span>
     </div>
-    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Auto-detected from the CRM CSV. Edit manually if needed.</p>
+    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Auto-detected. Edit manually if needed.</p>
     <div class="reason-row"><label>Didn't Answer Consult Call</label><input type="number" id="r_noanswer" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
     <div class="reason-row"><label>Incomplete Inquiry</label><input type="number" id="r_incomplete" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
     <div class="reason-row"><label>HAP Insurance / Financial</label><input type="number" id="r_hap" value="0" min="0" /><span style="font-size:10px;color:var(--warm-mid)">leads</span></div>
@@ -315,7 +304,7 @@
   <div class="form-section">
     <div class="form-section-title">
       <span class="fsec-dot" style="background:var(--violet)"></span> Lead Service Type
-      <span class="auto-tag">← auto-filled from CRM CSV</span>
+      <span class="auto-tag">← auto-filled from CRM Excel</span>
     </div>
     <div class="form-grid">
       <div class="field"><label>Psychotherapy</label><input type="number" id="s_psycho" value="0" min="0" /></div>
@@ -343,20 +332,20 @@
   <!-- OBSERVATIONS -->
   <div class="form-section">
     <div class="form-section-title"><span class="fsec-dot" style="background:var(--teal)"></span> Key Observations (optional override)</div>
-    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate. To add multiple observations, put each on a new line. Prefix with <strong>!</strong> for amber, <strong>!!</strong> for red/rust highlight.</p>
+    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate. Each line = one card. Prefix <strong>!</strong> for amber, <strong>!!</strong> for red.</p>
     <div class="field">
       <label>Custom Observations</label>
-      <textarea id="customObs" rows="6" placeholder="DSA is our strongest performer this week.&#10;!60% of leads went unscheduled — structural causes.&#10;!!Missed call rate increased vs last week."></textarea>
+      <textarea id="customObs" rows="5" placeholder="DSA is our strongest performer this week.&#10;!60% of leads went unscheduled — structural causes.&#10;!!Missed call rate increased vs last week."></textarea>
     </div>
   </div>
 
   <!-- ACTIONS -->
   <div class="form-section">
     <div class="form-section-title"><span class="fsec-dot" style="background:var(--amber)"></span> Actions &amp; Recommendations (optional override)</div>
-    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate from data. Each line becomes one action item. Start with <strong>bold text</strong> using **double asterisks**.</p>
+    <p style="margin-bottom:12px;color:var(--warm-mid);font-size:11px;">Leave blank to auto-generate. Each line = one action. Use **bold** for the headline.</p>
     <div class="field">
       <label>Custom Actions</label>
-      <textarea id="customActions" rows="6" placeholder="**Increase DSA budget.** DSA is significantly outperforming Search on CPA this week.&#10;**Follow up on missed calls.** 2 leads went uncontacted — review timing with the team.&#10;**Add ESA negative keywords.** Reduce wasted spend from ESA-related searches."></textarea>
+      <textarea id="customActions" rows="5" placeholder="**Increase DSA budget.** DSA is significantly outperforming Search on CPA.&#10;**Follow up on missed calls.** 2 leads went uncontacted — review timing with the team."></textarea>
     </div>
   </div>
 
@@ -378,180 +367,185 @@
 
 <script>
 // ══════════════════════════════════════════════════
-//  GLOBAL RAW DATA STORAGE
+//  GLOBAL STORAGE
 // ══════════════════════════════════════════════════
-let rawCRMRows = null;   // all parsed CRM data rows (excluding header)
-let rawAdsRows = null;   // all parsed Ads data rows
-let adsHeaderCols = {};  // column index map from Ads header
+// CRM: { tabName, startDate, rows[] } for each weekly tab
+let crmWeeklyTabs = [];
+// Ads: flat array of all daily rows with dates
+let adsAllRows = [];
+let adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
 
-// CRM date column: index 1 (Date Opportunity/Lead was Generated)
-const CRM_DATE_COL = 1;
-const CRM_COL = { HEAR:9, SOURCE:10, SERVICE:12, SCHEDULED:15, REASON:16 };
+// Sparkline history — array of { label, googleLeads, googleSched, totalConv, totalCost, totalClicks, cpl }
+let sparkHistory = [];
+
+const CRM_COL = { DATE:1, HEAR:9, SOURCE:10, SERVICE:12, SCHEDULED:15, REASON:16 };
+const CPL_BENCHMARK = () => parseFloat(document.getElementById('cplBenchmark').value) || 100;
 
 // ══════════════════════════════════════════════════
 //  DATE HELPERS
 // ══════════════════════════════════════════════════
 function parseCRMDate(str) {
-  // Format: "3/22/2026" (M/D/YYYY)
-  if (!str || str.trim() === '-' || str.trim() === '') return null;
-  const parts = str.trim().split('/');
-  if (parts.length !== 3) return null;
-  const m = parseInt(parts[0]), d = parseInt(parts[1]), y = parseInt(parts[2]);
-  if (isNaN(m)||isNaN(d)||isNaN(y)) return null;
-  const dt = new Date(y, m-1, d);
-  dt.setHours(0,0,0,0);
-  return dt;
-}
-
-function parseAdsDate(str) {
-  // Format: "2026-03-25" (YYYY-MM-DD)
-  if (!str || str.trim() === '') return null;
-  const dt = new Date(str.trim() + 'T00:00:00');
+  if (!str) return null;
+  const s = str.toString().trim();
+  const parts = s.split('/');
+  if (parts.length === 3) {
+    let y = parseInt(parts[2]); if (y < 100) y += 2000;
+    const dt = new Date(y, parseInt(parts[0])-1, parseInt(parts[1]));
+    dt.setHours(0,0,0,0); return isNaN(dt.getTime()) ? null : dt;
+  }
+  const dt = new Date(s); dt.setHours(0,0,0,0);
   return isNaN(dt.getTime()) ? null : dt;
 }
-
-function dateToYMD(dt) {
-  return dt.toISOString().slice(0,10);
+function parseAdsDate(str) {
+  if (!str) return null;
+  const dt = new Date(str.toString().trim() + 'T00:00:00');
+  return isNaN(dt.getTime()) ? null : dt;
 }
-
+function formatShortDate(dt) {
+  return dt.toLocaleDateString('en-US', { month:'short', day:'numeric' });
+}
 function formatDateLabel(dt) {
   return dt.toLocaleDateString('en-US', { month:'long', day:'numeric', year:'numeric' });
 }
-
-// Get Mon-Sun range from a week input value ("2026-W12")
 function weekPickerToRange(weekStr) {
-  if (!weekStr) return null;
-  const [yearStr, weekStr2] = weekStr.split('-W');
-  const year = parseInt(yearStr), week = parseInt(weekStr2);
-  // Jan 4 is always in week 1
-  const jan4 = new Date(year, 0, 4);
-  jan4.setHours(0,0,0,0);
-  const dow = jan4.getDay() || 7; // Mon=1 ... Sun=7
-  const weekStart = new Date(jan4);
-  weekStart.setDate(jan4.getDate() - dow + 1 + (week-1)*7);
-  const weekEnd = new Date(weekStart);
-  weekEnd.setDate(weekStart.getDate() + 6);
+  const [yearStr, wStr] = weekStr.split('-W');
+  const year = parseInt(yearStr), week = parseInt(wStr);
+  const jan4 = new Date(year, 0, 4); jan4.setHours(0,0,0,0);
+  const dow = jan4.getDay() || 7;
+  const weekStart = new Date(jan4); weekStart.setDate(jan4.getDate() - dow + 1 + (week-1)*7);
+  const weekEnd = new Date(weekStart); weekEnd.setDate(weekStart.getDate() + 6);
   return { start: weekStart, end: weekEnd };
 }
 
+// Parse tab name like "4/5/26-4/11/26" or "4/12/2026-4/18/2026"
+function parseTabStartDate(tabName) {
+  const m = tabName.match(/^(\d+)\/(\d+)\/(\d+)/);
+  if (!m) return null;
+  let y = parseInt(m[3]); if (y < 100) y += 2000;
+  const dt = new Date(y, parseInt(m[1])-1, parseInt(m[2]));
+  dt.setHours(0,0,0,0);
+  return isNaN(dt.getTime()) ? null : dt;
+}
+
 // ══════════════════════════════════════════════════
-//  DATE FILTER TAB SWITCHING
+//  TAB SWITCHING
 // ══════════════════════════════════════════════════
 let currentFilterMode = 'week';
-
 function switchTab(mode) {
   currentFilterMode = mode;
   ['week','custom','all'].forEach(m => {
     document.getElementById('tab-'+m).classList.toggle('active', m===mode);
     document.getElementById('panel-'+m).classList.toggle('active', m===mode);
   });
-  if (mode === 'all') applyAllDataFilter();
+  if (mode === 'all') applyAllFilter();
 }
-
 function applyWeekFilter() {
   const wval = document.getElementById('weekPicker').value;
   if (!wval) return;
   const range = weekPickerToRange(wval);
-  if (!range) return;
   applyDateFilter(range.start, range.end);
 }
-
 function applyCustomFilter() {
   const s = document.getElementById('dateStart').value;
   const e = document.getElementById('dateEnd').value;
   if (!s || !e) return;
-  const start = new Date(s+'T00:00:00');
-  const end   = new Date(e+'T00:00:00');
-  if (start > end) return;
-  applyDateFilter(start, end);
+  applyDateFilter(new Date(s+'T00:00:00'), new Date(e+'T00:00:00'));
 }
-
-function applyAllDataFilter() {
-  if (!rawCRMRows && !rawAdsRows) return;
-  processCRMRows(rawCRMRows || []);
-  processAdsRows(rawAdsRows || []);
+function applyAllFilter() {
+  const allCRM = crmWeeklyTabs.flatMap(t => t.rows);
+  processCRMRows(allCRM);
+  processAdsRows(adsAllRows, null, null);
+  sparkHistory = [];
   document.getElementById('filterSummary').style.display = 'none';
-  // Clear weekRange so user can type manually
   document.getElementById('weekRange').value = 'All Data';
-  // No previous period comparison possible
-  document.getElementById('prevGoogleLeads').value = -1;
-  document.getElementById('prevLeadsDisplay').value = '';
 }
 
 // ══════════════════════════════════════════════════
-//  MAIN DATE FILTER APPLY
+//  MAIN DATE FILTER — finds 4 weeks automatically
 // ══════════════════════════════════════════════════
 function applyDateFilter(startDate, endDate) {
-  if (!startDate || !endDate) return;
-
-  // ── Filter CRM rows ──────────────────────────────
-  const filteredCRM = (rawCRMRows||[]).filter(row => {
-    const dt = parseCRMDate(row[CRM_DATE_COL]);
-    if (!dt) return false;
-    return dt >= startDate && dt <= endDate;
-  });
-
-  // ── Filter Ads rows ──────────────────────────────
-  const filteredAds = (rawAdsRows||[]).filter(row => {
-    const dt = parseAdsDate(row[0]);
-    if (!dt) return false;
-    return dt >= startDate && dt <= endDate;
-  });
-
-  // ── Previous period (same number of days before start) ──
   const durationMs = endDate.getTime() - startDate.getTime();
-  const prevEnd   = new Date(startDate.getTime() - 86400000); // day before start
-  const prevStart = new Date(prevEnd.getTime() - durationMs);
 
-  const prevCRM = (rawCRMRows||[]).filter(row => {
-    const dt = parseCRMDate(row[CRM_DATE_COL]);
-    if (!dt) return false;
-    return dt >= prevStart && dt <= prevEnd;
+  // Filter CRM rows for current period
+  const currentCRM = crmWeeklyTabs.flatMap(t => t.rows).filter(row => {
+    const dt = parseCRMDate(row[CRM_COL.DATE]);
+    return dt && dt >= startDate && dt <= endDate;
   });
 
-  // Count Google leads in previous period
-  let prevGoogleLeads = 0;
-  for (const row of prevCRM) {
-    if (classifySource(row) === 'Google') prevGoogleLeads++;
+  // Filter Ads rows for current period
+  const currentAds = adsAllRows.filter(row => {
+    const dt = parseAdsDate(row[0]);
+    return dt && dt >= startDate && dt <= endDate;
+  });
+
+  // Build 4-week sparkline history (current week + 3 previous)
+  sparkHistory = [];
+  for (let w = 3; w >= 0; w--) {
+    const wEnd   = new Date(startDate.getTime() - w * (durationMs + 86400000) + durationMs);
+    const wStart = new Date(wEnd.getTime() - durationMs);
+    wEnd.setHours(23,59,59);
+
+    const wCRM = crmWeeklyTabs.flatMap(t => t.rows).filter(row => {
+      const dt = parseCRMDate(row[CRM_COL.DATE]);
+      return dt && dt >= wStart && dt <= wEnd;
+    });
+    const wAds = adsAllRows.filter(row => {
+      const dt = parseAdsDate(row[0]);
+      return dt && dt >= wStart && dt <= wEnd;
+    });
+
+    const crmStats = getCRMStats(wCRM);
+    const adsStats = getAdsStats(wAds);
+    const totalConv = adsStats.c1totalConv + adsStats.c2totalConv;
+    const cpl = totalConv > 0 ? (adsStats.totalCost / totalConv) : 0;
+
+    sparkHistory.push({
+      label: formatShortDate(wStart),
+      googleLeads: crmStats.googleLeads,
+      googleSched: crmStats.googleSched,
+      totalConv,
+      totalCost: adsStats.totalCost,
+      totalClicks: adsStats.totalClicks,
+      cpl,
+      ctr: adsStats.totalImpr > 0 ? (adsStats.totalClicks / adsStats.totalImpr * 100) : 0
+    });
   }
-  document.getElementById('prevGoogleLeads').value = prevGoogleLeads;
-  document.getElementById('prevLeadsDisplay').value = prevGoogleLeads;
 
-  // ── Process filtered data ────────────────────────
-  processCRMRows(filteredCRM);
-  processAdsRows(filteredAds);
+  // Process current period into form fields
+  processCRMRows(currentCRM);
+  processAdsRows(currentAds);
 
-  // ── Update weekRange label ───────────────────────
+  // Update label
   const label = `${formatDateLabel(startDate)} – ${formatDateLabel(endDate)}`;
   document.getElementById('weekRange').value = label;
 
-  // ── Show filter summary ──────────────────────────
-  const prevLabel = `${formatDateLabel(prevStart)} – ${formatDateLabel(prevEnd)}`;
+  // Show summary with detected CRM tabs
+  const matchedTabs = crmWeeklyTabs
+    .filter(t => t.startDate && t.startDate >= new Date(startDate.getTime() - 4 * (durationMs + 86400000)))
+    .map(t => t.tabName).slice(0,4);
+
   const summaryEl = document.getElementById('filterSummary');
   summaryEl.style.display = 'block';
   summaryEl.innerHTML =
-    `<strong>Showing:</strong> ${label} &nbsp;·&nbsp; ` +
-    `${filteredCRM.length} CRM leads · ${filteredAds.length} Ads rows<br>` +
-    `<strong>Previous period:</strong> ${prevLabel} &nbsp;·&nbsp; ${prevGoogleLeads} Google leads`;
+    `<strong>Period:</strong> ${label}<br>` +
+    `<strong>CRM leads found:</strong> ${currentCRM.length} &nbsp;·&nbsp; <strong>Ads rows:</strong> ${currentAds.length}<br>` +
+    `<strong>Sparkline weeks (auto-detected):</strong> ${sparkHistory.map(w=>w.label).join(' → ')}`;
 }
 
 // ══════════════════════════════════════════════════
-//  DRAG & DROP WIRING
+//  DRAG & DROP
 // ══════════════════════════════════════════════════
 function wireDrop(dropId, cardId, handler) {
   const drop = document.getElementById(dropId);
   const card = document.getElementById(cardId);
-  drop.addEventListener('dragover',  e => { e.preventDefault(); card.classList.add('drag-over'); });
+  drop.addEventListener('dragover', e => { e.preventDefault(); card.classList.add('drag-over'); });
   drop.addEventListener('dragleave', () => card.classList.remove('drag-over'));
-  drop.addEventListener('drop', e => {
-    e.preventDefault(); card.classList.remove('drag-over');
-    const f = e.dataTransfer.files[0]; if (f) handler(f);
-  });
+  drop.addEventListener('drop', e => { e.preventDefault(); card.classList.remove('drag-over'); const f = e.dataTransfer.files[0]; if(f) handler(f); });
 }
-wireDrop('crmDrop','crmCard', processCRM);
-wireDrop('adsDrop','adsCard', processAds);
-function handleCRM(e) { if (e.target.files[0]) processCRM(e.target.files[0]); }
-function handleAds(e) { if (e.target.files[0]) processAds(e.target.files[0]); }
+wireDrop('crmDrop','crmCard', processCRMFile);
+wireDrop('adsDrop','adsCard', processAdsFile);
+function handleCRM(e) { if(e.target.files[0]) processCRMFile(e.target.files[0]); }
+function handleAds(e) { if(e.target.files[0]) processAdsFile(e.target.files[0]); }
 
 // ══════════════════════════════════════════════════
 //  CLASSIFICATION HELPERS
@@ -565,353 +559,396 @@ function classifySource(row) {
   if (hear.includes('psychology today')) return 'Psychology Today';
   return 'Referral';
 }
-
 function normaliseServices(raw) {
   if (!raw) return ['Unknown'];
   const v = raw.toString().trim().toLowerCase();
   if (!v) return ['Unknown'];
   return [...new Set(v.split(',').map(p => {
     p = p.trim();
-    if (p.includes('psychotherapy'))                 return 'Psychotherapy';
-    if (p.includes('medication'))                    return 'Medication Management';
+    if (p.includes('psychotherapy'))               return 'Psychotherapy';
+    if (p.includes('medication'))                  return 'Medication Management';
     if (p.includes('couple')||p.includes('couples')) return "Couple's Therapy";
-    if (p.includes('testing'))                       return 'Testing';
-    if (p.includes('unknown')||!p)                   return 'Unknown';
+    if (p.includes('testing'))                     return 'Testing';
+    if (!p || p.includes('unknown'))               return 'Unknown';
     return 'Other';
   }))];
 }
-
 function classifyReason(raw) {
   const v = (raw||'').toString().trim().toLowerCase();
   if (!v) return null;
   if (v.includes('didn')||v.includes('answer')||v.includes('call')||v.includes('lvm')) return 'r_noanswer';
   if (v.includes('incomplete')||v.includes('inquiry')||v.includes('form'))             return 'r_incomplete';
   if (v.includes('hap')||v.includes('insurance')||v.includes('financial'))             return 'r_hap';
-  if (v.includes('esa')||v.includes('emotional support')||v.includes('not offered'))   return 'r_esa';
+  if (v.includes('esa')||v.includes('emotional')||v.includes('not offered'))           return 'r_esa';
   if (v.includes('provider')||v.includes('capacity')||v.includes('available'))         return 'r_noprovider';
   if (v.includes('waitlist')||v.includes('wait list'))                                 return 'r_waitlist';
   return 'r_other';
 }
 
 // ══════════════════════════════════════════════════
-//  CRM CSV PARSE (stores raw, then processes)
+//  CRM EXCEL PARSE — reads all tabs
 // ══════════════════════════════════════════════════
-function processCRM(file) {
+function processCRMFile(file) {
   const statusEl = document.getElementById('crmStatus');
   statusEl.className = 'import-status';
-  Papa.parse(file, {
-    skipEmptyLines: true,
-    complete(results) {
-      try {
-        const rows = results.data;
-        rawCRMRows = rows.slice(1).filter(r =>
-          r[0] && r[0].toString().trim() !== '' &&
-          ((r[CRM_COL.HEAR]||'').toString().trim() !== '' || (r[CRM_COL.SOURCE]||'').toString().trim() !== '')
-        );
-        statusEl.className = 'import-status success';
-        statusEl.innerHTML = `✓ CRM file loaded — ${rawCRMRows.length} leads. Now select a date range above to filter.`;
-        // Auto-apply current filter if dates already set
-        reapplyCurrentFilter();
-      } catch(e) {
-        statusEl.className = 'import-status error';
-        statusEl.textContent = 'Error: ' + e.message;
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      let tabs = [];
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'csv') {
+        // Single CSV fallback
+        const text = new TextDecoder().decode(e.target.result);
+        const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+        const dataRows = rows.slice(1).filter(r => r[0] && r[0].trim());
+        tabs = [{ tabName: 'CRM Data', startDate: null, rows: dataRows }];
+      } else {
+        const wb = XLSX.read(e.target.result, { type:'array', cellDates:true });
+        tabs = wb.SheetNames
+          .filter(n => !n.toLowerCase().includes('patient') && !n.toLowerCase().includes('testimonial'))
+          .map(name => {
+            const ws = wb.Sheets[name];
+            const raw = XLSX.utils.sheet_to_json(ws, { header:1, raw:false, defval:'' });
+            const dataRows = raw.slice(1).filter(r => r[0] && r[0].toString().trim());
+            const startDate = parseTabStartDate(name);
+            return { tabName: name, startDate, rows: dataRows };
+          })
+          .filter(t => t.rows.length > 0)
+          .sort((a,b) => (b.startDate||new Date(0)) - (a.startDate||new Date(0)));
       }
+      crmWeeklyTabs = tabs;
+      const totalLeads = tabs.reduce((s,t) => s + t.rows.length, 0);
+      statusEl.className = 'import-status success';
+      statusEl.innerHTML = `✓ CRM loaded — ${tabs.length} weekly tabs · ${totalLeads} total leads<br>
+        <div class="import-breakdown"><strong>Tabs detected:</strong> ${tabs.slice(0,6).map(t=>t.tabName).join(' · ')}${tabs.length>6?' · ...':''}</div>`;
+      reapplyFilter();
+    } catch(err) {
+      statusEl.className = 'import-status error';
+      statusEl.textContent = 'Error reading CRM file: ' + err.message;
     }
-  });
+  };
+  reader.readAsArrayBuffer(file);
 }
 
 // ══════════════════════════════════════════════════
-//  ADS CSV PARSE (stores raw, then processes)
+//  ADS EXCEL PARSE — reads all daily rows from all tabs
 // ══════════════════════════════════════════════════
-function processAds(file) {
+function parseNum(val) { return parseFloat((val||'').toString().replace(/[^0-9.-]/g,'')) || 0; }
+
+function processAdsFile(file) {
   const statusEl = document.getElementById('adsStatus');
   statusEl.className = 'import-status';
-  Papa.parse(file, {
-    skipEmptyLines: true,
-    complete(results) {
-      try {
-        const rows = results.data;
-        // Find header and store column map
-        adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
-        let convExactFound = false;
-        let dataStartIdx = 0;
-        for (let i = 0; i < rows.length; i++) {
-          if ((rows[i][0]||'').toString().trim() === 'Day' && (rows[i][2]||'').toString().trim() === 'Campaign') {
-            const h = rows[i];
-            for (let j = 0; j < h.length; j++) {
-              const hv = (h[j]||'').toString().trim().toLowerCase();
-              if (hv === 'day')          adsHeaderCols.colDay      = j;
-              if (hv === 'campaign')     adsHeaderCols.colCampaign = j;
-              if (hv === 'clicks')       adsHeaderCols.colClicks   = j;
-              if (hv === 'ctr')          adsHeaderCols.colCTR      = j;
-              if (hv === 'avg. cpc')     adsHeaderCols.colCPC      = j;
-              if (hv === 'impr.')        adsHeaderCols.colImpr     = j;
-              if (hv === 'cost')         adsHeaderCols.colCost     = j;
-              if (hv.includes('phone'))  adsHeaderCols.colPhone    = j;
-              // Prioritise exact "conversions" column; fall back to "conv. (platform...)" if not found
-              if (hv === 'conversions') {
-                adsHeaderCols.colConv = j;
-                convExactFound = true;
-              } else if (!convExactFound && hv.startsWith('conv.') && !hv.includes('cost') && !hv.includes('/')) {
-                adsHeaderCols.colConv = j;
-              }
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      let allRows = [];
+      const ext = file.name.split('.').pop().toLowerCase();
+      if (ext === 'csv') {
+        const text = new TextDecoder().decode(e.target.result);
+        const lines = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+        // Find header
+        let hIdx = 0;
+        for (let i=0; i<lines.length; i++) {
+          if (lines[i][0]==='Day' && lines[i][2]==='Campaign') { hIdx=i; break; }
+        }
+        mapAdsHeader(lines[hIdx]);
+        allRows = lines.slice(hIdx+1).filter(r => r[0] && r[0]!=='Day' && r[0]!=='Total: Account' && r[0].trim());
+      } else {
+        const wb = XLSX.read(e.target.result, { type:'array', raw:false, defval:'' });
+        for (const sheetName of wb.SheetNames) {
+          const ws = wb.Sheets[sheetName];
+          const rows = XLSX.utils.sheet_to_json(ws, { header:1, raw:false, defval:'' });
+          for (let i=0; i<rows.length; i++) {
+            if ((rows[i][0]||'').toString().trim()==='Day' && (rows[i][2]||'').toString().trim()==='Campaign') {
+              mapAdsHeader(rows[i]);
+              const dataRows = rows.slice(i+1).filter(r => {
+                const c0 = (r[0]||'').toString().trim();
+                return c0 && c0!=='Day' && c0!=='Total: Account';
+              });
+              allRows = allRows.concat(dataRows);
             }
-            dataStartIdx = i + 1;
           }
         }
-        // Store only data rows (skip header/blank/total rows)
-        rawAdsRows = rows.slice(dataStartIdx).filter(r => {
-          const cell0 = (r[0]||'').toString().trim();
-          return cell0 && cell0 !== '' && cell0 !== 'Total: Account' && cell0 !== 'Day';
-        });
-        statusEl.className = 'import-status success';
-        statusEl.innerHTML = `✓ Ads file loaded — ${rawAdsRows.length} daily rows. Date filter will be applied automatically.`;
-        reapplyCurrentFilter();
-      } catch(e) {
-        statusEl.className = 'import-status error';
-        statusEl.textContent = 'Error reading Ads CSV: ' + e.message;
       }
+      adsAllRows = allRows;
+      const stats = getAdsStats(allRows);
+      statusEl.className = 'import-status success';
+      statusEl.innerHTML = `✓ Ads loaded — ${allRows.length} daily rows across all weeks
+        <div class="import-breakdown"><strong>Total clicks:</strong> ${stats.totalClicks} · <strong>Total spend:</strong> $${Math.round(stats.totalCost)} · <strong>Platform conv:</strong> ${stats.c1totalConv+stats.c2totalConv}</div>`;
+      reapplyFilter();
+    } catch(err) {
+      statusEl.className = 'import-status error';
+      statusEl.textContent = 'Error reading Ads file: ' + err.message;
     }
-  });
+  };
+  reader.readAsArrayBuffer(file);
 }
 
-// Re-applies whatever filter is currently active after a new upload
-function reapplyCurrentFilter() {
-  if (currentFilterMode === 'week') {
-    const wval = document.getElementById('weekPicker').value;
-    if (wval) applyWeekFilter();
-    else if (rawCRMRows) { processCRMRows(rawCRMRows); }
-    if (rawAdsRows) { processAdsRows(rawAdsRows); }
-  } else if (currentFilterMode === 'custom') {
-    const s = document.getElementById('dateStart').value;
-    const e = document.getElementById('dateEnd').value;
-    if (s && e) applyCustomFilter();
-    else {
-      if (rawCRMRows) processCRMRows(rawCRMRows);
-      if (rawAdsRows) processAdsRows(rawAdsRows);
-    }
-  } else {
-    applyAllDataFilter();
+function mapAdsHeader(headerRow) {
+  let convExact = false;
+  adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
+  for (let j=0; j<headerRow.length; j++) {
+    const h = (headerRow[j]||'').toString().trim().toLowerCase();
+    if (h==='clicks')     adsHeaderCols.colClicks   = j;
+    if (h==='ctr')        adsHeaderCols.colCTR      = j;
+    if (h==='avg. cpc')   adsHeaderCols.colCPC      = j;
+    if (h==='impr.')      adsHeaderCols.colImpr     = j;
+    if (h==='cost')       adsHeaderCols.colCost     = j;
+    if (h.includes('phone')) adsHeaderCols.colPhone = j;
+    if (h==='campaign')   adsHeaderCols.colCampaign = j;
+    if (h==='conversions') { adsHeaderCols.colConv = j; convExact = true; }
+    else if (!convExact && h.startsWith('conv.') && !h.includes('cost') && !h.includes('/')) adsHeaderCols.colConv = j;
   }
 }
 
+function reapplyFilter() {
+  if (currentFilterMode==='week') { const wval=document.getElementById('weekPicker').value; if(wval) applyWeekFilter(); }
+  else if (currentFilterMode==='custom') { const s=document.getElementById('dateStart').value, e2=document.getElementById('dateEnd').value; if(s&&e2) applyCustomFilter(); }
+  else applyAllFilter();
+}
+
 // ══════════════════════════════════════════════════
-//  PROCESS CRM ROWS (after filtering)
+//  STATS CALCULATORS (pure, no side effects)
 // ══════════════════════════════════════════════════
-function processCRMRows(dataRows) {
-  let total = 0, sched = 0, googleLeads = 0, googleSched = 0;
+function getCRMStats(dataRows) {
+  let total=0, sched=0, googleLeads=0, googleSched=0;
   const sources  = { Google:0, Internal:0, Referral:0, 'Psychology Today':0 };
   const services = { Psychotherapy:0, 'Medication Management':0, "Couple's Therapy":0, Testing:0, Unknown:0, Other:0 };
   const reasons  = { r_noanswer:0, r_incomplete:0, r_hap:0, r_esa:0, r_noprovider:0, r_waitlist:0, r_other:0 };
-
   for (const row of dataRows) {
     total++;
-    const isScheduled = (row[CRM_COL.SCHEDULED]||'').toString().trim().toLowerCase() === 'yes';
-    if (isScheduled) sched++;
+    const isSched = (row[CRM_COL.SCHEDULED]||'').toString().trim().toLowerCase()==='yes';
+    if (isSched) sched++;
     const src = classifySource(row);
-    sources[src] = (sources[src]||0) + 1;
-    if (src === 'Google') { googleLeads++; if (isScheduled) googleSched++; }
+    sources[src] = (sources[src]||0)+1;
+    if (src==='Google') { googleLeads++; if(isSched) googleSched++; }
     for (const s of normaliseServices(row[CRM_COL.SERVICE])) { if(services[s]!==undefined) services[s]++; else services.Other++; }
-    if (!isScheduled) { const rk = classifyReason(row[CRM_COL.REASON]); if(rk) reasons[rk]++; }
+    if (!isSched) { const rk=classifyReason(row[CRM_COL.REASON]); if(rk) reasons[rk]++; }
   }
+  return { total, sched, googleLeads, googleSched, sources, services, reasons };
+}
 
-  const sf = (id, val) => { const el = document.getElementById(id); if(el){ el.value=val; el.classList.add('auto-filled'); } };
-  sf('totalLeads', total); sf('scheduledLeads', sched);
-  sf('googleLeads', googleLeads); sf('googleSched', googleSched);
-  sf('r_noanswer', reasons.r_noanswer); sf('r_incomplete', reasons.r_incomplete);
-  sf('r_hap', reasons.r_hap); sf('r_esa', reasons.r_esa);
-  sf('r_noprovider', reasons.r_noprovider); sf('r_waitlist', reasons.r_waitlist); sf('r_other', reasons.r_other);
-  sf('s_psycho', services.Psychotherapy); sf('s_unknown', services.Unknown);
-  sf('s_med', services['Medication Management']); sf('s_testing', services.Testing);
-  sf('s_couples', services["Couple's Therapy"]); sf('s_other', services.Other);
+function getAdsStats(dataRows) {
+  const { colClicks, colCPC, colImpr, colCost, colConv, colPhone, colCampaign } = adsHeaderCols;
+  const c1={clicks:0,impr:0,cost:0,conv:0,phone:0}, c2={clicks:0,impr:0,cost:0,conv:0,phone:0};
+  for (const row of dataRows) {
+    const camp = (row[colCampaign]||'').toString().trim().toLowerCase();
+    const isSearch = camp.includes('generic')||camp.includes('search');
+    const isDSA    = camp.includes('dsa')||camp.includes('wellspring_ad');
+    if (!isSearch&&!isDSA) continue;
+    const t = isSearch?c1:c2;
+    t.clicks += parseNum(row[colClicks]); t.impr += parseNum(row[colImpr]);
+    t.cost   += parseNum(row[colCost]);   t.conv += parseNum(row[colConv]);
+    t.phone  += parseNum(row[colPhone]);
+  }
+  const c1totalConv = c1.conv+c1.phone, c2totalConv = c2.conv+c2.phone;
+  const totalClicks = c1.clicks+c2.clicks, totalImpr = c1.impr+c2.impr;
+  const totalCost   = c1.cost+c2.cost;
+  return { c1, c2, c1totalConv, c2totalConv, totalClicks, totalImpr, totalCost };
+}
 
-  const googleSchedPct = googleLeads ? ((googleSched/googleLeads)*100).toFixed(1) : 0;
-  const srcSummary = Object.entries(sources).filter(([,v])=>v>0).map(([k,v])=>`<strong>${k}:</strong> ${v}`).join(' · ');
+// ══════════════════════════════════════════════════
+//  PROCESS CRM ROWS → fill form fields
+// ══════════════════════════════════════════════════
+function processCRMRows(dataRows) {
+  const stats = getCRMStats(dataRows);
+  const sf = (id, val) => { const el=document.getElementById(id); if(el){el.value=val;el.classList.add('auto-filled');} };
+  sf('totalLeads', stats.total); sf('scheduledLeads', stats.sched);
+  sf('googleLeads', stats.googleLeads); sf('googleSched', stats.googleSched);
+  sf('r_noanswer', stats.reasons.r_noanswer); sf('r_incomplete', stats.reasons.r_incomplete);
+  sf('r_hap', stats.reasons.r_hap); sf('r_esa', stats.reasons.r_esa);
+  sf('r_noprovider', stats.reasons.r_noprovider); sf('r_waitlist', stats.reasons.r_waitlist); sf('r_other', stats.reasons.r_other);
+  sf('s_psycho', stats.services.Psychotherapy); sf('s_unknown', stats.services.Unknown);
+  sf('s_med', stats.services['Medication Management']); sf('s_testing', stats.services.Testing);
+  sf('s_couples', stats.services["Couple's Therapy"]); sf('s_other', stats.services.Other);
 
-  // Update CRM status if already shown
-  const statusEl = document.getElementById('crmStatus');
-  if (statusEl.classList.contains('success')) {
-    statusEl.innerHTML = `✓ ${total} leads in period (${googleLeads} Google)
+  const el = document.getElementById('crmStatus');
+  if (el.classList.contains('success')) {
+    const gPct = stats.googleLeads ? ((stats.googleSched/stats.googleLeads)*100).toFixed(1) : 0;
+    const srcSummary = Object.entries(stats.sources).filter(([,v])=>v>0).map(([k,v])=>`<strong>${k}:</strong> ${v}`).join(' · ');
+    el.innerHTML = `✓ ${stats.total} leads in period (${stats.googleLeads} Google)
       <div class="import-stats">
-        <div class="import-stat"><div class="import-stat-val">${googleLeads}</div><div class="import-stat-label">Google Leads</div></div>
-        <div class="import-stat"><div class="import-stat-val">${googleSched}</div><div class="import-stat-label">Google Sched.</div></div>
-        <div class="import-stat"><div class="import-stat-val">${total-googleLeads}</div><div class="import-stat-label">Other Sources</div></div>
-        <div class="import-stat"><div class="import-stat-val">${googleSchedPct}%</div><div class="import-stat-label">Google Rate</div></div>
+        <div class="import-stat"><div class="import-stat-val">${stats.googleLeads}</div><div class="import-stat-label">Google Leads</div></div>
+        <div class="import-stat"><div class="import-stat-val">${stats.googleSched}</div><div class="import-stat-label">Google Sched.</div></div>
+        <div class="import-stat"><div class="import-stat-val">${stats.total-stats.googleLeads}</div><div class="import-stat-label">Other Sources</div></div>
+        <div class="import-stat"><div class="import-stat-val">${gPct}%</div><div class="import-stat-label">Google Rate</div></div>
       </div>
       <div class="import-breakdown">${srcSummary}</div>`;
   }
 }
 
 // ══════════════════════════════════════════════════
-//  PROCESS ADS ROWS (after filtering)
+//  PROCESS ADS ROWS → fill form fields
 // ══════════════════════════════════════════════════
-function parseNum(val) { return parseFloat((val||'').toString().replace(/[^0-9.-]/g,'')) || 0; }
-
 function processAdsRows(dataRows) {
-  const { colClicks, colCTR, colCPC, colImpr, colCost, colConv, colPhone, colCampaign } = adsHeaderCols;
-  const c1 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
-  const c2 = { clicks:0, impr:0, cost:0, conv:0, phone:0 };
-
-  for (const row of dataRows) {
-    const campaign = (row[colCampaign]||'').toString().trim().toLowerCase();
-    const isSearch = campaign.includes('generic') || campaign.includes('search');
-    const isDSA    = campaign.includes('dsa') || campaign.includes('wellspring_ad');
-    if (!isSearch && !isDSA) continue;
-    const target = isSearch ? c1 : c2;
-    target.clicks += parseNum(row[colClicks]);
-    target.impr   += parseNum(row[colImpr]);
-    target.cost   += parseNum(row[colCost]);
-    target.conv   += parseNum(row[colConv]);
-    target.phone  += parseNum(row[colPhone]);
-  }
-
-  const c1ctr = c1.impr ? (c1.clicks/c1.impr*100) : 0;
-  const c2ctr = c2.impr ? (c2.clicks/c2.impr*100) : 0;
-  const c1cpc = c1.clicks ? (c1.cost/c1.clicks) : 0;
-  const c2cpc = c2.clicks ? (c2.cost/c2.clicks) : 0;
-  const c1totalConv = c1.conv + c1.phone;
-  const c2totalConv = c2.conv + c2.phone;
-  const c1cvr = c1.clicks ? (c1totalConv/c1.clicks*100) : 0;
-  const c2cvr = c2.clicks ? (c2totalConv/c2.clicks*100) : 0;
-
-  const sf = (id, val, decimals=2) => {
-    const el = document.getElementById(id);
-    if (el) { el.value = parseFloat(val.toFixed(decimals)); el.classList.add('auto-filled'); }
-  };
-  sf('c1_conv', c1.conv, 0); sf('c1_phone', c1.phone, 0);
-  sf('c1_clicks', c1.clicks, 0); sf('c1_impr', c1.impr, 0);
-  sf('c1_cpc', c1cpc); sf('c1_cost', c1.cost);
-  sf('c1_cvr', c1cvr); sf('c1_ctr', c1ctr);
-  sf('c2_conv', c2.conv, 0); sf('c2_phone', c2.phone, 0);
-  sf('c2_clicks', c2.clicks, 0); sf('c2_impr', c2.impr, 0);
-  sf('c2_cpc', c2cpc); sf('c2_cost', c2.cost);
-  sf('c2_cvr', c2cvr); sf('c2_ctr', c2ctr);
-  sf('c1_platform_conv', c1totalConv, 0);
-  sf('c2_platform_conv', c2totalConv, 0);
-
-  const totalCost = c1.cost + c2.cost;
-  const totalPlatformConv = c1totalConv + c2totalConv;
-  const statusEl = document.getElementById('adsStatus');
-  if (statusEl.classList.contains('success')) {
-    statusEl.innerHTML = `✓ Ads data for period: ${c1.clicks+c2.clicks} clicks · $${Math.round(totalCost)} spend · ${totalPlatformConv} platform conv
+  const s = getAdsStats(dataRows);
+  const { c1, c2, c1totalConv, c2totalConv, totalClicks, totalImpr, totalCost } = s;
+  const c1ctr = c1.impr?(c1.clicks/c1.impr*100):0, c2ctr = c2.impr?(c2.clicks/c2.impr*100):0;
+  const c1cpc = c1.clicks?(c1.cost/c1.clicks):0,   c2cpc = c2.clicks?(c2.cost/c2.clicks):0;
+  const c1cvr = c1.clicks?(c1totalConv/c1.clicks*100):0, c2cvr = c2.clicks?(c2totalConv/c2.clicks*100):0;
+  const sf2 = (id, val, d=2) => { const el=document.getElementById(id); if(el){el.value=parseFloat(val.toFixed(d));el.classList.add('auto-filled');} };
+  sf2('c1_conv',c1.conv,0); sf2('c1_phone',c1.phone,0); sf2('c1_clicks',c1.clicks,0); sf2('c1_impr',c1.impr,0);
+  sf2('c1_cpc',c1cpc); sf2('c1_cost',c1.cost); sf2('c1_cvr',c1cvr); sf2('c1_ctr',c1ctr);
+  sf2('c2_conv',c2.conv,0); sf2('c2_phone',c2.phone,0); sf2('c2_clicks',c2.clicks,0); sf2('c2_impr',c2.impr,0);
+  sf2('c2_cpc',c2cpc); sf2('c2_cost',c2.cost); sf2('c2_cvr',c2cvr); sf2('c2_ctr',c2ctr);
+  sf2('c1_platform_conv',c1totalConv,0); sf2('c2_platform_conv',c2totalConv,0);
+  const el = document.getElementById('adsStatus');
+  if (el.classList.contains('success')) {
+    el.innerHTML = `✓ Ads data for period: ${totalClicks} clicks · $${Math.round(totalCost)} spend · ${c1totalConv+c2totalConv} platform conv
       <div class="import-stats">
-        <div class="import-stat"><div class="import-stat-val">${c1.clicks+c2.clicks}</div><div class="import-stat-label">Clicks</div></div>
+        <div class="import-stat"><div class="import-stat-val">${totalClicks}</div><div class="import-stat-label">Clicks</div></div>
         <div class="import-stat"><div class="import-stat-val">$${Math.round(totalCost)}</div><div class="import-stat-label">Spend</div></div>
-        <div class="import-stat"><div class="import-stat-val">${totalPlatformConv}</div><div class="import-stat-label">Platform Conv.</div></div>
+        <div class="import-stat"><div class="import-stat-val">${c1totalConv+c2totalConv}</div><div class="import-stat-label">Conv.</div></div>
         <div class="import-stat"><div class="import-stat-val">${c1.impr+c2.impr}</div><div class="import-stat-label">Impr.</div></div>
       </div>
-      <div class="import-breakdown"><strong>Generic Search:</strong> ${c1.clicks} clicks · $${c1.cost.toFixed(2)} · ${c1totalConv} conv &nbsp;·&nbsp; <strong>DSA:</strong> ${c2.clicks} clicks · $${c2.cost.toFixed(2)} · ${c2totalConv} conv</div>`;
+      <div class="import-breakdown"><strong>Search:</strong> ${c1.clicks} clicks · $${c1.cost.toFixed(2)} · ${c1totalConv} conv &nbsp;·&nbsp; <strong>DSA:</strong> ${c2.clicks} clicks · $${c2.cost.toFixed(2)} · ${c2totalConv} conv</div>`;
   }
+}
+
+// ══════════════════════════════════════════════════
+//  SPARKLINE SVG BUILDER
+// ══════════════════════════════════════════════════
+function buildSparkline(values, color, benchmarkValue) {
+  const W=72, H=36, PAD=3;
+  const vals = values.map(v => v||0);
+  const allVals = benchmarkValue != null ? [...vals, benchmarkValue] : vals;
+  const minV = Math.min(...allVals), maxV = Math.max(...allVals);
+  const range = maxV - minV || 1;
+  const toY = v => PAD + (H - 2*PAD) * (1 - (v-minV)/range);
+  const toX = i => PAD + (W - 2*PAD) * (i/(vals.length-1||1));
+
+  const pts = vals.map((v,i) => `${toX(i).toFixed(1)},${toY(v).toFixed(1)}`).join(' ');
+  const lastX = toX(vals.length-1), lastY = toY(vals[vals.length-1]);
+
+  let benchLine = '';
+  if (benchmarkValue != null) {
+    const by = toY(benchmarkValue).toFixed(1);
+    benchLine = `<line x1="${PAD}" y1="${by}" x2="${W-PAD}" y2="${by}" stroke="#DDD5C8" stroke-width="0.8" stroke-dasharray="2,2"/>`;
+  }
+
+  return `<svg width="${W}" height="${H}" viewBox="0 0 ${W} ${H}">
+    ${benchLine}
+    <polyline points="${pts}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+    <circle cx="${lastX.toFixed(1)}" cy="${lastY.toFixed(1)}" r="2.5" fill="${color}"/>
+  </svg>`;
+}
+
+function sparkCard(colorClass, label, value, sub, sparkVals, sparkColor, badge, benchmarkVal, weekLabels) {
+  const spark = sparkHistory.length >= 2
+    ? buildSparkline(sparkVals, sparkColor, benchmarkVal)
+    : '';
+  const wowBadge = badge ? `<span class="kpi-badge ${badge.cls}">${badge.text}</span>` : '';
+  const labels = sparkHistory.length >= 2
+    ? `<div class="spark-labels">${sparkHistory.map(w=>`<span class="spark-lbl">${w.label.replace(' ','<br>')}</span>`).join('')}</div>` : '';
+  return `
+    <div class="kpi-card ${colorClass}">
+      <div class="kpi-top">
+        <div class="kpi-left">
+          <div class="kpi-label">${label}</div>
+          <div class="kpi-value">${value}</div>
+          <div class="kpi-sub">${sub}</div>
+          ${wowBadge}
+        </div>
+        <div class="spark-wrap">${spark}${labels}</div>
+      </div>
+    </div>`;
+}
+
+function wowBadge(current, previous) {
+  if (previous == null || previous === 0) return null;
+  const diff = current - previous;
+  const pct = Math.abs((diff/previous)*100).toFixed(1);
+  if (diff > 0) return { cls:'badge-up', text:`↑ +${pct}% WoW` };
+  if (diff < 0) return { cls:'badge-warn', text:`↓ −${pct}% WoW` };
+  return { cls:'badge-neutral', text:'= No change' };
 }
 
 // ══════════════════════════════════════════════════
 //  FORM HELPERS
 // ══════════════════════════════════════════════════
 function v(id) { const el=document.getElementById(id); if(!el) return ''; return el.type==='checkbox'?el.checked:(el.value||''); }
-function n(id,fb=0) { const val=v(id); if(val===''||val===null||val===undefined) return fb; const p=parseFloat(val); return isNaN(p)?fb:p; }
+function n(id,fb=0) { const val=v(id); if(val===''||val===null) return fb; const p=parseFloat(val); return isNaN(p)?fb:p; }
 function pct(a,b) { return b?((a/b)*100).toFixed(1):'0.0'; }
 function fmt(num) { return '$'+num.toFixed(2); }
 function fmtN(num) { return num.toLocaleString(); }
 function showForm() { document.getElementById('form-view').style.display='block'; document.getElementById('dashboard-view').style.display='none'; Chart.helpers.each(Chart.instances,c=>c.destroy()); }
 
 // ══════════════════════════════════════════════════
-//  DOWNLOAD REPORT AS STANDALONE HTML
+//  DOWNLOAD
 // ══════════════════════════════════════════════════
 function downloadReport() {
-  // Convert any canvas charts to static images first
   document.querySelectorAll('#dashboardContent canvas').forEach(canvas => {
     const img = document.createElement('img');
     img.src = canvas.toDataURL('image/png');
     img.style.cssText = canvas.style.cssText;
-    img.style.maxHeight = '220px';
-    img.style.width = '100%';
+    img.style.maxHeight = '220px'; img.style.width = '100%';
     canvas.parentNode.replaceChild(img, canvas);
   });
-
-  const content   = document.getElementById('dashboardContent').innerHTML;
-  const weekRange = document.querySelector('.report-week')
-    ? document.querySelector('.report-week').textContent.trim()
-    : 'report';
-
-  // Collect all CSS
-  const css = Array.from(document.styleSheets)
-    .map(ss => { try { return Array.from(ss.cssRules).map(r => r.cssText).join('\n'); } catch(e) { return ''; } })
-    .join('\n');
-
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wellspring — ${weekRange}</title>
-<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
-<style>
-${css}
-body { background: #f0ece6 !important; }
-.page { max-width: 1100px; margin: 0 auto; padding: 28px 32px; background: var(--cream, #F7F3EE); min-height: 100vh; }
-</style>
-</head>
-<body>
-<div class="page">
-${content}
-</div>
-</body>
-</html>`;
-
-  const slug     = weekRange.replace(/[^a-zA-Z0-9]+/g, '-').toLowerCase().replace(/^-|-$/g, '');
-  const filename = `wellspring-report-${slug}.html`;
-  const blob     = new Blob([html], { type: 'text/html' });
-  const url      = URL.createObjectURL(blob);
-  const a        = document.createElement('a');
-  a.href = url; a.download = filename; a.click();
+  const content = document.getElementById('dashboardContent').innerHTML;
+  const weekRange = document.querySelector('.report-week') ? document.querySelector('.report-week').textContent.trim() : 'report';
+  const css = Array.from(document.styleSheets).map(ss=>{try{return Array.from(ss.cssRules).map(r=>r.cssText).join('\n');}catch(e){return '';}}).join('\n');
+  const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Wellspring — ${weekRange}</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><style>${css}body{background:#f0ece6!important;}.page{max-width:1100px;margin:0 auto;padding:28px 32px;background:#F7F3EE;min-height:100vh;}</style></head><body><div class="page">${content}</div></body></html>`;
+  const slug = weekRange.replace(/[^a-zA-Z0-9]+/g,'-').toLowerCase().replace(/^-|-$/g,'');
+  const blob = new Blob([html],{type:'text/html'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a'); a.href=url; a.download=`wellspring-report-${slug}.html`; a.click();
   URL.revokeObjectURL(url);
 }
 
 // ══════════════════════════════════════════════════
-//  DASHBOARD GENERATOR
+//  GENERATE DASHBOARD
 // ══════════════════════════════════════════════════
 function generateDashboard() {
   const weekRange  = v('weekRange') || 'This Period';
   const preparedBy = v('preparedBy') || 'Damco Digital';
+  const cplBench   = CPL_BENCHMARK();
 
   const c1 = { conv:n('c1_conv'), phone:n('c1_phone'), clicks:n('c1_clicks'), impr:n('c1_impr'), cpc:n('c1_cpc'), cost:n('c1_cost'), cvr:n('c1_cvr'), ctr:n('c1_ctr') };
   const c2 = { conv:n('c2_conv'), phone:n('c2_phone'), clicks:n('c2_clicks'), impr:n('c2_impr'), cpc:n('c2_cpc'), cost:n('c2_cost'), cvr:n('c2_cvr'), ctr:n('c2_ctr') };
 
-  const totalPhone  = c1.phone + c2.phone;
-  const totalClicks = c1.clicks + c2.clicks;
-  const totalImpr   = c1.impr + c2.impr;
-  const totalCost   = c1.cost + c2.cost;
-  const totalCTR    = totalImpr ? (totalClicks/totalImpr*100).toFixed(2) : '0.00';
+  const totalPhone  = c1.phone+c2.phone;
+  const totalClicks = c1.clicks+c2.clicks;
+  const totalImpr   = c1.impr+c2.impr;
+  const totalCost   = c1.cost+c2.cost;
+  const totalCTR    = totalImpr?(totalClicks/totalImpr*100).toFixed(2):'0.00';
 
-  // Google leads from CRM (current period)
   const totalLeads  = n('totalLeads');
-  const _gl = n('googleLeads', -1);
-  const _gs = n('googleSched', -1);
-  const googleLeads = _gl === -1 ? totalLeads : _gl;
-  const googleSched = _gs === -1 ? n('scheduledLeads') : _gs;
+  const _gl = n('googleLeads',-1), _gs = n('googleSched',-1);
+  const googleLeads = _gl===-1?totalLeads:_gl;
+  const googleSched = _gs===-1?n('scheduledLeads'):_gs;
+  const notScheduled  = googleLeads-googleSched;
+  const scheduledPct  = pct(googleSched, googleLeads);
 
-  // Previous period Google leads (auto-calculated from date filter)
-  const _prev = n('prevGoogleLeads', -1);
-  const prevGoogleLeads = _prev === -1 ? null : _prev;
+  const c1totalConv  = n('c1_platform_conv')||(c1.conv+c1.phone);
+  const c2totalConv  = n('c2_platform_conv')||(c2.conv+c2.phone);
+  const totalAllConv = c1totalConv+c2totalConv;
+  const totalCVR     = totalClicks?(totalAllConv/totalClicks*100).toFixed(2):'0.00';
+  const totalCostPerConv = totalAllConv?totalCost/totalAllConv:0;
+  const c1CostPerConv = c1totalConv?c1.cost/c1totalConv:0;
+  const c2CostPerConv = c2totalConv?c2.cost/c2totalConv:0;
 
-  const notScheduled = googleLeads - googleSched;
-  const scheduledPct = pct(googleSched, googleLeads);
+  // Sparkline data arrays (index 0=oldest, 3=current)
+  const prevWeek = sparkHistory.length >= 2 ? sparkHistory[sparkHistory.length-2] : null;
+  const sparkGL   = sparkHistory.map(w=>w.googleLeads);
+  const sparkGS   = sparkHistory.map(w=>w.googleSched);
+  const sparkConv = sparkHistory.map(w=>w.totalConv);
+  const sparkCost = sparkHistory.map(w=>w.totalCost);
+  const sparkCPL  = sparkHistory.map(w=>w.cpl);
+  const sparkCTR  = sparkHistory.map(w=>w.ctr);
 
-  // Comparison: only show if previous period was calculated
-  let comparisonBadge = '';
-  let comparisonSubtext = '';
+  // CPL status
+  const cplOk = totalCostPerConv <= cplBench;
+  const cplBadge = totalAllConv > 0
+    ? `<span class="${cplOk?'badge-cpl-ok':'badge-cpl-over'}">${cplOk?'✓ Under':'⚠ Over'} $${cplBench} benchmark</span>`
+    : '';
 
-  // Platform conversions from Ads CSV
-  const c1totalConv  = n('c1_platform_conv') !== -1 ? n('c1_platform_conv') : (c1.conv + c1.phone);
-  const c2totalConv  = n('c2_platform_conv') !== -1 ? n('c2_platform_conv') : (c2.conv + c2.phone);
-  const totalAllConv = c1totalConv + c2totalConv;
+  // WoW badges
+  const wowGL  = wowBadge(googleLeads, prevWeek?.googleLeads);
+  const wowGS  = wowBadge(googleSched, prevWeek?.googleSched);
+  const wowCPL = prevWeek?.cpl > 0 ? wowBadge(totalCostPerConv, prevWeek.cpl) : null;
+  const wowCTR = wowBadge(parseFloat(totalCTR), prevWeek?.ctr);
 
-  // Metrics
-  const totalCVR        = totalClicks ? (totalAllConv/totalClicks*100).toFixed(2) : '0.00';
-  const totalCostPerConv = totalAllConv ? totalCost/totalAllConv : 0;
-  const c1CostPerConv   = c1totalConv ? c1.cost/c1totalConv : 0;
-  const c2CostPerConv   = c2totalConv ? c2.cost/c2totalConv : 0;
-
+  // Reasons / Services
   const reasons = [
     { label:"Didn't Answer Consult Call", count:n('r_noanswer'), color:'var(--red)' },
     { label:'Incomplete Inquiry',         count:n('r_incomplete'), color:'var(--red)' },
@@ -935,7 +972,7 @@ function generateDashboard() {
   const topService    = services[0]||{label:'Psychotherapy',count:0};
   const topSvcPct     = pct(topService.count,totalSvcLeads);
 
-  const showHAP    = v('showHAPFlag');
+  const showHAP = v('showHAPFlag');
   const customFlag = v('customFlag');
   const customObs  = v('customObs').trim();
   const customActions = v('customActions').trim();
@@ -947,47 +984,34 @@ function generateDashboard() {
       ${customFlag?`<br>${customFlag}`:''}
     </div></div>` : '';
 
-  const prevInsight = prevGoogleLeads !== null
-    ? `We moved from ${prevGoogleLeads} to ${googleLeads} Google-sourced leads period-on-period.`
-    : `${googleLeads} Google-sourced leads this period.`;
-
-  // Parse manual observations — each line = one card
-  // Prefix !!  = rust/red highlight
-  // Prefix !   = amber highlight
-  // No prefix  = default teal
   function parseObsCards(text) {
-    return text.split('\n').map(l => l.trim()).filter(Boolean).map(line => {
-      let cls = '';
-      if (line.startsWith('!!'))      { cls = 'rust';  line = line.slice(2).trim(); }
-      else if (line.startsWith('!'))  { cls = 'amber'; line = line.slice(1).trim(); }
-      // Bold everything up to and including the first full stop
-      const dot = line.indexOf('.');
-      const html = dot > 0
-        ? `<strong>${line.slice(0, dot+1)}</strong>${line.slice(dot+1)}`
-        : `<strong>${line}</strong>`;
+    return text.split('\n').map(l=>l.trim()).filter(Boolean).map(line => {
+      let cls='';
+      if (line.startsWith('!!'))     { cls='rust';  line=line.slice(2).trim(); }
+      else if (line.startsWith('!')) { cls='amber'; line=line.slice(1).trim(); }
+      const dot=line.indexOf('.');
+      const html = dot>0?`<strong>${line.slice(0,dot+1)}</strong>${line.slice(dot+1)}`:`<strong>${line}</strong>`;
       return `<div class="insight-card ${cls}">${html}</div>`;
     }).join('');
   }
-
-  // Parse manual actions — each line = one numbered step
-  // **text** becomes <strong>text</strong>
   function parseActionsCards(text) {
-    return text.split('\n').map(l => l.trim()).filter(Boolean).map((line, i) => {
-      const html = line.replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>');
-      return `<div class="next-step"><div class="step-num">${i+1}</div><div class="step-text">${html}</div></div>`;
-    }).join('');
+    return text.split('\n').map(l=>l.trim()).filter(Boolean).map((line,i) =>
+      `<div class="next-step"><div class="step-num">${i+1}</div><div class="step-text">${line.replace(/\*\*(.+?)\*\*/g,'<strong>$1</strong>')}</div></div>`
+    ).join('');
   }
 
-  const obsSection = customObs
-    ? parseObsCards(customObs)
+  const prevInsight = prevWeek != null
+    ? `We moved from ${prevWeek.googleLeads} to ${googleLeads} Google-sourced leads week-on-week.`
+    : `${googleLeads} Google-sourced leads this period.`;
+
+  const obsSection = customObs ? parseObsCards(customObs)
     : `<div class="insight-card"><strong>Conversions are trending in the right direction.</strong> ${prevInsight} Without increasing spend, the campaigns are becoming more efficient.</div>
        <div class="insight-card amber"><strong>DSA is our strongest performer this period.</strong> Cost per conversion of ${fmt(c2CostPerConv)} on DSA vs. ${fmt(c1CostPerConv)} on Search, with CTR of ${c2.ctr.toFixed(2)}% confirming strong intent match.</div>
        <div class="insight-card rust"><strong>${scheduledPct}% of Google leads scheduled.</strong> Several leads could not convert due to service or provider gaps. We recommend the Wellspring team reviews capacity as a parallel action.</div>
        <div class="insight-card amber"><strong>${topService.label} is driving most inbound volume at ${topSvcPct}%.</strong> We plan to test copy redirecting ADHD, Anxiety, and ADD queries toward medication management.</div>
        <div class="insight-card"><strong>${n('r_noanswer')} lead(s) went uncontacted after the consult call.</strong> We'd like to explore improving the re-contact rate together.</div>`;
 
-  const actionsSection = customActions
-    ? parseActionsCards(customActions)
+  const actionsSection = customActions ? parseActionsCards(customActions)
     : `<div class="next-step"><div class="step-num">1</div><div class="step-text"><strong>Increase budget allocation toward DSA.</strong> At ${fmt(c2CostPerConv)} CPA and ${c2.ctr.toFixed(2)}% CTR, DSA is significantly outperforming Search.</div></div>
        <div class="next-step"><div class="step-num">2</div><div class="step-text"><strong>Improve the missed-call follow-up process.</strong> With ${n('r_noanswer')} lead(s) uncontacted, review timing, channel, and messaging to improve re-contact rate.</div></div>
        <div class="next-step"><div class="step-num">3</div><div class="step-text"><strong>Add ESA-related negative keywords.</strong> Adding "ESA letter" as a negative will reduce wasted spend on leads that cannot be served.</div></div>
@@ -995,8 +1019,7 @@ function generateDashboard() {
        <div class="next-step"><div class="step-num">5</div><div class="step-text"><strong>Review re-engagement sequence together.</strong> Bring intent signals, query patterns, and peak response windows to sharpen timing for better conversion on missed calls.</div></div>`;
 
   const reasonBars = reasons.map(r => {
-    const pv = pct(r.count,totalNotSched);
-    const fw = Math.max(15,(r.count/totalNotSched)*100);
+    const pv=pct(r.count,totalNotSched), fw=Math.max(15,(r.count/totalNotSched)*100);
     return `<div class="hbar-row"><div class="hbar-label">${r.label}</div><div class="hbar-track"><div class="hbar-fill" style="width:${fw}%;background:${r.color};"><span class="hbar-pct">${pv}%</span></div></div><div class="hbar-count">${r.count}</div></div>`;
   }).join('');
 
@@ -1012,17 +1035,36 @@ function generateDashboard() {
     ${flagSection}
     <div class="section-label">Platform Overview: Google Ads</div>
     <div class="kpi-grid">
-      <div class="kpi-card">
-        <div class="kpi-label">Total Conversions</div>
-        <div class="kpi-value">${googleLeads}</div>
-        <div class="kpi-sub">Ads platform conv: ${totalAllConv}</div>
-        ${comparisonBadge}
+      ${sparkCard('', 'Total Conversions', googleLeads,
+        `Ads conv: ${totalAllConv}`,
+        sparkGL, '#3D7A72', wowGL, null)}
+      ${sparkCard('amber', 'Scheduled (Google)', googleSched,
+        `${scheduledPct}% of Google leads`,
+        sparkGS, '#C9882A', wowGS, null)}
+      ${sparkCard('violet', 'Total Spend', '$'+Math.round(totalCost),
+        'This period',
+        sparkCost, '#5C4E9E', null, null)}
+      ${sparkCard('green', 'Conv. Rate', totalCVR+'%',
+        `${totalClicks} clicks`,
+        sparkCTR, '#3D8A60', wowCTR, null)}
+      <div class="kpi-card rust">
+        <div class="kpi-top">
+          <div class="kpi-left">
+            <div class="kpi-label">Cost / Conv.</div>
+            <div class="kpi-value">$${Math.round(totalCostPerConv)}</div>
+            <div class="kpi-sub">DSA: ${fmt(c2CostPerConv)}</div>
+            ${cplBadge}
+            ${wowCPL?`<span class="kpi-badge ${wowCPL.cls}" style="display:block;margin-top:2px;">${wowCPL.text}</span>`:''}
+          </div>
+          <div class="spark-wrap">
+            ${sparkHistory.length>=2 ? buildSparkline(sparkCPL, '#C25B3F', cplBench) : ''}
+            ${sparkHistory.length>=2 ? `<div class="spark-labels">${sparkHistory.map(w=>`<span class="spark-lbl">${w.label.replace(' ','<br>')}</span>`).join('')}</div>` : ''}
+          </div>
+        </div>
       </div>
-      <div class="kpi-card amber"><div class="kpi-label">Scheduled (Google)</div><div class="kpi-value">${googleSched}</div><div class="kpi-sub">${scheduledPct}% of Google leads</div><span class="kpi-badge badge-up">Quality leads</span></div>
-      <div class="kpi-card violet"><div class="kpi-label">Total Spend</div><div class="kpi-value">$${Math.round(totalCost)}</div><div class="kpi-sub">This period</div><span class="kpi-badge badge-neutral">Budget on track</span></div>
-      <div class="kpi-card green"><div class="kpi-label">Conv. Rate</div><div class="kpi-value">${totalCVR}%</div><div class="kpi-sub">${totalClicks} clicks</div><span class="kpi-badge badge-up">Healthy</span></div>
-      <div class="kpi-card rust"><div class="kpi-label">Cost / Conv.</div><div class="kpi-value">$${Math.round(totalCostPerConv)}</div><div class="kpi-sub">DSA: ${fmt(c2CostPerConv)}</div><span class="kpi-badge badge-up">↓ DSA efficient</span></div>
-      <div class="kpi-card pink"><div class="kpi-label">Avg. CTR</div><div class="kpi-value">${totalCTR}%</div><div class="kpi-sub">${fmtN(totalImpr)} impressions</div><span class="kpi-badge badge-up">Strong</span></div>
+      ${sparkCard('pink', 'Avg. CTR', totalCTR+'%',
+        `${fmtN(totalImpr)} impressions`,
+        sparkCTR, '#C4527A', null, null)}
     </div>
     <div class="two-col">
       <div class="panel">
@@ -1045,7 +1087,7 @@ function generateDashboard() {
             </tr>
             <tr class="total-row">
               <td><strong>Total</strong></td>
-              <td><strong>${c1.conv + c2.conv}</strong></td><td><strong>${totalPhone}</strong></td><td><strong>${totalClicks}</strong></td>
+              <td><strong>${c1.conv+c2.conv}</strong></td><td><strong>${totalPhone}</strong></td><td><strong>${totalClicks}</strong></td>
               <td><strong>${totalCTR}%</strong></td><td><strong>${fmt(c1.cpc+c2.cpc)}</strong></td>
               <td><strong>${fmt(totalCost)}</strong></td><td><strong>${fmt(totalCostPerConv)}</strong></td>
             </tr>
@@ -1079,18 +1121,15 @@ function generateDashboard() {
     <hr class="divider">
     <div class="two-col">
       <div><div class="section-label">Key Observations</div>${obsSection}</div>
-      <div>
-        <div class="section-label">Actions and Recommendations</div>
-        ${actionsSection}
-      </div>
+      <div><div class="section-label">Actions and Recommendations</div>${actionsSection}</div>
     </div>
     <div class="footer">
       <div class="footer-left">Prepared by <strong>${preparedBy}</strong> &nbsp;·&nbsp; Confidential: For Wellspring Team Use Only<br>Data source: Google Ads + CRM &nbsp;·&nbsp; ${weekRange}</div>
       <div class="footer-right">Wellspring Therapeutic Partners</div>
     </div>`;
 
-  document.getElementById('form-view').style.display = 'none';
-  document.getElementById('dashboard-view').style.display = 'block';
+  document.getElementById('form-view').style.display='none';
+  document.getElementById('dashboard-view').style.display='block';
   window.scrollTo(0,0);
 
   setTimeout(() => {
