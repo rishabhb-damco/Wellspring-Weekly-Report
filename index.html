@@ -463,8 +463,23 @@ function applyAllFilter() {
 // ══════════════════════════════════════════════════
 //  MAIN DATE FILTER — finds 4 weeks automatically
 // ══════════════════════════════════════════════════
+function getSundaySaturdayWeeks(startDate, endDate) {
+  const firstSun = new Date(startDate);
+  firstSun.setDate(firstSun.getDate() - firstSun.getDay());
+  firstSun.setHours(0,0,0,0);
+  const weeks = [];
+  let wStart = new Date(firstSun);
+  while (wStart <= endDate) {
+    const wEnd = new Date(wStart);
+    wEnd.setDate(wStart.getDate() + 6);
+    wEnd.setHours(23,59,59,999);
+    weeks.push({ start: new Date(wStart), end: new Date(wEnd) });
+    wStart.setDate(wStart.getDate() + 7);
+  }
+  return weeks;
+}
+
 function applyDateFilter(startDate, endDate) {
-  const durationMs = endDate.getTime() - startDate.getTime();
 
   // Filter CRM rows for current period
   const currentCRM = crmWeeklyTabs.flatMap(t => t.rows).filter(row => {
@@ -478,20 +493,20 @@ function applyDateFilter(startDate, endDate) {
     return dt && dt >= startDate && dt <= endDate;
   });
 
-  // Build 4-week sparkline history (current week + 3 previous)
+  // Build sparklines from Sunday-Saturday calendar weeks within selected range
+  // First week may include a few days from previous month to complete Sun-Sat
+  const calWeeks = getSundaySaturdayWeeks(startDate, endDate);
+  const sparkWeeks = calWeeks.slice(-4); // up to last 4 weeks
   sparkHistory = [];
-  for (let w = 3; w >= 0; w--) {
-    const wEnd   = new Date(startDate.getTime() - w * (durationMs + 86400000) + durationMs);
-    const wStart = new Date(wEnd.getTime() - durationMs);
-    wEnd.setHours(23,59,59);
 
+  for (const week of sparkWeeks) {
     const wCRM = crmWeeklyTabs.flatMap(t => t.rows).filter(row => {
       const dt = parseCRMDate(row[CRM_COL.DATE]);
-      return dt && dt >= wStart && dt <= wEnd;
+      return dt && dt >= week.start && dt <= week.end;
     });
     const wAds = adsAllRows.filter(row => {
       const dt = parseAdsDate(row[0]);
-      return dt && dt >= wStart && dt <= wEnd;
+      return dt && dt >= week.start && dt <= week.end;
     });
 
     const crmStats = getCRMStats(wCRM);
@@ -500,7 +515,7 @@ function applyDateFilter(startDate, endDate) {
     const cpl = totalConv > 0 ? (adsStats.totalCost / totalConv) : 0;
 
     sparkHistory.push({
-      label: formatShortDate(wStart),
+      label: formatShortDate(week.start),
       googleLeads: crmStats.googleLeads,
       googleSched: crmStats.googleSched,
       totalConv,
@@ -529,7 +544,7 @@ function applyDateFilter(startDate, endDate) {
   summaryEl.innerHTML =
     `<strong>Period:</strong> ${label}<br>` +
     `<strong>CRM leads found:</strong> ${currentCRM.length} &nbsp;·&nbsp; <strong>Ads rows:</strong> ${currentAds.length}<br>` +
-    `<strong>Sparkline weeks (auto-detected):</strong> ${sparkHistory.map(w=>w.label).join(' → ')}`;
+    `<strong>Sparkline weeks (Sun–Sat):</strong> ${sparkWeeks.map(w=>formatShortDate(w.start)+' – '+formatShortDate(w.end)).join(' → ')}`;
 }
 
 // ══════════════════════════════════════════════════
