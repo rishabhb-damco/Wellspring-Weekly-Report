@@ -958,7 +958,7 @@ function generateDashboard() {
     : '';
 
   // WoW badges
-  const wowGL  = wowBadge(googleLeads, prevWeek?.googleLeads);
+  const wowGL  = wowBadge(totalAllConv, prevWeek?.totalConv);
   const wowGS  = wowBadge(googleSched, prevWeek?.googleSched);
   const wowCPL = prevWeek?.cpl > 0 ? wowBadge(totalCostPerConv, prevWeek.cpl) : null;
   const wowCTR = wowBadge(parseFloat(totalCTR), prevWeek?.ctr);
@@ -1050,9 +1050,9 @@ function generateDashboard() {
     ${flagSection}
     <div class="section-label">Platform Overview: Google Ads</div>
     <div class="kpi-grid">
-      ${sparkCard('', 'Total Conversions', googleLeads,
-        `Ads conv: ${totalAllConv}`,
-        sparkGL, '#3D7A72', wowGL, null)}
+      ${sparkCard('', 'Total Conversions', totalAllConv,
+        `Google CRM leads: ${googleLeads}`,
+        sparkConv, '#3D7A72', wowGL, null)}
       ${sparkCard('amber', 'Scheduled (Google)', googleSched,
         `${scheduledPct}% of Google leads`,
         sparkGS, '#C9882A', wowGS, null)}
