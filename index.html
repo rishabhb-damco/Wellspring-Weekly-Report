@@ -100,9 +100,9 @@
   .badge-up{background:#E8F5EC;color:#2E7D4F;}.badge-neutral{background:#F0EDE8;color:#6B6460;}.badge-warn{background:#FDF6EC;color:#C9882A;}
   .badge-cpl-ok{background:#E8F5EC;color:#2E7D4F;font-size:9px;padding:1px 6px;border-radius:10px;display:inline-block;margin-top:2px;}
   .badge-cpl-over{background:#FDF1EE;color:#C25B3F;font-size:9px;padding:1px 6px;border-radius:10px;display:inline-block;margin-top:2px;}
-  .spark-wrap{width:72px;flex-shrink:0;margin-left:8px;}
-  .spark-labels{display:flex;justify-content:space-between;margin-top:4px;}
-  .spark-lbl{font-size:8px;color:var(--warm-mid);}
+  .spark-wrap{width:80px;flex-shrink:0;margin-left:6px;}
+  .spark-labels{display:flex;justify-content:space-between;margin-top:3px;}
+  .spark-lbl{font-size:8.5px;color:var(--charcoal);font-weight:500;text-align:center;line-height:1.3;}
   .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
   .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
   .panel-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--charcoal);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
@@ -384,23 +384,64 @@ const CPL_BENCHMARK = () => parseFloat(document.getElementById('cplBenchmark').v
 // ══════════════════════════════════════════════════
 //  DATE HELPERS
 // ══════════════════════════════════════════════════
-function parseCRMDate(str) {
-  if (!str) return null;
-  const s = str.toString().trim();
-  const parts = s.split('/');
-  if (parts.length === 3) {
-    let y = parseInt(parts[2]); if (y < 100) y += 2000;
-    const dt = new Date(y, parseInt(parts[0])-1, parseInt(parts[1]));
-    dt.setHours(0,0,0,0); return isNaN(dt.getTime()) ? null : dt;
+// Universal date parser — handles all formats Excel and CSV can produce:
+// "2026-03-25", "3/25/2026", "3/25/26", "25/3/2026", "March 25, 2026",
+// Excel serial numbers (numeric), JS Date objects
+function parseAnyDate(val) {
+  if (!val && val !== 0) return null;
+
+  // Already a Date object
+  if (val instanceof Date) {
+    const dt = new Date(val); dt.setHours(0,0,0,0);
+    return isNaN(dt.getTime()) ? null : dt;
   }
-  const dt = new Date(s); dt.setHours(0,0,0,0);
-  return isNaN(dt.getTime()) ? null : dt;
+
+  // Excel serial number (number type)
+  if (typeof val === 'number') {
+    // Excel epoch: Jan 1 1900 = 1, with leap year bug correction
+    const d = new Date(Math.round((val - 25569) * 86400 * 1000));
+    d.setHours(0,0,0,0);
+    return isNaN(d.getTime()) ? null : d;
+  }
+
+  const s = val.toString().trim();
+  if (!s || s === '-') return null;
+
+  // YYYY-MM-DD
+  if (/^\d{4}-\d{1,2}-\d{1,2}$/.test(s)) {
+    const dt = new Date(s + 'T00:00:00');
+    dt.setHours(0,0,0,0);
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+
+  // M/D/YYYY or M/D/YY
+  if (/^\d{1,2}\/\d{1,2}\/\d{2,4}$/.test(s)) {
+    const p = s.split('/');
+    let y = parseInt(p[2]); if (y < 100) y += 2000;
+    const dt = new Date(y, parseInt(p[0])-1, parseInt(p[1]));
+    dt.setHours(0,0,0,0);
+    return isNaN(dt.getTime()) ? null : dt;
+  }
+
+  // D/M/YYYY (European) — only if day > 12 makes it unambiguous
+  if (/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(s)) {
+    const p = s.split('/');
+    if (parseInt(p[0]) > 12) {
+      const dt = new Date(parseInt(p[2]), parseInt(p[1])-1, parseInt(p[0]));
+      dt.setHours(0,0,0,0);
+      return isNaN(dt.getTime()) ? null : dt;
+    }
+  }
+
+  // Fallback: let JS parse it
+  const dt = new Date(s);
+  if (!isNaN(dt.getTime())) { dt.setHours(0,0,0,0); return dt; }
+
+  return null;
 }
-function parseAdsDate(str) {
-  if (!str) return null;
-  const dt = new Date(str.toString().trim() + 'T00:00:00');
-  return isNaN(dt.getTime()) ? null : dt;
-}
+
+function parseCRMDate(val) { return parseAnyDate(val); }
+function parseAdsDate(val) { return parseAnyDate(val); }
 function formatShortDate(dt) {
   return dt.toLocaleDateString('en-US', { month:'short', day:'numeric' });
 }
@@ -493,10 +534,20 @@ function applyDateFilter(startDate, endDate) {
     return dt && dt >= startDate && dt <= endDate;
   });
 
-  // Build sparklines from Sunday-Saturday calendar weeks within selected range
-  // First week may include a few days from previous month to complete Sun-Sat
-  const calWeeks = getSundaySaturdayWeeks(startDate, endDate);
-  const sparkWeeks = calWeeks.slice(-4); // up to last 4 weeks
+  // Always build 4 Sun-Sat weeks ending at the week that contains endDate
+  // Find the Sunday on or before endDate first, then go back 3 weeks
+  const endSun = new Date(endDate);
+  endSun.setDate(endSun.getDate() - endSun.getDay()); // back to Sunday of current week
+  endSun.setHours(0,0,0,0);
+  const sparkWeeks = [];
+  for (let i = 3; i >= 0; i--) {
+    const wStart = new Date(endSun);
+    wStart.setDate(endSun.getDate() - i * 7);
+    const wEnd = new Date(wStart);
+    wEnd.setDate(wStart.getDate() + 6);
+    wEnd.setHours(23,59,59,999);
+    sparkWeeks.push({ start: wStart, end: wEnd });
+  }
   sparkHistory = [];
 
   for (const week of sparkWeeks) {
@@ -669,10 +720,10 @@ function processAdsFile(file) {
         mapAdsHeader(lines[hIdx]);
         allRows = lines.slice(hIdx+1).filter(r => r[0] && r[0]!=='Day' && r[0]!=='Total: Account' && r[0].trim());
       } else {
-        const wb = XLSX.read(e.target.result, { type:'array', raw:false, defval:'' });
+        const wb = XLSX.read(e.target.result, { type:'array', cellDates:true, defval:'' });
         for (const sheetName of wb.SheetNames) {
           const ws = wb.Sheets[sheetName];
-          const rows = XLSX.utils.sheet_to_json(ws, { header:1, raw:false, defval:'' });
+          const rows = XLSX.utils.sheet_to_json(ws, { header:1, raw:true, defval:'' });
           for (let i=0; i<rows.length; i++) {
             if ((rows[i][0]||'').toString().trim()==='Day' && (rows[i][2]||'').toString().trim()==='Campaign') {
               mapAdsHeader(rows[i]);
@@ -686,9 +737,12 @@ function processAdsFile(file) {
         }
       }
       adsAllRows = allRows;
+      const sampleDates = allRows.slice(0,3).map(r => JSON.stringify(r[0])).join(' | ');
+      const parsedSample = allRows.slice(0,3).map(r => { const d=parseAnyDate(r[0]); return d?d.toISOString().slice(0,10):'null'; }).join(' | ');
       const stats = getAdsStats(allRows);
       statusEl.className = 'import-status success';
       statusEl.innerHTML = `✓ Ads loaded — ${allRows.length} daily rows across all weeks
+        <div class="import-breakdown"><strong>Date format:</strong> ${sampleDates}<br><strong>Parsed as:</strong> ${parsedSample}</div>
         <div class="import-breakdown"><strong>Total clicks:</strong> ${stats.totalClicks} · <strong>Total spend:</strong> $${Math.round(stats.totalCost)} · <strong>Platform conv:</strong> ${stats.c1totalConv+stats.c2totalConv}</div>`;
       reapplyFilter();
     } catch(err) {
@@ -848,13 +902,16 @@ function buildSparkline(values, color, benchmarkValue) {
   </svg>`;
 }
 
-function sparkCard(colorClass, label, value, sub, sparkVals, sparkColor, badge, benchmarkVal, weekLabels) {
+function sparkCard(colorClass, label, value, sub, sparkVals, sparkColor, badge, benchmarkVal, formatter) {
+  const fmt2 = formatter || (v => Math.round(v||0));
   const spark = sparkHistory.length >= 2
     ? buildSparkline(sparkVals, sparkColor, benchmarkVal)
     : '';
   const wowBadge = badge ? `<span class="kpi-badge ${badge.cls}">${badge.text}</span>` : '';
-  const labels = sparkHistory.length >= 2
-    ? `<div class="spark-labels">${sparkHistory.map(w=>`<span class="spark-lbl">${w.label.replace(' ','<br>')}</span>`).join('')}</div>` : '';
+  const valueLabels = sparkHistory.length >= 2
+    ? `<div class="spark-labels">${sparkVals.map((val, i) =>
+        `<span class="spark-lbl">${fmt2(val)}<br><span style="font-size:7px;color:#9E9589;">${sparkHistory[i]?.label||''}</span></span>`
+      ).join('')}</div>` : '';
   return `
     <div class="kpi-card ${colorClass}">
       <div class="kpi-top">
@@ -864,9 +921,9 @@ function sparkCard(colorClass, label, value, sub, sparkVals, sparkColor, badge, 
           <div class="kpi-sub">${sub}</div>
           ${wowBadge}
         </div>
-        <div class="spark-wrap">${spark}${labels}</div>
+        <div class="spark-wrap">${spark}${valueLabels}</div>
       </div>
-    </div>`;
+    </div>`;\
 }
 
 function wowBadge(current, previous) {
@@ -1052,16 +1109,16 @@ function generateDashboard() {
     <div class="kpi-grid">
       ${sparkCard('', 'Total Conversions', totalAllConv,
         `Google CRM leads: ${googleLeads}`,
-        sparkConv, '#3D7A72', wowGL, null)}
+        sparkConv, '#3D7A72', wowGL, null, v => Math.round(v||0))}
       ${sparkCard('amber', 'Scheduled (Google)', googleSched,
         `${scheduledPct}% of Google leads`,
-        sparkGS, '#C9882A', wowGS, null)}
+        sparkGS, '#C9882A', wowGS, null, v => Math.round(v||0))}
       ${sparkCard('violet', 'Total Spend', '$'+Math.round(totalCost),
         'This period',
-        sparkCost, '#5C4E9E', null, null)}
+        sparkCost, '#5C4E9E', null, null, v => '$'+Math.round(v||0))}
       ${sparkCard('green', 'Conv. Rate', totalCVR+'%',
         `${totalClicks} clicks`,
-        sparkCTR, '#3D8A60', wowCTR, null)}
+        sparkCTR, '#3D8A60', wowCTR, null, v => (v||0).toFixed(1)+'%')}
       <div class="kpi-card rust">
         <div class="kpi-top">
           <div class="kpi-left">
@@ -1073,13 +1130,13 @@ function generateDashboard() {
           </div>
           <div class="spark-wrap">
             ${sparkHistory.length>=2 ? buildSparkline(sparkCPL, '#C25B3F', cplBench) : ''}
-            ${sparkHistory.length>=2 ? `<div class="spark-labels">${sparkHistory.map(w=>`<span class="spark-lbl">${w.label.replace(' ','<br>')}</span>`).join('')}</div>` : ''}
+            ${sparkHistory.length>=2 ? `<div class="spark-labels">${sparkCPL.map((val,i)=>`<span class="spark-lbl">$${Math.round(val||0)}<br><span style="font-size:7px;color:#9E9589;">${sparkHistory[i]?.label||''}</span></span>`).join('')}</div>` : ''}
           </div>
         </div>
       </div>
       ${sparkCard('pink', 'Avg. CTR', totalCTR+'%',
         `${fmtN(totalImpr)} impressions`,
-        sparkCTR, '#C4527A', null, null)}
+        sparkCTR, '#C4527A', null, null, v => (v||0).toFixed(1)+'%')}
     </div>
     <div class="two-col">
       <div class="panel">
