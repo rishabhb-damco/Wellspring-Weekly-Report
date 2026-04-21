@@ -77,15 +77,13 @@ body { background: rgb(240, 236, 230); font-family: "DM Sans", sans-serif; color
 .header-meta .report-prepared { font-size: 11px; color: var(--warm-mid); margin-top: 4px; }
 .section-label { font-size: 9px; text-transform: uppercase; letter-spacing: 3px; color: var(--teal); font-weight: 500; margin-bottom: 8px; }
 .kpi-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; margin-bottom: 16px; }
-.kpi-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 10px; padding: 12px 16px; position: relative; overflow: hidden; }
+.kpi-card { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 10px; padding: 14px 18px; position: relative; overflow: hidden; }
 .kpi-card::before { content: ""; position: absolute; top: 0px; left: 0px; right: 0px; height: 3px; background: var(--teal); border-radius: 10px 10px 0px 0px; }
 .kpi-card.amber::before { background: var(--amber); }
 .kpi-card.violet::before { background: var(--violet); }
 .kpi-card.green::before { background: var(--green); }
 .kpi-card.rust::before { background: var(--rust); }
 .kpi-card.pink::before { background: var(--pink); }
-.kpi-top { display: flex; justify-content: space-between; align-items: flex-start; }
-.kpi-left { flex: 1 1 0%; }
 .kpi-label { font-size: 10px; text-transform: uppercase; letter-spacing: 1.5px; color: var(--warm-mid); font-weight: 500; margin-bottom: 4px; }
 .kpi-value { font-family: "Cormorant Garamond", serif; font-size: 38px; font-weight: 600; color: var(--charcoal); line-height: 1; }
 .kpi-sub { font-size: 11px; color: var(--warm-mid); margin-top: 3px; }
@@ -95,9 +93,6 @@ body { background: rgb(240, 236, 230); font-family: "DM Sans", sans-serif; color
 .badge-warn { background: rgb(253, 246, 236); color: rgb(201, 136, 42); }
 .badge-cpl-ok { background: rgb(232, 245, 236); color: rgb(46, 125, 79); font-size: 9px; padding: 1px 6px; border-radius: 10px; display: inline-block; margin-top: 2px; }
 .badge-cpl-over { background: rgb(253, 241, 238); color: rgb(194, 91, 63); font-size: 9px; padding: 1px 6px; border-radius: 10px; display: inline-block; margin-top: 2px; }
-.spark-wrap { width: 80px; flex-shrink: 0; margin-left: 6px; }
-.spark-labels { display: flex; justify-content: space-between; margin-top: 3px; }
-.spark-lbl { font-size: 8.5px; color: var(--charcoal); font-weight: 500; text-align: center; line-height: 1.3; }
 .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 12px; }
 .panel { background: rgb(255, 255, 255); border: 1px solid var(--border); border-radius: 12px; padding: 16px 18px; }
 .panel-title { font-family: "Cormorant Garamond", serif; font-size: 16px; font-weight: 600; color: var(--charcoal); margin-bottom: 10px; display: flex; align-items: center; gap: 8px; }
@@ -158,102 +153,45 @@ canvas { max-height: 220px; }
     <div class="kpi-grid">
       
     <div class="kpi-card ">
-      <div class="kpi-top">
-        <div class="kpi-left">
-          <div class="kpi-label">Total Conversions</div>
-          <div class="kpi-value">10</div>
-          <div class="kpi-sub">Google CRM leads: 6</div>
-          
-        </div>
-        <div class="spark-wrap"><svg width="72" height="36" viewBox="0 0 72 36">
-    
-    <polyline points="3.0,33.0 25.0,33.0 47.0,33.0 69.0,3.0" fill="none" stroke="#3D7A72" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    <circle cx="69.0" cy="3.0" r="2.5" fill="#3D7A72"></circle>
-  </svg><div class="spark-labels"><span class="spark-lbl">0<br><span style="font-size:7px;color:#9E9589;">Mar 22</span></span><span class="spark-lbl">0<br><span style="font-size:7px;color:#9E9589;">Mar 29</span></span><span class="spark-lbl">0<br><span style="font-size:7px;color:#9E9589;">Apr 5</span></span><span class="spark-lbl">10<br><span style="font-size:7px;color:#9E9589;">Apr 12</span></span></div></div>
-      </div>
+      <div class="kpi-label">Total Conversions</div>
+      <div class="kpi-value">10</div>
+      <div class="kpi-sub">Google CRM leads: 6</div>
+      
     </div>
       
     <div class="kpi-card amber">
-      <div class="kpi-top">
-        <div class="kpi-left">
-          <div class="kpi-label">Scheduled (Google)</div>
-          <div class="kpi-value">3</div>
-          <div class="kpi-sub">50.0% of Google leads</div>
-          <span class="kpi-badge badge-up">↑ +50.0% WoW</span>
-        </div>
-        <div class="spark-wrap"><svg width="72" height="36" viewBox="0 0 72 36">
-    
-    <polyline points="3.0,33.0 25.0,33.0 47.0,18.0 69.0,3.0" fill="none" stroke="#C9882A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    <circle cx="69.0" cy="3.0" r="2.5" fill="#C9882A"></circle>
-  </svg><div class="spark-labels"><span class="spark-lbl">1<br><span style="font-size:7px;color:#9E9589;">Mar 22</span></span><span class="spark-lbl">1<br><span style="font-size:7px;color:#9E9589;">Mar 29</span></span><span class="spark-lbl">2<br><span style="font-size:7px;color:#9E9589;">Apr 5</span></span><span class="spark-lbl">3<br><span style="font-size:7px;color:#9E9589;">Apr 12</span></span></div></div>
-      </div>
+      <div class="kpi-label">Scheduled (Google)</div>
+      <div class="kpi-value">3</div>
+      <div class="kpi-sub">50.0% of Google leads</div>
+      <span class="kpi-badge badge-up">↑ +50.0% WoW</span>
     </div>
       
     <div class="kpi-card violet">
-      <div class="kpi-top">
-        <div class="kpi-left">
-          <div class="kpi-label">Total Spend</div>
-          <div class="kpi-value">$490</div>
-          <div class="kpi-sub">This period</div>
-          
-        </div>
-        <div class="spark-wrap"><svg width="72" height="36" viewBox="0 0 72 36">
-    
-    <polyline points="3.0,33.0 25.0,33.0 47.0,33.0 69.0,3.0" fill="none" stroke="#5C4E9E" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    <circle cx="69.0" cy="3.0" r="2.5" fill="#5C4E9E"></circle>
-  </svg><div class="spark-labels"><span class="spark-lbl">$0<br><span style="font-size:7px;color:#9E9589;">Mar 22</span></span><span class="spark-lbl">$0<br><span style="font-size:7px;color:#9E9589;">Mar 29</span></span><span class="spark-lbl">$0<br><span style="font-size:7px;color:#9E9589;">Apr 5</span></span><span class="spark-lbl">$490<br><span style="font-size:7px;color:#9E9589;">Apr 12</span></span></div></div>
-      </div>
+      <div class="kpi-label">Total Spend</div>
+      <div class="kpi-value">$490</div>
+      <div class="kpi-sub">This period</div>
+      
     </div>
       
     <div class="kpi-card green">
-      <div class="kpi-top">
-        <div class="kpi-left">
-          <div class="kpi-label">Conv. Rate</div>
-          <div class="kpi-value">7.75%</div>
-          <div class="kpi-sub">129 clicks</div>
-          
-        </div>
-        <div class="spark-wrap"><svg width="72" height="36" viewBox="0 0 72 36">
-    
-    <polyline points="3.0,33.0 25.0,33.0 47.0,33.0 69.0,3.0" fill="none" stroke="#3D8A60" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    <circle cx="69.0" cy="3.0" r="2.5" fill="#3D8A60"></circle>
-  </svg><div class="spark-labels"><span class="spark-lbl">0.0%<br><span style="font-size:7px;color:#9E9589;">Mar 22</span></span><span class="spark-lbl">0.0%<br><span style="font-size:7px;color:#9E9589;">Mar 29</span></span><span class="spark-lbl">0.0%<br><span style="font-size:7px;color:#9E9589;">Apr 5</span></span><span class="spark-lbl">5.9%<br><span style="font-size:7px;color:#9E9589;">Apr 12</span></span></div></div>
-      </div>
+      <div class="kpi-label">Conv. Rate</div>
+      <div class="kpi-value">7.75%</div>
+      <div class="kpi-sub">129 clicks</div>
+      
     </div>
       <div class="kpi-card rust">
-        <div class="kpi-top">
-          <div class="kpi-left">
-            <div class="kpi-label">Cost / Conv.</div>
-            <div class="kpi-value">$49</div>
-            <div class="kpi-sub">DSA: $29.83</div>
-            <span class="badge-cpl-ok">✓ Under $100 benchmark</span>
-            
-          </div>
-          <div class="spark-wrap">
-            <svg width="72" height="36" viewBox="0 0 72 36">
-    <line x1="3" y1="3.0" x2="69" y2="3.0" stroke="#DDD5C8" stroke-width="0.8" stroke-dasharray="2,2"></line>
-    <polyline points="3.0,33.0 25.0,33.0 47.0,33.0 69.0,18.3" fill="none" stroke="#C25B3F" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    <circle cx="69.0" cy="18.3" r="2.5" fill="#C25B3F"></circle>
-  </svg>
-            <div class="spark-labels"><span class="spark-lbl">$0<br><span style="font-size:7px;color:#9E9589;">Mar 22</span></span><span class="spark-lbl">$0<br><span style="font-size:7px;color:#9E9589;">Mar 29</span></span><span class="spark-lbl">$0<br><span style="font-size:7px;color:#9E9589;">Apr 5</span></span><span class="spark-lbl">$49<br><span style="font-size:7px;color:#9E9589;">Apr 12</span></span></div>
-          </div>
-        </div>
+        <div class="kpi-label">Cost / Conv.</div>
+        <div class="kpi-value">$49</div>
+        <div class="kpi-sub">DSA: $29.83</div>
+        <span class="badge-cpl-ok">✓ Under $100 benchmark</span>
+        
       </div>
       
     <div class="kpi-card pink">
-      <div class="kpi-top">
-        <div class="kpi-left">
-          <div class="kpi-label">Avg. CTR</div>
-          <div class="kpi-value">5.94%</div>
-          <div class="kpi-sub">2,171 impressions</div>
-          
-        </div>
-        <div class="spark-wrap"><svg width="72" height="36" viewBox="0 0 72 36">
-    
-    <polyline points="3.0,33.0 25.0,33.0 47.0,33.0 69.0,3.0" fill="none" stroke="#C4527A" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"></polyline>
-    <circle cx="69.0" cy="3.0" r="2.5" fill="#C4527A"></circle>
-  </svg><div class="spark-labels"><span class="spark-lbl">0.0%<br><span style="font-size:7px;color:#9E9589;">Mar 22</span></span><span class="spark-lbl">0.0%<br><span style="font-size:7px;color:#9E9589;">Mar 29</span></span><span class="spark-lbl">0.0%<br><span style="font-size:7px;color:#9E9589;">Apr 5</span></span><span class="spark-lbl">5.9%<br><span style="font-size:7px;color:#9E9589;">Apr 12</span></span></div></div>
-      </div>
+      <div class="kpi-label">Avg. CTR</div>
+      <div class="kpi-value">5.94%</div>
+      <div class="kpi-sub">2,171 impressions</div>
+      
     </div>
     </div>
     <div class="two-col">
