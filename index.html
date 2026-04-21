@@ -378,7 +378,22 @@ let adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13,
 // Sparkline history — array of { label, googleLeads, googleSched, totalConv, totalCost, totalClicks, cpl }
 let sparkHistory = [];
 
-const CRM_COL = { DATE:1, HEAR:9, SOURCE:10, SERVICE:12, SCHEDULED:15, REASON:16 };
+// Build CRM column map dynamically from header row — resilient to column reordering
+function buildCRMColMap(headerRow) {
+  const map = { DATE:1, HEAR:9, SOURCE:10, SERVICE:12, SCHEDULED:15, REASON:16 }; // safe defaults
+  if (!headerRow) return map;
+  headerRow.forEach((cell, i) => {
+    const h = (cell||'').toString().toLowerCase().trim();
+    if (h.includes('date opportunity') || h.includes('date lead') || h.includes('lead was generated')) map.DATE = i;
+    if (h.includes('how did you hear'))   map.HEAR      = i;
+    if (h === 'source')                   map.SOURCE    = i;
+    if (h.includes('type of services') || h.includes('services are you looking')) map.SERVICE = i;
+    if (h.includes('did they schedule'))  map.SCHEDULED = i;
+    if (h.includes('reason not scheduled') || h.includes('reason not sched')) map.REASON = i;
+  });
+  return map;
+}
+let CRM_COL = { DATE:1, HEAR:9, SOURCE:10, SERVICE:12, SCHEDULED:15, REASON:16 };
 const CPL_BENCHMARK = () => parseFloat(document.getElementById('cplBenchmark').value) || 100;
 
 // ══════════════════════════════════════════════════
@@ -493,9 +508,13 @@ function applyCustomFilter() {
   applyDateFilter(new Date(s+'T00:00:00'), new Date(e+'T00:00:00'));
 }
 function applyAllFilter() {
-  const allCRM = crmWeeklyTabs.flatMap(t => t.rows);
+  const allCRM = [];
+  for (const t of crmWeeklyTabs) {
+    const cm = t.colMap || CRM_COL;
+    t.rows.forEach(row => allCRM.push({ row, colMap: cm }));
+  }
   processCRMRows(allCRM);
-  processAdsRows(adsAllRows, null, null);
+  processAdsRows(adsAllRows);
   sparkHistory = [];
   document.getElementById('filterSummary').style.display = 'none';
   document.getElementById('weekRange').value = 'All Data';
@@ -523,10 +542,15 @@ function getSundaySaturdayWeeks(startDate, endDate) {
 function applyDateFilter(startDate, endDate) {
 
   // Filter CRM rows for current period
-  const currentCRM = crmWeeklyTabs.flatMap(t => t.rows).filter(row => {
-    const dt = parseCRMDate(row[CRM_COL.DATE]);
-    return dt && dt >= startDate && dt <= endDate;
-  });
+  // Each tab may have its own colMap — we process per-tab to respect column order
+  const currentCRM = [];
+  for (const t of crmWeeklyTabs) {
+    const cm = t.colMap || CRM_COL;
+    for (const row of t.rows) {
+      const dt = parseCRMDate(row[cm.DATE]);
+      if (dt && dt >= startDate && dt <= endDate) currentCRM.push({ row, colMap: cm });
+    }
+  }
 
   // Filter Ads rows for current period
   const currentAds = adsAllRows.filter(row => {
@@ -551,10 +575,14 @@ function applyDateFilter(startDate, endDate) {
   sparkHistory = [];
 
   for (const week of sparkWeeks) {
-    const wCRM = crmWeeklyTabs.flatMap(t => t.rows).filter(row => {
-      const dt = parseCRMDate(row[CRM_COL.DATE]);
-      return dt && dt >= week.start && dt <= week.end;
-    });
+    const wCRM = [];
+    for (const t of crmWeeklyTabs) {
+      const cm = t.colMap || CRM_COL;
+      for (const row of t.rows) {
+        const dt = parseCRMDate(row[cm.DATE]);
+        if (dt && dt >= week.start && dt <= week.end) wCRM.push({ row, colMap: cm });
+      }
+    }
     const wAds = adsAllRows.filter(row => {
       const dt = parseAdsDate(row[0]);
       return dt && dt >= week.start && dt <= week.end;
@@ -616,14 +644,28 @@ function handleAds(e) { if(e.target.files[0]) processAdsFile(e.target.files[0]);
 // ══════════════════════════════════════════════════
 //  CLASSIFICATION HELPERS
 // ══════════════════════════════════════════════════
-function classifySource(row) {
-  const hear   = (row[CRM_COL.HEAR]  ||'').toString().trim().toLowerCase();
-  const source = (row[CRM_COL.SOURCE]||'').toString().trim().toLowerCase();
+function classifySource(row, colMap) {
+  const cm = colMap || CRM_COL;
+  const hear   = (row[cm.HEAR]  ||'').toString().trim().toLowerCase();
+  const source = (row[cm.SOURCE]||'').toString().trim().toLowerCase();
+
+  // Rule 1: Internal
   if (source === 'internal') return 'Internal';
+
+  // Rule 2: Google explicit
   if (source === 'google ads' || hear === 'google') return 'Google';
+
+  // Rule 3: Google implicit (no referral info)
   if (hear === '' || hear === '-' || hear === 'other' || hear === 'online') return 'Google';
+
+  // Rule 4: Psychology Today
   if (hear.includes('psychology today')) return 'Psychology Today';
-  return 'Referral';
+
+  // Rule 5: Referral — Col K is "external" or Col J has a named person/org
+  if (source === 'external' || source === 'referral' || hear.length > 0) return 'Referral';
+
+  // Rule 6: Other — safety net for anything that slips through
+  return 'Other';
 }
 function normaliseServices(raw) {
   if (!raw) return ['Unknown'];
@@ -666,8 +708,11 @@ function processCRMFile(file) {
         // Single CSV fallback
         const text = new TextDecoder().decode(e.target.result);
         const rows = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+        const headerRow = rows[0] || [];
+        const colMap = buildCRMColMap(headerRow);
         const dataRows = rows.slice(1).filter(r => r[0] && r[0].trim());
-        tabs = [{ tabName: 'CRM Data', startDate: null, rows: dataRows }];
+        CRM_COL = colMap; // update global for this CSV
+        tabs = [{ tabName: 'CRM Data', startDate: null, rows: dataRows, colMap }];
       } else {
         const wb = XLSX.read(e.target.result, { type:'array', cellDates:true });
         tabs = wb.SheetNames
@@ -675,9 +720,11 @@ function processCRMFile(file) {
           .map(name => {
             const ws = wb.Sheets[name];
             const raw = XLSX.utils.sheet_to_json(ws, { header:1, raw:false, defval:'' });
+            const headerRow = raw[0] || [];
+            const colMap = buildCRMColMap(headerRow);
             const dataRows = raw.slice(1).filter(r => r[0] && r[0].toString().trim());
             const startDate = parseTabStartDate(name);
-            return { tabName: name, startDate, rows: dataRows };
+            return { tabName: name, startDate, rows: dataRows, colMap };
           })
           .filter(t => t.rows.length > 0)
           .sort((a,b) => (b.startDate||new Date(0)) - (a.startDate||new Date(0)));
@@ -781,18 +828,21 @@ function reapplyFilter() {
 // ══════════════════════════════════════════════════
 function getCRMStats(dataRows) {
   let total=0, sched=0, googleLeads=0, googleSched=0;
-  const sources  = { Google:0, Internal:0, Referral:0, 'Psychology Today':0 };
+  const sources  = { Google:0, Internal:0, Referral:0, 'Psychology Today':0, Other:0 };
   const services = { Psychotherapy:0, 'Medication Management':0, "Couple's Therapy":0, Testing:0, Unknown:0, Other:0 };
   const reasons  = { r_noanswer:0, r_incomplete:0, r_hap:0, r_esa:0, r_noprovider:0, r_waitlist:0, r_other:0 };
-  for (const row of dataRows) {
+  for (const item of dataRows) {
+    // Support both plain rows and {row, colMap} wrapped objects
+    const row = item.row !== undefined ? item.row : item;
+    const cm  = item.colMap || CRM_COL;
     total++;
-    const isSched = (row[CRM_COL.SCHEDULED]||'').toString().trim().toLowerCase()==='yes';
+    const isSched = (row[cm.SCHEDULED]||'').toString().trim().toLowerCase()==='yes';
     if (isSched) sched++;
-    const src = classifySource(row);
+    const src = classifySource(row, cm);
     sources[src] = (sources[src]||0)+1;
     if (src==='Google') { googleLeads++; if(isSched) googleSched++; }
-    for (const s of normaliseServices(row[CRM_COL.SERVICE])) { if(services[s]!==undefined) services[s]++; else services.Other++; }
-    if (!isSched) { const rk=classifyReason(row[CRM_COL.REASON]); if(rk) reasons[rk]++; }
+    for (const s of normaliseServices(row[cm.SERVICE])) { if(services[s]!==undefined) services[s]++; else services.Other++; }
+    if (!isSched) { const rk=classifyReason(row[cm.REASON]); if(rk) reasons[rk]++; }
   }
   return { total, sched, googleLeads, googleSched, sources, services, reasons };
 }
@@ -923,7 +973,7 @@ function sparkCard(colorClass, label, value, sub, sparkVals, sparkColor, badge, 
         </div>
         <div class="spark-wrap">${spark}${valueLabels}</div>
       </div>
-    </div>`;\
+    </div>`;
 }
 
 function wowBadge(current, previous) {
