@@ -414,7 +414,8 @@ function parseAnyDate(val) {
     return isNaN(d.getTime()) ? null : d;
   }
 
-  const s = val.toString().trim();
+  // Strip null bytes (UTF-16LE artefact from some Excel exports)
+  const s = val.toString().replace(/\u0000/g, '').trim();
   if (!s || s === '-') return null;
 
   // YYYY-MM-DD
@@ -469,13 +470,55 @@ function weekPickerToRange(weekStr) {
 }
 
 // Parse tab name like "4/5/26-4/11/26" or "4/12/2026-4/18/2026"
+// Parse tab name like "4/12/2026-4/18/2026" or "4122026-4182026"
+// Returns { start, end } dates
+function parseTabDateRange(tabName) {
+  // Try slash format first: "4/12/2026-4/18/2026"
+  let m = tabName.match(/^(\d{1,2})\/(\d{1,2})\/(\d{2,4})[-–](\d{1,2})\/(\d{1,2})\/(\d{2,4})/);
+  if (m) {
+    let y1 = parseInt(m[3]); if (y1 < 100) y1 += 2000;
+    let y2 = parseInt(m[6]); if (y2 < 100) y2 += 2000;
+    const s = new Date(y1, parseInt(m[1])-1, parseInt(m[2])); s.setHours(0,0,0,0);
+    const e = new Date(y2, parseInt(m[4])-1, parseInt(m[5])); e.setHours(23,59,59,999);
+    return { start: s, end: e };
+  }
+  // Try compact format: "4526-41126", "32926-4426", "4122026-4182026"
+  m = tabName.match(/^(\d+)-(\d+)$/);
+  if (m) {
+    const parseCompact = str => {
+      // 4 digits  = M/D/YY    e.g. 4526  = Apr 5 2026
+      // 5 digits  = M/DD/YY   e.g. 41126 = Apr 11 2026
+      // 6 digits  = MM/DD/YY  e.g. 32226 = Mar 22 2026
+      // 7 digits  = M/DD/YYYY e.g. 4122026 = Apr 12 2026
+      // 8 digits  = MM/DD/YYYY
+      const n = str.length;
+      let mo, dd, yy;
+      if (n === 4)  { mo=str.slice(0,1); dd=str.slice(1,2); yy=parseInt(str.slice(2))+2000; }
+      else if (n===5) { mo=str.slice(0,1); dd=str.slice(1,3); yy=parseInt(str.slice(3))+2000; }
+      else if (n===6) {
+        // Ambiguous: MM/DD/YY (e.g. 032226) OR M/D/YYYY (e.g. 382026 = 3/8/2026)
+        // If first 2 chars > 12 as a month, it must be M+D+YYYY
+        if (parseInt(str.slice(0,2)) > 12) { mo=str.slice(0,1); dd=str.slice(1,2); yy=parseInt(str.slice(2)); }
+        else { mo=str.slice(0,2); dd=str.slice(2,4); yy=parseInt(str.slice(4))+2000; }
+      }
+      else if (n===7) { mo=str.slice(0,1); dd=str.slice(1,3); yy=parseInt(str.slice(3)); }
+      else if (n===8) { mo=str.slice(0,2); dd=str.slice(2,4); yy=parseInt(str.slice(4)); }
+      else return null;
+      const dt = new Date(yy, parseInt(mo)-1, parseInt(dd));
+      return isNaN(dt.getTime()) ? null : dt;
+    };
+    const s = parseCompact(m[1]); const e = parseCompact(m[2]);
+    if (s && e) {
+      s.setHours(0,0,0,0); e.setHours(23,59,59,999);
+      return { start: s, end: e };
+    }
+  }
+  return null;
+}
+
 function parseTabStartDate(tabName) {
-  const m = tabName.match(/^(\d+)\/(\d+)\/(\d+)/);
-  if (!m) return null;
-  let y = parseInt(m[3]); if (y < 100) y += 2000;
-  const dt = new Date(y, parseInt(m[1])-1, parseInt(m[2]));
-  dt.setHours(0,0,0,0);
-  return isNaN(dt.getTime()) ? null : dt;
+  const r = parseTabDateRange(tabName);
+  return r ? r.start : null;
 }
 
 // ══════════════════════════════════════════════════
@@ -536,14 +579,17 @@ function getSundaySaturdayWeeks(startDate, endDate) {
 
 function applyDateFilter(startDate, endDate) {
 
-  // Filter CRM rows for current period
-  // Each tab may have its own colMap — we process per-tab to respect column order
+  // Filter CRM rows by TAB date range — tab name is the source of truth for which week
+  // a lead belongs to, not the individual row date
   const currentCRM = [];
   for (const t of crmWeeklyTabs) {
     const cm = t.colMap || CRM_COL;
-    for (const row of t.rows) {
-      const dt = parseCRMDate(row[cm.DATE]);
-      if (dt && dt >= startDate && dt <= endDate) currentCRM.push({ row, colMap: cm });
+    // Include this tab if its week overlaps the selected period
+    const tabStart = t.startDate, tabEnd = t.endDate || t.startDate;
+    if (!tabStart) continue;
+    // Tab overlaps if: tabStart <= selectedEnd AND tabEnd >= selectedStart
+    if (tabStart <= endDate && tabEnd >= startDate) {
+      for (const row of t.rows) currentCRM.push({ row, colMap: cm });
     }
   }
 
@@ -573,9 +619,10 @@ function applyDateFilter(startDate, endDate) {
     const wCRM = [];
     for (const t of crmWeeklyTabs) {
       const cm = t.colMap || CRM_COL;
-      for (const row of t.rows) {
-        const dt = parseCRMDate(row[cm.DATE]);
-        if (dt && dt >= week.start && dt <= week.end) wCRM.push({ row, colMap: cm });
+      const tabStart = t.startDate, tabEnd = t.endDate || t.startDate;
+      if (!tabStart) continue;
+      if (tabStart <= week.end && tabEnd >= week.start) {
+        for (const row of t.rows) wCRM.push({ row, colMap: cm });
       }
     }
     const wAds = adsAllRows.filter(row => {
@@ -718,8 +765,10 @@ function processCRMFile(file) {
             const headerRow = raw[0] || [];
             const colMap = buildCRMColMap(headerRow);
             const dataRows = raw.slice(1).filter(r => r[0] && r[0].toString().trim());
-            const startDate = parseTabStartDate(name);
-            return { tabName: name, startDate, rows: dataRows, colMap };
+            const tabRange = parseTabDateRange(name);
+            const startDate = tabRange ? tabRange.start : null;
+            const endDate   = tabRange ? tabRange.end   : null;
+            return { tabName: name, startDate, endDate, rows: dataRows, colMap };
           })
           .filter(t => t.rows.length > 0)
           .sort((a,b) => (b.startDate||new Date(0)) - (a.startDate||new Date(0)));
@@ -741,7 +790,7 @@ function processCRMFile(file) {
 // ══════════════════════════════════════════════════
 //  ADS EXCEL PARSE — reads all daily rows from all tabs
 // ══════════════════════════════════════════════════
-function parseNum(val) { return parseFloat((val||'').toString().replace(/[^0-9.-]/g,'')) || 0; }
+function parseNum(val) { return parseFloat((val||'').toString().replace(/\u0000/g,'').replace(/[^0-9.-]/g,'')) || 0; }
 
 function processAdsFile(file) {
   const statusEl = document.getElementById('adsStatus');
@@ -799,7 +848,7 @@ function mapAdsHeader(headerRow) {
   let convExact = false;
   adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
   for (let j=0; j<headerRow.length; j++) {
-    const h = (headerRow[j]||'').toString().trim().toLowerCase();
+    const h = (headerRow[j]||'').toString().replace(/\u0000/g,'').trim().toLowerCase();
     if (h==='clicks')     adsHeaderCols.colClicks   = j;
     if (h==='ctr')        adsHeaderCols.colCTR      = j;
     if (h==='avg. cpc')   adsHeaderCols.colCPC      = j;
