@@ -761,7 +761,8 @@ function processCRMFile(file) {
           .filter(n => !n.toLowerCase().includes('patient') && !n.toLowerCase().includes('testimonial'))
           .map(name => {
             const ws = wb.Sheets[name];
-            const raw = XLSX.utils.sheet_to_json(ws, { header:1, raw:false, defval:'' });
+            const rawRead = XLSX.utils.sheet_to_json(ws, { header:1, raw:false, defval:'' });
+            const raw = rawRead.map(row => row.map(cell => typeof cell === 'string' ? cell.replace(/\u0000/g,'') : cell));
             const headerRow = raw[0] || [];
             const colMap = buildCRMColMap(headerRow);
             const dataRows = raw.slice(1).filter(r => r[0] && r[0].toString().trim());
@@ -814,7 +815,8 @@ function processAdsFile(file) {
         const wb = XLSX.read(e.target.result, { type:'array', cellDates:true, defval:'' });
         for (const sheetName of wb.SheetNames) {
           const ws = wb.Sheets[sheetName];
-          const rows = XLSX.utils.sheet_to_json(ws, { header:1, raw:true, defval:'' });
+          const rowsRaw = XLSX.utils.sheet_to_json(ws, { header:1, raw:true, defval:'' });
+          const rows = rowsRaw.map(row => row.map(cell => typeof cell === 'string' ? cell.replace(/\u0000/g,'') : cell));
           for (let i=0; i<rows.length; i++) {
             if ((rows[i][0]||'').toString().trim()==='Day' && (rows[i][2]||'').toString().trim()==='Campaign') {
               mapAdsHeader(rows[i]);
