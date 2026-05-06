@@ -802,8 +802,20 @@ function processAdsFile(file) {
       let allRows = [];
       const ext = file.name.split('.').pop().toLowerCase();
       if (ext === 'csv') {
-        const text = new TextDecoder().decode(e.target.result);
-        const lines = text.split('\n').map(r => r.split(',').map(c => c.replace(/^"|"$/g,'').trim()));
+        // Handle UTF-16LE (with BOM) or UTF-8
+        let text;
+        const bytes = new Uint8Array(e.target.result);
+        if (bytes[0] === 0xFF && bytes[1] === 0xFE) {
+          // UTF-16LE BOM detected
+          text = new TextDecoder('utf-16le').decode(e.target.result);
+        } else {
+          text = new TextDecoder('utf-8').decode(e.target.result);
+        }
+        text = text.replace(/\u0000/g,'').replace(/\uFEFF/g,''); // strip null bytes and BOM
+        // Detect delimiter — Google Ads exports use tabs
+        const firstLine = text.split('\n')[0];
+        const delim = firstLine.includes('\t') ? '\t' : ',';
+        const lines = text.split('\n').map(r => r.split(delim).map(c => c.replace(/^"|"$/g,'').trim()));
         // Find header
         let hIdx = 0;
         for (let i=0; i<lines.length; i++) {
@@ -816,7 +828,16 @@ function processAdsFile(file) {
         for (const sheetName of wb.SheetNames) {
           const ws = wb.Sheets[sheetName];
           const rowsRaw = XLSX.utils.sheet_to_json(ws, { header:1, raw:true, defval:'' });
-          const rows = rowsRaw.map(row => row.map(cell => typeof cell === 'string' ? cell.replace(/\u0000/g,'') : cell));
+          const rows = rowsRaw.map(row => {
+            // Strip null bytes from every cell
+            const cleaned = row.map(cell => typeof cell === 'string' ? cell.replace(/\u0000/g,'') : cell);
+            // If entire row came as single tab-delimited string (UTF-16LE CSV misread by XLSX)
+            // split it into proper columns
+            if (cleaned.length <= 2 && typeof cleaned[0] === 'string' && cleaned[0].includes('\t')) {
+              return cleaned[0].split('\t');
+            }
+            return cleaned;
+          });
           for (let i=0; i<rows.length; i++) {
             if ((rows[i][0]||'').toString().trim()==='Day' && (rows[i][2]||'').toString().trim()==='Campaign') {
               mapAdsHeader(rows[i]);
