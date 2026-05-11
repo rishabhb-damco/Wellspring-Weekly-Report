@@ -633,7 +633,7 @@ function applyDateFilter(startDate, endDate) {
     const crmStats = getCRMStats(wCRM);
     const adsStats = getAdsStats(wAds);
     const totalConv = adsStats.c1totalConv + adsStats.c2totalConv;
-    const cpl = totalConv > 0 ? (adsStats.totalCost / totalConv) : 0;
+    const cpl = crmStats.googleLeads > 0 ? (adsStats.totalCost / crmStats.googleLeads) : 0;
 
     sparkHistory.push({
       label: formatShortDate(week.start),
@@ -706,8 +706,8 @@ function classifySource(row, colMap) {
   // Rule 5: Referral — Col K is "external" or Col J has a named person/org
   if (source === 'external' || source === 'referral' || hear.length > 0) return 'Referral';
 
-  // Rule 6: Other — safety net for anything that slips through
-  return 'Other';
+  // Rule 6: Google — unidentified sources fall to Google (no other bracket applies)
+  return 'Google';
 }
 function normaliseServices(raw) {
   if (!raw) return ['Unknown'];
@@ -1102,7 +1102,8 @@ function generateDashboard() {
   const c2totalConv  = n('c2_platform_conv')||(c2.conv+c2.phone);
   const totalAllConv = c1totalConv+c2totalConv;
   const totalCVR     = totalClicks?(totalAllConv/totalClicks*100).toFixed(2):'0.00';
-  const totalCostPerConv = totalAllConv?totalCost/totalAllConv:0;
+  const totalCostPerConv = googleLeads?totalCost/googleLeads:0;
+  const totalPlatformCPA  = totalAllConv?totalCost/totalAllConv:0;
   const c1CostPerConv = c1totalConv?c1.cost/c1totalConv:0;
   const c2CostPerConv = c2totalConv?c2.cost/c2totalConv:0;
 
@@ -1227,9 +1228,9 @@ function generateDashboard() {
         `${totalClicks} clicks`,
         sparkCTR, '#3D8A60', wowCTR, null, v => (v||0).toFixed(1)+'%')}
       <div class="kpi-card rust">
-        <div class="kpi-label">Cost / Conv.</div>
+        <div class="kpi-label">Cost Per Lead (CRM)</div>
         <div class="kpi-value">$${Math.round(totalCostPerConv)}</div>
-        <div class="kpi-sub">DSA: ${fmt(c2CostPerConv)}</div>
+        <div class="kpi-sub">${googleLeads} Google CRM leads</div>
         ${cplBadge}
         ${wowCPL?`<span class="kpi-badge ${wowCPL.cls}" style="display:block;margin-top:2px;">${wowCPL.text}</span>`:''}
       </div>
@@ -1260,7 +1261,7 @@ function generateDashboard() {
               <td><strong>Total</strong></td>
               <td><strong>${c1.conv+c2.conv}</strong></td><td><strong>${totalPhone}</strong></td><td><strong>${totalClicks}</strong></td>
               <td><strong>${totalCTR}%</strong></td><td><strong>${fmt(c1.cpc+c2.cpc)}</strong></td>
-              <td><strong>${fmt(totalCost)}</strong></td><td><strong>${fmt(totalCostPerConv)}</strong></td>
+              <td><strong>${fmt(totalCost)}</strong></td><td><strong>${fmt(totalPlatformCPA)}</strong></td>
             </tr>
           </tbody>
         </table>
