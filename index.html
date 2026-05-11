@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -368,7 +368,7 @@
 let crmWeeklyTabs = [];
 // Ads: flat array of all daily rows with dates
 let adsAllRows = [];
-let adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
+let adsHeaderCols = { colDay:0, colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
 
 // Sparkline history — array of { label, googleLeads, googleSched, totalConv, totalCost, totalClicks, cpl }
 let sparkHistory = [];
@@ -595,7 +595,7 @@ function applyDateFilter(startDate, endDate) {
 
   // Filter Ads rows for current period
   const currentAds = adsAllRows.filter(row => {
-    const dt = parseAdsDate(row[0]);
+    const dt = parseAdsDate(row[adsHeaderCols.colDay]);
     return dt && dt >= startDate && dt <= endDate;
   });
 
@@ -626,7 +626,7 @@ function applyDateFilter(startDate, endDate) {
       }
     }
     const wAds = adsAllRows.filter(row => {
-      const dt = parseAdsDate(row[0]);
+      const dt = parseAdsDate(row[adsHeaderCols.colDay]);
       return dt && dt >= week.start && dt <= week.end;
     });
 
@@ -819,10 +819,11 @@ function processAdsFile(file) {
         // Find header
         let hIdx = 0;
         for (let i=0; i<lines.length; i++) {
-          if (lines[i][0]==='Day' && lines[i][2]==='Campaign') { hIdx=i; break; }
+          const _r0=lines[i][0]||'',_r2=lines[i][2]||'';
+          if ((_r0==='Day'&&_r2==='Campaign')||(_r0==='Campaign'&&lines[i].some(c=>(c||'').trim()==='Day'))) { hIdx=i; break; }
         }
         mapAdsHeader(lines[hIdx]);
-        allRows = lines.slice(hIdx+1).filter(r => r[0] && r[0]!=='Day' && r[0]!=='Total: Account' && r[0].trim());
+        allRows = lines.slice(hIdx+1).filter(r => r[0] && r[0]!=='Day' && r[0]!=='Campaign' && r[0]!=='Total: Account' && r[0].trim());
       } else {
         const wb = XLSX.read(e.target.result, { type:'array', cellDates:true, defval:'' });
         for (const sheetName of wb.SheetNames) {
@@ -839,11 +840,12 @@ function processAdsFile(file) {
             return cleaned;
           });
           for (let i=0; i<rows.length; i++) {
-            if ((rows[i][0]||'').toString().trim()==='Day' && (rows[i][2]||'').toString().trim()==='Campaign') {
+            const _x0=(rows[i][0]||'').toString().trim(),_x2=(rows[i][2]||'').toString().trim();
+            if ((_x0==='Day'&&_x2==='Campaign')||(_x0==='Campaign'&&rows[i].some(c=>(c||'').toString().trim()==='Day'))) {
               mapAdsHeader(rows[i]);
               const dataRows = rows.slice(i+1).filter(r => {
                 const c0 = (r[0]||'').toString().trim();
-                return c0 && c0!=='Day' && c0!=='Total: Account';
+                return c0 && c0!=='Day' && c0!=='Campaign' && c0!=='Total: Account';
               });
               allRows = allRows.concat(dataRows);
             }
@@ -851,8 +853,8 @@ function processAdsFile(file) {
         }
       }
       adsAllRows = allRows;
-      const sampleDates = allRows.slice(0,3).map(r => JSON.stringify(r[0])).join(' | ');
-      const parsedSample = allRows.slice(0,3).map(r => { const d=parseAnyDate(r[0]); return d?d.toISOString().slice(0,10):'null'; }).join(' | ');
+      const sampleDates = allRows.slice(0,3).map(r => JSON.stringify(r[adsHeaderCols.colDay])).join(' | ');
+      const parsedSample = allRows.slice(0,3).map(r => { const d=parseAnyDate(r[adsHeaderCols.colDay]); return d?d.toISOString().slice(0,10):'null'; }).join(' | ');
       const stats = getAdsStats(allRows);
       statusEl.className = 'import-status success';
       statusEl.innerHTML = `✓ Ads loaded — ${allRows.length} daily rows across all weeks
@@ -869,9 +871,10 @@ function processAdsFile(file) {
 
 function mapAdsHeader(headerRow) {
   let convExact = false;
-  adsHeaderCols = { colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
+  adsHeaderCols = { colDay:0, colClicks:9, colCTR:10, colCPC:11, colImpr:12, colCost:13, colConv:16, colPhone:17, colCampaign:2 };
   for (let j=0; j<headerRow.length; j++) {
     const h = (headerRow[j]||'').toString().replace(/\u0000/g,'').trim().toLowerCase();
+    if (h==='day')        adsHeaderCols.colDay      = j;
     if (h==='clicks')     adsHeaderCols.colClicks   = j;
     if (h==='ctr')        adsHeaderCols.colCTR      = j;
     if (h==='avg. cpc')   adsHeaderCols.colCPC      = j;

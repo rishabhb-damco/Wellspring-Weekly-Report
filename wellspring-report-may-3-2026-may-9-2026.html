@@ -1,0 +1,536 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wellspring — May 3 – 9, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{--cream:#F7F3EE;--cream-dark:#EDE7DC;--charcoal:#1C1C1A;--warm-mid:#6B6460;--teal:#3D7A72;--teal-light:#5A9E95;--teal-pale:#EAF3F2;--rust:#C25B3F;--amber:#C9882A;--violet:#5C4E9E;--green:#3D8A60;--pink:#C4527A;--red:#C44040;--border:#DDD5C8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#f0ece6;font-family:'DM Sans',sans-serif;color:var(--charcoal);font-size:13px;line-height:1.6;}
+  .page{max-width:1100px;margin:0 auto;padding:28px 32px;background:var(--cream);min-height:100vh;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:1.5px solid var(--border);margin-bottom:16px;}
+  .logo-name{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:500;letter-spacing:-0.5px;color:var(--charcoal);line-height:1;}
+  .logo-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-top:4px;font-weight:500;}
+  .header-meta{text-align:right;}
+  .header-meta .report-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--warm-mid);font-weight:500;}
+  .header-meta .report-week{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--charcoal);margin-top:2px;}
+  .header-meta .report-prepared{font-size:11px;color:var(--warm-mid);margin-top:4px;}
+  .section-label{font-size:9px;text-transform:uppercase;letter-spacing:3px;color:var(--teal);font-weight:500;margin-bottom:8px;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .kpi-grid-2{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;margin-bottom:16px;}
+  .kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;position:relative;overflow:hidden;}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);border-radius:10px 10px 0 0;}
+  .kpi-card.amber::before{background:var(--amber);}.kpi-card.violet::before{background:var(--violet);}
+  .kpi-card.green::before{background:var(--green);}.kpi-card.rust::before{background:var(--rust);}
+  .kpi-card.pink::before{background:var(--pink);}.kpi-card.warn::before{background:var(--amber);}
+  .kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-bottom:4px;}
+  .kpi-value{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:var(--charcoal);line-height:1;}
+  .kpi-sub{font-size:11px;color:var(--warm-mid);margin-top:3px;}
+  .kpi-badge{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500;}
+  .badge-up{background:#E8F5EC;color:#2E7D4F;}.badge-neutral{background:#F0EDE8;color:#6B6460;}.badge-warn{background:#FDF6EC;color:#C9882A;}.badge-down{background:#FDF1EE;color:#C25B3F;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px;margin-bottom:12px;}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+  .panel-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--charcoal);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .panel-title .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;}
+  .campaign-table{width:100%;border-collapse:collapse;}
+  .campaign-table th{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .campaign-table th:first-child{text-align:left;}
+  .campaign-table td{padding:10px 10px;font-size:12px;text-align:right;border-bottom:1px solid #F0EDE8;color:var(--charcoal);}
+  .campaign-table td:first-child{text-align:left;}
+  .campaign-table tr.total-row td{border-bottom:none;font-weight:500;background:var(--teal-pale);}
+  .campaign-table tr.total-row td:first-child{border-radius:6px 0 0 6px;}
+  .campaign-table tr.total-row td:last-child{border-radius:0 6px 6px 0;}
+  .badge-tag{display:inline-block;font-size:8.5px;padding:2px 6px;border-radius:4px;font-weight:500;margin-top:3px;}
+  .tag-search{background:#EAF0FF;color:#3D5FA0;}.tag-dsa{background:#EEF9EC;color:#2E7D4F;}
+  .metric-highlight{display:inline-block;background:var(--teal-pale);color:var(--teal);font-weight:500;border-radius:4px;padding:1px 6px;font-size:12px;}
+  .highlight-green{color:var(--green);font-weight:600;}
+  .highlight-red{color:var(--rust);font-weight:600;}
+  .hbar-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+  .hbar-label{font-size:11.5px;color:var(--charcoal);min-width:200px;flex-shrink:0;}
+  .hbar-track{flex:1;background:var(--cream-dark);border-radius:4px;height:26px;}
+  .hbar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-width:48px;}
+  .hbar-pct{font-size:11px;font-weight:600;color:#fff;white-space:nowrap;}
+  .hbar-count{font-size:12px;color:var(--warm-mid);min-width:20px;text-align:right;font-weight:600;}
+  .insight-card{border-left:3px solid var(--teal);padding:8px 12px;margin-bottom:7px;background:var(--teal-pale);border-radius:0 8px 8px 0;font-size:12px;line-height:1.5;}
+  .insight-card.amber{border-left-color:var(--amber);background:#FDF6EC;}
+  .insight-card.rust{border-left-color:var(--rust);background:#FDF1EE;}
+  .insight-card strong{font-weight:500;color:var(--charcoal);}
+  .next-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
+  .step-num{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:centre;flex-shrink:0;margin-top:1px;align-items:center;justify-content:center;}
+  .step-text{font-size:12px;line-height:1.6;color:var(--charcoal);}
+  .step-text strong{font-weight:500;}
+  .notice-bar{background:#FDF6EC;border:1px solid #F0D9B5;border-radius:10px;padding:10px 16px;font-size:11.5px;color:var(--charcoal);margin-bottom:14px;display:flex;gap:10px;align-items:flex-start;}
+  .notice-bar .icon{font-size:14px;flex-shrink:0;margin-top:1px;}
+  .trend-chip{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:500;padding:2px 8px;border-radius:12px;}
+  .chip-down{background:#FDF1EE;color:#C25B3F;}
+  .chip-up{background:#E8F5EC;color:#2E7D4F;}
+  .chip-flat{background:#F0EDE8;color:#6B6460;}
+  .footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .footer-left{font-size:10.5px;color:var(--warm-mid);line-height:1.7;}
+  .footer-right{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:500;color:var(--teal);}
+  .divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+  canvas{max-height:220px;}
+  @media print{body{background:white;}.page{padding:16px 20px;}.notice-bar{display:none;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="logo-name">Wellspring</div>
+      <div class="logo-sub">Therapeutic Partners</div>
+    </div>
+    <div class="header-meta">
+      <div class="report-label">Performance Report</div>
+      <div class="report-week">May 3 – 9, 2026</div>
+      <div class="report-prepared">Prepared by Damco Digital &nbsp;·&nbsp; Google Ads + CRM</div>
+    </div>
+  </div>
+
+  <!-- NOTICE BAR -->
+  <div class="notice-bar">
+    <div class="icon">&#9888;</div>
+    <div>
+      <strong>Google Ads data for May 3–9 was not included in this upload.</strong>
+      CRM lead and scheduling metrics are complete for this period. The platform performance section shows a 3-week historical trend (Apr 12 – May 2) for context.
+      To populate live Ads metrics, re-upload the Daily MTD CSV covering May 3–9.
+    </div>
+  </div>
+
+  <!-- CRM KPI GRID -->
+  <div class="section-label">CRM Lead Overview — May 3–9, 2026</div>
+  <div class="kpi-grid">
+
+    <div class="kpi-card">
+      <div class="kpi-label">Total Leads</div>
+      <div class="kpi-value">13</div>
+      <div class="kpi-sub">All sources this period</div>
+    </div>
+
+    <div class="kpi-card green">
+      <div class="kpi-label">Confirmed Scheduled</div>
+      <div class="kpi-value">7</div>
+      <div class="kpi-sub">53.8% scheduling rate</div>
+      <span class="kpi-badge badge-warn">&#8595; vs 81.8% last week</span>
+    </div>
+
+    <div class="kpi-card rust">
+      <div class="kpi-label">Not Scheduled</div>
+      <div class="kpi-value">6</div>
+      <div class="kpi-sub">46.2% of all leads</div>
+      <span class="kpi-badge badge-down">&#8593; vs 18.2% last week</span>
+    </div>
+
+    <div class="kpi-card amber">
+      <div class="kpi-label">Google-Attributed Leads</div>
+      <div class="kpi-value">6</div>
+      <div class="kpi-sub">3 explicit Google Ads · 3 implied</div>
+    </div>
+
+    <div class="kpi-card violet">
+      <div class="kpi-label">Google Scheduling Rate</div>
+      <div class="kpi-value">16.7%</div>
+      <div class="kpi-sub">1 of 6 confirmed appointment</div>
+      <span class="kpi-badge badge-down">&#8595; vs 100% last week</span>
+    </div>
+
+    <div class="kpi-card pink">
+      <div class="kpi-label">Top Service Type</div>
+      <div class="kpi-value">69%</div>
+      <div class="kpi-sub">Psychotherapy · 9 of 13 leads</div>
+    </div>
+
+  </div>
+
+  <!-- SCHEDULE + REASONS -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Lead Scheduling — All 13 Leads</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="width:140px;flex-shrink:0;"><canvas id="scheduleDonut"></canvas></div>
+        <div style="flex:1;">
+          <div style="margin-bottom:10px;">
+            <div style="display:flex;align-items:center;gap:6px;margin-bottom:4px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div>
+              <span style="font-size:11.5px;">Scheduled</span>
+              <strong style="margin-left:auto;">7 &nbsp;(53.8%)</strong>
+            </div>
+            <div style="display:flex;align-items:center;gap:6px;">
+              <div style="width:10px;height:10px;border-radius:50%;background:var(--rust);flex-shrink:0;"></div>
+              <span style="font-size:11.5px;">Not Scheduled</span>
+              <strong style="margin-left:auto;">6 &nbsp;(46.2%)</strong>
+            </div>
+          </div>
+          <div style="background:#FDF6EC;border-radius:8px;padding:10px 12px;font-size:11.5px;line-height:1.6;">
+            Scheduling rate dropped from <strong>81.8%</strong> last week to <strong>53.8%</strong> this week. Several leads had non-standard disqualification reasons — review sources below.
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--rust)"></span> Reason Not Scheduled (6 leads)</div>
+      <div class="hbar-row">
+        <div class="hbar-label">Other / Unspecified</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:50%;background:#A0A0A0;"><span class="hbar-pct">50%</span></div></div>
+        <div class="hbar-count">3</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">Incomplete Inquiry</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:33%;background:var(--red);"><span class="hbar-pct">33%</span></div></div>
+        <div class="hbar-count">2</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">Didn't Answer Consult Call</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:17%;background:var(--red);"><span class="hbar-pct">17%</span></div></div>
+        <div class="hbar-count">1</div>
+      </div>
+      <p style="font-size:10.5px;color:var(--warm-mid);margin-top:8px;line-height:1.6;">
+        "Other" breakdown: free consultation expectation (1), therapist gender preference (1), referral to Brain Balance first (1).
+      </p>
+    </div>
+  </div>
+
+  <!-- GOOGLE LEADS + SERVICE TYPE -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Google Lead Quality</div>
+      <table class="campaign-table">
+        <thead>
+          <tr>
+            <th>Lead</th>
+            <th>Date</th>
+            <th>Source Detail</th>
+            <th>Service</th>
+            <th>Scheduled</th>
+            <th>Outcome</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td style="font-weight:500;">#2</td>
+            <td>May 3</td>
+            <td><span class="badge-tag tag-search">Google Ads</span></td>
+            <td>Psychotherapy</td>
+            <td style="color:var(--rust);">&#10007;</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Incomplete inquiry</td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;">#3</td>
+            <td>May 3</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Implied</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Unknown</td>
+            <td style="color:var(--rust);">&#10007;</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Incomplete inquiry</td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;">#4</td>
+            <td>May 4</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Implied</td>
+            <td>Psychotherapy</td>
+            <td style="color:var(--rust);">&#10007;</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Free consult expectation</td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;">#9</td>
+            <td>May 7</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Implied</td>
+            <td>Psychotherapy</td>
+            <td style="color:var(--rust);">&#10007;</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Wants Brain Balance first</td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;">#11</td>
+            <td>May 6</td>
+            <td><span class="badge-tag tag-search">Generic Search</span></td>
+            <td>Psychotherapy</td>
+            <td style="color:var(--teal);font-weight:600;">&#10003;</td>
+            <td style="font-size:11px;color:var(--teal);">Scheduled</td>
+          </tr>
+          <tr>
+            <td style="font-weight:500;">#14</td>
+            <td>May 7</td>
+            <td><span class="badge-tag tag-search">Generic Search</span></td>
+            <td>Unknown</td>
+            <td style="color:var(--rust);">&#10007;</td>
+            <td style="font-size:11px;color:var(--warm-mid);">Didn't answer call</td>
+          </tr>
+        </tbody>
+      </table>
+      <p style="font-size:10.5px;color:var(--warm-mid);margin-top:8px;">
+        "Implied" = no referral info provided (app classifies as Google by default). Explicit Google Ads: 3 leads, 1 scheduled (33.3%).
+      </p>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Lead Service Type</div>
+      <canvas id="serviceBar" style="max-height:230px;"></canvas>
+    </div>
+  </div>
+
+  <!-- LEAD SOURCE BREAKDOWN -->
+  <div class="panel" style="margin-bottom:12px;">
+    <div class="panel-title"><span class="dot" style="background:var(--teal)"></span> Lead Source Breakdown — All 13 Leads</div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;">
+      <div style="text-align:center;background:var(--cream);border-radius:8px;padding:12px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--charcoal);">6</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);font-weight:500;margin-top:3px;">Google</div>
+        <div style="font-size:10.5px;color:var(--warm-mid);">3 explicit · 3 implied</div>
+      </div>
+      <div style="text-align:center;background:var(--cream);border-radius:8px;padding:12px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--charcoal);">3</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-top:3px;">Internal</div>
+        <div style="font-size:10.5px;color:var(--warm-mid);">Patient / staff referrals</div>
+      </div>
+      <div style="text-align:center;background:var(--cream);border-radius:8px;padding:12px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--charcoal);">3</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-top:3px;">Referral</div>
+        <div style="font-size:10.5px;color:var(--warm-mid);">External / online search</div>
+      </div>
+      <div style="text-align:center;background:var(--cream);border-radius:8px;padding:12px;">
+        <div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--charcoal);">1</div>
+        <div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--pink);font-weight:500;margin-top:3px;">Psychology Today</div>
+        <div style="font-size:10.5px;color:var(--warm-mid);">Scheduled</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 3-WEEK ADS TREND -->
+  <div class="section-label">Google Ads — 3-Week Historical Trend (Ads data not available for May 3–9)</div>
+  <div class="panel" style="margin-bottom:12px;">
+    <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Platform Performance Trend</div>
+    <table class="campaign-table">
+      <thead>
+        <tr>
+          <th style="text-align:left;">Period</th>
+          <th>Total Conv.</th>
+          <th>Total Spend</th>
+          <th>CPA</th>
+          <th>Clicks</th>
+          <th>CTR</th>
+          <th>Trend</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td style="font-size:12px;color:var(--warm-mid);">Apr 12–18</td>
+          <td>10</td>
+          <td>$490</td>
+          <td>$49</td>
+          <td>129</td>
+          <td><span class="metric-highlight">5.94%</span></td>
+          <td style="text-align:left;"><span class="trend-chip chip-flat">&#8212; Base</span></td>
+        </tr>
+        <tr>
+          <td style="font-size:12px;color:var(--warm-mid);">Apr 19–25</td>
+          <td>3</td>
+          <td>$285</td>
+          <td>$95</td>
+          <td>74</td>
+          <td><span class="metric-highlight">7.27%</span></td>
+          <td style="text-align:left;"><span class="trend-chip chip-down">&#8595; Conv &#8209;70%</span></td>
+        </tr>
+        <tr>
+          <td style="font-size:12px;color:var(--warm-mid);">Apr 26–May 2</td>
+          <td>7</td>
+          <td>$263</td>
+          <td class="highlight-green">$38</td>
+          <td>71</td>
+          <td><span class="metric-highlight">5.93%</span></td>
+          <td style="text-align:left;"><span class="trend-chip chip-up">&#8593; Recovery</span></td>
+        </tr>
+        <tr class="total-row">
+          <td><strong>May 3–9</strong></td>
+          <td style="color:var(--warm-mid);font-style:italic;">—</td>
+          <td style="color:var(--warm-mid);font-style:italic;">—</td>
+          <td style="color:var(--warm-mid);font-style:italic;">—</td>
+          <td style="color:var(--warm-mid);font-style:italic;">—</td>
+          <td style="color:var(--warm-mid);font-style:italic;">—</td>
+          <td style="text-align:left;font-size:10.5px;color:var(--warm-mid);font-style:italic;">Ads data not uploaded</td>
+        </tr>
+      </tbody>
+    </table>
+    <div style="display:flex;gap:10px;margin-top:10px;">
+      <div style="flex:1;"><canvas id="convTrendBar" style="max-height:100px;"></canvas></div>
+      <div style="flex:1;"><canvas id="cpaTrendBar" style="max-height:100px;"></canvas></div>
+    </div>
+  </div>
+
+  <hr class="divider">
+
+  <!-- OBSERVATIONS + ACTIONS -->
+  <div class="two-col">
+    <div>
+      <div class="section-label">Key Observations</div>
+
+      <div class="insight-card rust">
+        <strong>Scheduling rate dropped significantly — 53.8% this week vs. 81.8% last week.</strong> 6 of 13 leads did not convert. This is partly driven by lead quality issues (free consult expectations, incomplete forms) rather than capacity alone.
+      </div>
+
+      <div class="insight-card amber">
+        <strong>Google Ads lead quality is the primary concern this week.</strong> Of 3 explicit Google Ads leads: 2 went unscheduled (1 incomplete inquiry, 1 missed consultation call). Only Lead #11 via Generic Search converted. Explicit scheduling rate: 33.3%.
+      </div>
+
+      <div class="insight-card amber">
+        <strong>Two leads abandoned the inquiry form mid-way.</strong> Both were followed up on May 4 and May 6. One was a verified Google Ads lead. Form abandonment is a recurring pattern — an automated re-contact flow is needed.
+      </div>
+
+      <div class="insight-card">
+        <strong>Internal and referral leads are converting well.</strong> All 4 internal/referral leads that reached scheduling confirmed appointments. Psychology Today delivered 1 scheduled lead (Medication Management). Non-Google channels are high-quality.
+      </div>
+
+      <div class="insight-card">
+        <strong>Psychotherapy remains dominant at 69% of inbound.</strong> Medication Management dropped to 2 leads (15.4%). The ADHD/anxiety copy strategy should be accelerated to shift the service mix and relieve psychotherapy waitlist pressure.
+      </div>
+
+    </div>
+    <div>
+      <div class="section-label">Actions and Recommendations</div>
+
+      <div class="next-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Implement same-day callback for Google Ads form submissions.</strong> Lead #14 (Generic Search) didn't answer the consultation call. A follow-up SMS or email within 1 hour of submission would reduce missed connections.</div>
+      </div>
+
+      <div class="next-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Set up automated incomplete inquiry recovery sequence.</strong> 2 leads abandoned forms this week (with prior week patterns too). A triggered email or SMS 30 minutes after form start can recover these leads before they go cold.</div>
+      </div>
+
+      <div class="next-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Add "free consultation" landing page clarification.</strong> One lead expected a free consultation with a specific therapist (Kendra). Update ad copy and landing page to set consultation expectations upfront and reduce mismatched intent.</div>
+      </div>
+
+      <div class="next-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Add negative keywords for competitor and alternative therapies.</strong> One lead wanted Brain Balance first. Add "Brain Balance", "neurofeedback", and similar alternatives as negatives to reduce spend on leads redirecting to other providers.</div>
+      </div>
+
+      <div class="next-step">
+        <div class="step-num">5</div>
+        <div class="step-text"><strong>Accelerate Medication Management copy strategy.</strong> Only 2 MM leads this week vs. 4 last week. Launch ADHD/ADD/Depression-specific ad groups to rebuild MM pipeline and reduce psychotherapy capacity pressure.</div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      Prepared by <strong>Damco Digital</strong> &nbsp;·&nbsp; Confidential: For Wellspring Team Use Only<br>
+      Data source: Google Ads (historical) + CRM &nbsp;·&nbsp; May 3 – 9, 2026
+    </div>
+    <div class="footer-right">Wellspring Therapeutic Partners</div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener('load', function() {
+
+  // Schedule donut (all 13 leads)
+  new Chart(document.getElementById('scheduleDonut').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Scheduled', 'Not Scheduled'],
+      datasets: [{
+        data: [7, 6],
+        backgroundColor: ['#3D7A72', '#C25B3F'],
+        borderWidth: 0,
+        hoverOffset: 4
+      }]
+    },
+    options: {
+      cutout: '70%',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } }
+      }
+    }
+  });
+
+  // Service type bar
+  new Chart(document.getElementById('serviceBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Psychotherapy', 'Medication Management', 'Unknown'],
+      datasets: [{
+        label: 'Leads',
+        data: [9, 2, 2],
+        backgroundColor: ['#5C4E9E', '#3D8A60', '#9E9589'],
+        borderRadius: 5,
+        borderSkipped: false
+      }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: {
+        legend: { display: false },
+        tooltip: { callbacks: { label: ctx => ` ${ctx.raw} leads` } }
+      },
+      scales: {
+        x: { grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460' } },
+        y: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#1C1C1A' } }
+      }
+    }
+  });
+
+  // Conversion trend bar
+  new Chart(document.getElementById('convTrendBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Apr 12–18', 'Apr 19–25', 'Apr 26–May 2'],
+      datasets: [{
+        label: 'Platform Conv.',
+        data: [10, 3, 7],
+        backgroundColor: ['#C0D8D5', '#C0D8D5', '#3D7A72'],
+        borderRadius: 4
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Platform Conversions', font: { family: 'DM Sans', size: 11 }, color: '#6B6460' }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 9 }, color: '#6B6460' } },
+        y: { grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 9 }, color: '#6B6460', stepSize: 2 } }
+      }
+    }
+  });
+
+  // CPA trend bar
+  new Chart(document.getElementById('cpaTrendBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Apr 12–18', 'Apr 19–25', 'Apr 26–May 2'],
+      datasets: [{
+        label: 'CPA ($)',
+        data: [49, 95, 38],
+        backgroundColor: ['#C0D8D5', '#F0D9B5', '#3D7A72'],
+        borderRadius: 4
+      }]
+    },
+    options: {
+      plugins: {
+        legend: { display: false },
+        title: { display: true, text: 'Cost Per Conversion ($)', font: { family: 'DM Sans', size: 11 }, color: '#6B6460' }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 9 }, color: '#6B6460' } },
+        y: { grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 9 }, color: '#6B6460', callback: v => '$' + v } }
+      }
+    }
+  });
+
+});
+</script>
+</body>
+</html>
