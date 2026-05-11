@@ -1101,7 +1101,7 @@ function generateDashboard() {
   const c1totalConv  = n('c1_platform_conv')||(c1.conv+c1.phone);
   const c2totalConv  = n('c2_platform_conv')||(c2.conv+c2.phone);
   const totalAllConv = c1totalConv+c2totalConv;
-  const totalCVR     = totalClicks?(totalAllConv/totalClicks*100).toFixed(2):'0.00';
+  const totalCVR     = totalClicks?(googleLeads/totalClicks*100).toFixed(2):'0.00';
   const totalCostPerConv = googleLeads?totalCost/googleLeads:0;
   const totalPlatformCPA  = totalAllConv?totalCost/totalAllConv:0;
   const c1CostPerConv = c1totalConv?c1.cost/c1totalConv:0;
@@ -1224,8 +1224,8 @@ function generateDashboard() {
       ${sparkCard('violet', 'Total Spend', '$'+Math.round(totalCost),
         'This period',
         sparkCost, '#5C4E9E', null, null, v => '$'+Math.round(v||0))}
-      ${sparkCard('green', 'Conv. Rate', totalCVR+'%',
-        `${totalClicks} clicks`,
+      ${sparkCard('green', 'CRM Conv. Rate', totalCVR+'%',
+        `${googleLeads} CRM leads ÷ ${totalClicks} clicks`,
         sparkCTR, '#3D8A60', wowCTR, null, v => (v||0).toFixed(1)+'%')}
       <div class="kpi-card rust">
         <div class="kpi-label">Cost Per Lead (CRM)</div>
