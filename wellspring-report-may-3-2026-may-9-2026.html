@@ -250,7 +250,7 @@
           <span class="trend-badge tb-up">$23 CPA &#10003;</span>
         </div>
       </div>
-      <div style="margin-top:10px;"><canvas id="trendChart" style="max-height:100px;"></canvas></div>
+      <div style="margin-top:16px;position:relative;height:180px;width:100%;"><canvas id="trendChart"></canvas></div>
     </div>
   </div>
 
@@ -505,6 +505,8 @@ window.addEventListener('load', function() {
           data: [10, 3, 8, 15],
           backgroundColor: ['#C0D8D5', '#C0D8D5', '#C0D8D5', '#3D7A72'],
           borderRadius: 4,
+          barPercentage: 0.6,
+          categoryPercentage: 0.7,
           yAxisID: 'y'
         },
         {
@@ -522,13 +524,15 @@ window.addEventListener('load', function() {
       ]
     },
     options: {
+      responsive: true,
+      maintainAspectRatio: false,
       plugins: {
-        legend: { display: true, labels: { font: { family: 'DM Sans', size: 10 }, color: '#6B6460', boxWidth: 10 } }
+        legend: { display: true, labels: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460', boxWidth: 10 } }
       },
       scales: {
-        x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 9 }, color: '#6B6460' } },
-        y: { position: 'left', grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 9 }, color: '#6B6460', stepSize: 3 } },
-        y2: { position: 'right', grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 9 }, color: '#C9882A', callback: v => '$' + v } }
+        x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460' } },
+        y: { position: 'left', grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460', stepSize: 3 } },
+        y2: { position: 'right', grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#C9882A', callback: v => '$' + v } }
       }
     }
   });
