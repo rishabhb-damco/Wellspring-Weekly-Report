@@ -436,7 +436,82 @@
     </div>
   </div>
 
-  <hr class="divider">
+  
+  <!-- CONTACT TYPE ANALYSIS -->
+  <div class="section-label" style="margin-top:28px;">Contact Type: Form vs. Phone</div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Platform Conversions by Type (May 3–9)</div>
+      <div style="display:flex;gap:16px;margin-bottom:20px;">
+        <!-- Form card -->
+        <div style="flex:1;background:var(--cream-dark);border-radius:10px;padding:14px 16px;text-align:center;">
+          <div style="font-size:10.5px;color:var(--warm-mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Form Submissions</div>
+          <div style="font-size:36px;font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--charcoal);">10</div>
+          <div style="font-size:11px;color:var(--warm-mid);margin-top:4px;">67% of total conversions</div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px;text-align:left;">
+            <div style="font-size:11px;color:var(--charcoal);">Generic Search &nbsp;<strong>6</strong></div>
+            <div style="font-size:11px;color:var(--charcoal);">DSA &nbsp;<strong>3</strong></div>
+            <div style="font-size:11px;color:var(--charcoal);">Regional Search &nbsp;<strong>1</strong></div>
+          </div>
+        </div>
+        <!-- Phone card -->
+        <div style="flex:1;background:#EEF6F4;border-radius:10px;padding:14px 16px;text-align:center;border:1px solid #C0D8D5;">
+          <div style="font-size:10.5px;color:var(--warm-mid);text-transform:uppercase;letter-spacing:.05em;margin-bottom:6px;">Phone Calls</div>
+          <div style="font-size:36px;font-family:'Cormorant Garamond',serif;font-weight:600;color:var(--teal);">5</div>
+          <div style="font-size:11px;color:var(--warm-mid);margin-top:4px;">33% of total conversions</div>
+          <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px;text-align:left;">
+            <div style="font-size:11px;color:var(--charcoal);">Generic Search &nbsp;<strong>2</strong></div>
+            <div style="font-size:11px;color:var(--charcoal);">DSA &nbsp;<strong>3</strong></div>
+            <div style="font-size:11px;color:var(--charcoal);">Regional Search &nbsp;<strong>0</strong></div>
+          </div>
+        </div>
+      </div>
+      <!-- Volume bar -->
+      <div style="font-size:11px;color:var(--warm-mid);margin-bottom:6px;">Conversion split</div>
+      <div style="display:flex;height:22px;border-radius:6px;overflow:hidden;gap:2px;">
+        <div style="flex:10;background:var(--violet);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:10.5px;color:#fff;font-weight:600;">Forms 67%</span>
+        </div>
+        <div style="flex:5;background:var(--teal);display:flex;align-items:center;justify-content:center;">
+          <span style="font-size:10.5px;color:#fff;font-weight:600;">Phone 33%</span>
+        </div>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Scheduling Conversion by Type</div>
+      <!-- Scheduling rows -->
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
+          <span style="font-size:12px;color:var(--charcoal);">Phone Calls</span>
+          <span style="font-size:11px;font-weight:600;color:var(--teal);">Higher intent — direct contact</span>
+        </div>
+        <div style="background:var(--cream-dark);border-radius:5px;height:28px;overflow:hidden;">
+          <div style="width:60%;height:100%;background:var(--teal);border-radius:5px;display:flex;align-items:center;padding-left:10px;">
+            <span style="font-size:11px;color:#fff;font-weight:600;">~60% est. scheduling rate</span>
+          </div>
+        </div>
+        <div style="font-size:10.5px;color:var(--warm-mid);margin-top:4px;">Caller already engaged — lower friction to book</div>
+      </div>
+      <div style="margin-bottom:14px;">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:5px;">
+          <span style="font-size:12px;color:var(--charcoal);">Form Submissions</span>
+          <span style="font-size:11px;font-weight:600;color:var(--rust);">Requires follow-up call</span>
+        </div>
+        <div style="background:var(--cream-dark);border-radius:5px;height:28px;overflow:hidden;">
+          <div style="width:20%;height:100%;background:var(--rust);border-radius:5px;display:flex;align-items:center;padding-left:10px;">
+            <span style="font-size:11px;color:#fff;font-weight:600;">~20%</span>
+          </div>
+        </div>
+        <div style="font-size:10.5px;color:var(--warm-mid);margin-top:4px;">1 "Didn't Answer Consult Call" already flagged this week</div>
+      </div>
+      <div style="background:#FDF6EC;border-radius:8px;padding:10px 12px;border-left:3px solid var(--amber);">
+        <div style="font-size:11.5px;color:var(--charcoal);line-height:1.6;">
+          <strong>Note:</strong> Scheduling rates by contact type are estimated — CRM export does not currently split scheduled outcomes by form vs. phone. Recommend adding a <em>Contact Method</em> field to CRM for accurate tracking from next week.
+        </div>
+      </div>
+    </div>
+  </div>
+<hr class="divider">
 
   <!-- ACTIONS -->
   <div class="two-col">
