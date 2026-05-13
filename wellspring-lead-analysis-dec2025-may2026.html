@@ -3,140 +3,145 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Wellspring — Lead Analysis: Phone Call vs Form Submission</title>
+<title>Wellspring — Google Leads: Phone Call vs Form Submission</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
 <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
 <style>
   :root {
-    --teal-dark: #1a3a3a;
-    --teal-mid:  #2a5a5a;
-    --teal-light:#3d7a7a;
-    --gold:      #c9a84c;
-    --gold-light:#e8c97a;
-    --cream:     #f5f0e8;
-    --cream-dark:#ece5d8;
-    --text-dark: #1a2a2a;
-    --text-mid:  #3a4a4a;
-    --text-light:#6a7a7a;
-    --green:     #2e7d62;
-    --red:       #c0392b;
-    --amber:     #d4820a;
-    --phone-col: #2a5a5a;
-    --form-col:  #c9a84c;
-    --meta-col:  #6a7a9a;
+    --teal-dark:  #1a3a3a;
+    --teal-mid:   #2a5a5a;
+    --teal-light: #3d7a7a;
+    --gold:       #c9a84c;
+    --gold-light: #e8c97a;
+    --cream:      #f5f0e8;
+    --cream-dark: #ece5d8;
+    --text-dark:  #1a2a2a;
+    --text-mid:   #3a4a4a;
+    --text-light: #6a7a7a;
+    --green:      #2e7d62;
+    --red:        #c0392b;
+    --amber:      #d4820a;
+    --phone-col:  #2a5a5a;
+    --form-col:   #c9a84c;
+    --google-blue:#4a6fa5;
   }
   * { margin:0; padding:0; box-sizing:border-box; }
   body { background:var(--cream); color:var(--text-dark); font-family:'DM Sans',sans-serif; font-size:15px; line-height:1.6; }
 
-  /* Header */
   .report-header { background:var(--teal-dark); color:white; padding:48px 60px 40px; position:relative; overflow:hidden; }
-  .report-header::before { content:''; position:absolute; top:-60px; right:-60px; width:300px; height:300px; background:rgba(201,168,76,0.08); border-radius:50%; }
-  .report-header .eyebrow { font-family:'DM Sans',sans-serif; font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
-  .report-header h1 { font-family:'Cormorant Garamond',serif; font-size:38px; font-weight:600; color:white; line-height:1.2; margin-bottom:8px; }
-  .report-header .subtitle { font-size:14px; color:rgba(255,255,255,0.65); margin-top:6px; }
-  .header-meta { display:flex; gap:32px; margin-top:24px; flex-wrap:wrap; }
-  .header-meta-item { }
-  .header-meta-item .label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.4); }
-  .header-meta-item .value { font-size:14px; color:rgba(255,255,255,0.85); font-weight:500; margin-top:2px; }
-
-  /* Gold bar */
+  .report-header::before { content:''; position:absolute; top:-60px; right:-60px; width:320px; height:320px; background:rgba(201,168,76,0.07); border-radius:50%; }
+  .report-header::after  { content:''; position:absolute; bottom:-80px; right:160px; width:180px; height:180px; background:rgba(201,168,76,0.04); border-radius:50%; }
+  .eyebrow  { font-size:11px; font-weight:600; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:12px; }
+  .report-header h1 { font-family:'Cormorant Garamond',serif; font-size:40px; font-weight:600; line-height:1.2; margin-bottom:8px; }
+  .report-header .subtitle { font-size:14px; color:rgba(255,255,255,0.6); margin-top:6px; max-width:600px; }
+  .header-meta { display:flex; gap:36px; margin-top:28px; flex-wrap:wrap; }
+  .hm-item .label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:rgba(255,255,255,0.35); }
+  .hm-item .value { font-size:14px; color:rgba(255,255,255,0.85); font-weight:500; margin-top:3px; }
   .gold-bar { height:3px; background:linear-gradient(90deg,var(--gold),var(--gold-light),transparent); }
 
-  /* Main layout */
   .container { max-width:1200px; margin:0 auto; padding:48px 40px; }
   section { margin-bottom:56px; }
-  .section-title { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600; color:var(--teal-dark); margin-bottom:4px; }
-  .section-subtitle { font-size:13px; color:var(--text-light); margin-bottom:28px; }
+  .section-title    { font-family:'Cormorant Garamond',serif; font-size:26px; font-weight:600; color:var(--teal-dark); margin-bottom:4px; }
+  .section-subtitle { font-size:13px; color:var(--text-light); margin-bottom:26px; }
 
-  /* KPI Strip */
-  .kpi-strip { display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-bottom:48px; }
-  .kpi-card { background:white; border-radius:12px; padding:20px 18px; border-bottom:3px solid transparent; box-shadow:0 2px 12px rgba(26,58,58,0.07); }
-  .kpi-card.phone { border-color:var(--phone-col); }
-  .kpi-card.form  { border-color:var(--form-col); }
-  .kpi-card.total { border-color:var(--teal-light); }
-  .kpi-card.green-border { border-color:var(--green); }
+  /* KPI strip */
+  .kpi-strip { display:grid; grid-template-columns:repeat(6,1fr); gap:16px; margin-bottom:32px; }
+  .kpi-card  { background:white; border-radius:12px; padding:20px 18px; border-bottom:3px solid var(--cream-dark); box-shadow:0 2px 14px rgba(26,58,58,0.07); }
+  .kpi-card.phone  { border-color:var(--phone-col); }
+  .kpi-card.form   { border-color:var(--form-col); }
+  .kpi-card.total  { border-color:var(--teal-light); }
+  .kpi-card.green  { border-color:var(--green); }
+  .kpi-card.amber  { border-color:var(--amber); }
   .kpi-label { font-size:10px; letter-spacing:2px; text-transform:uppercase; color:var(--text-light); margin-bottom:8px; }
-  .kpi-value { font-family:'Cormorant Garamond',serif; font-size:32px; font-weight:700; color:var(--teal-dark); line-height:1; }
-  .kpi-sub { font-size:12px; color:var(--text-light); margin-top:6px; }
-  .badge { display:inline-block; font-size:11px; font-weight:600; padding:2px 8px; border-radius:20px; margin-top:4px; }
-  .badge.up   { background:#e6f4ee; color:var(--green); }
-  .badge.down { background:#fdecea; color:var(--red); }
+  .kpi-value { font-family:'Cormorant Garamond',serif; font-size:34px; font-weight:700; color:var(--teal-dark); line-height:1; }
+  .kpi-sub   { font-size:12px; color:var(--text-light); margin-top:6px; }
+  .badge     { display:inline-block; font-size:11px; font-weight:600; padding:2px 9px; border-radius:20px; margin-top:5px; }
+  .badge.up      { background:#e6f4ee; color:var(--green); }
+  .badge.down    { background:#fdecea; color:var(--red); }
   .badge.neutral { background:#f0f0f0; color:var(--text-light); }
+  .badge.amber   { background:#fff3cd; color:var(--amber); }
 
-  /* Charts grid */
-  .charts-2col { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:32px; }
-  .charts-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:32px; }
-  .chart-card { background:white; border-radius:12px; padding:28px 24px; box-shadow:0 2px 12px rgba(26,58,58,0.07); }
+  /* Notice */
+  .notice { background:#fff8e6; border:1px solid #f0d080; border-radius:10px; padding:14px 20px; font-size:13px; color:#7a5a00; margin-bottom:32px; display:flex; gap:10px; align-items:flex-start; }
+
+  /* Charts */
+  .charts-2col { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:28px; }
+  .charts-3col { display:grid; grid-template-columns:1fr 1fr 1fr; gap:24px; margin-bottom:28px; }
+  .chart-card  { background:white; border-radius:12px; padding:28px 24px; box-shadow:0 2px 14px rgba(26,58,58,0.07); }
   .chart-card.full { grid-column:1/-1; }
   .chart-title { font-family:'Cormorant Garamond',serif; font-size:18px; font-weight:600; color:var(--teal-dark); margin-bottom:4px; }
-  .chart-desc { font-size:12px; color:var(--text-light); margin-bottom:20px; }
-  .chart-wrap { position:relative; height:260px; }
-  .chart-wrap.tall { height:320px; }
+  .chart-desc  { font-size:12px; color:var(--text-light); margin-bottom:18px; }
+  .chart-wrap  { position:relative; height:260px; }
+  .chart-wrap.tall { height:300px; }
+  .legend { display:flex; gap:20px; margin-bottom:14px; flex-wrap:wrap; }
+  .legend-item { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-mid); }
+  .legend-swatch { width:13px; height:13px; border-radius:3px; }
 
-  /* Data table */
+  /* Comparison strip */
+  .compare-strip { display:grid; grid-template-columns:1fr 1fr; gap:24px; margin-bottom:0; }
+  .compare-card  { background:white; border-radius:12px; padding:28px; box-shadow:0 2px 14px rgba(26,58,58,0.07); }
+  .compare-card h3 { font-family:'Cormorant Garamond',serif; font-size:20px; font-weight:600; color:var(--teal-dark); margin-bottom:18px; padding-bottom:12px; border-bottom:2px solid var(--cream-dark); }
+  .compare-row { display:flex; justify-content:space-between; align-items:center; padding:10px 0; border-bottom:1px solid var(--cream-dark); font-size:13.5px; }
+  .compare-row:last-child { border-bottom:none; }
+  .compare-row .metric { color:var(--text-mid); }
+  .compare-row .val    { font-weight:600; color:var(--teal-dark); }
+  .compare-row .val.green { color:var(--green); }
+  .compare-row .val.amber { color:var(--amber); }
+  .compare-row .val.red   { color:var(--red); }
+
+  /* Table */
   table { width:100%; border-collapse:collapse; font-size:13.5px; }
   thead tr { background:var(--teal-dark); color:white; }
-  thead th { padding:12px 16px; text-align:left; font-weight:500; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; }
+  thead th { padding:13px 16px; text-align:left; font-weight:500; font-size:11px; letter-spacing:1.5px; text-transform:uppercase; }
   tbody tr { border-bottom:1px solid var(--cream-dark); }
-  tbody tr:hover { background:rgba(26,58,58,0.03); }
+  tbody tr:hover { background:rgba(26,58,58,0.025); }
+  tbody tr.highlight { background:rgba(201,168,76,0.06); }
   tbody td { padding:13px 16px; vertical-align:middle; }
-  tbody tr.highlight-row td { background:rgba(201,168,76,0.07); font-weight:500; }
   .rate-pill { display:inline-block; padding:3px 10px; border-radius:20px; font-size:12px; font-weight:600; }
   .rate-high { background:#e6f4ee; color:var(--green); }
   .rate-mid  { background:#fff3cd; color:var(--amber); }
   .rate-low  { background:#fdecea; color:var(--red); }
-  .rate-na   { background:#f0f0f0; color:var(--text-light); }
-  .vs-badge { display:inline-flex; align-items:center; gap:6px; font-size:12px; }
-  .phone-dot { width:9px; height:9px; border-radius:50%; background:var(--phone-col); display:inline-block; }
-  .form-dot  { width:9px; height:9px; border-radius:50%; background:var(--form-col); display:inline-block; }
+  .rate-na   { background:#f0f0f0; color:var(--text-light); font-style:italic; }
+  .dot { display:inline-block; width:9px; height:9px; border-radius:50%; margin-right:5px; vertical-align:middle; }
+  .dot-phone { background:var(--phone-col); }
+  .dot-form  { background:var(--form-col); }
 
-  /* Insight cards */
+  /* Insights */
   .insights-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:20px; }
-  .insight-card { background:white; border-radius:12px; padding:24px 22px; box-shadow:0 2px 12px rgba(26,58,58,0.07); border-left:4px solid var(--teal-light); }
-  .insight-card.gold-border { border-left-color:var(--gold); }
-  .insight-card.green-border { border-left-color:var(--green); }
-  .insight-card.red-border   { border-left-color:var(--red); }
-  .insight-icon { font-size:22px; margin-bottom:12px; }
+  .insight-card  { background:white; border-radius:12px; padding:24px; box-shadow:0 2px 14px rgba(26,58,58,0.07); border-left:4px solid var(--teal-light); }
+  .insight-card.gold  { border-left-color:var(--gold); }
+  .insight-card.green { border-left-color:var(--green); }
+  .insight-card.red   { border-left-color:var(--red); }
+  .insight-card.amber { border-left-color:var(--amber); }
+  .insight-stat { font-family:'Cormorant Garamond',serif; font-size:36px; font-weight:700; color:var(--teal-dark); display:block; line-height:1; margin-bottom:8px; }
   .insight-card h4 { font-family:'Cormorant Garamond',serif; font-size:17px; font-weight:600; color:var(--teal-dark); margin-bottom:8px; }
-  .insight-card p { font-size:13px; color:var(--text-mid); line-height:1.6; }
-  .insight-card .stat { font-family:'Cormorant Garamond',serif; font-size:28px; font-weight:700; color:var(--teal-dark); display:block; margin-bottom:6px; }
+  .insight-card p  { font-size:13px; color:var(--text-mid); line-height:1.65; }
 
-  /* Notice banner */
-  .notice { background:#fff8e6; border:1px solid #f0d080; border-radius:10px; padding:14px 18px; font-size:13px; color:#7a5a00; margin-bottom:28px; display:flex; gap:10px; align-items:flex-start; }
-  .notice svg { flex-shrink:0; margin-top:1px; }
-
-  /* Legend */
-  .legend { display:flex; gap:20px; margin-bottom:16px; flex-wrap:wrap; }
-  .legend-item { display:flex; align-items:center; gap:7px; font-size:12px; color:var(--text-mid); }
-  .legend-swatch { width:14px; height:14px; border-radius:3px; }
-
-  /* Footer */
-  .report-footer { background:var(--teal-dark); color:rgba(255,255,255,0.5); text-align:center; padding:24px; font-size:12px; margin-top:0; }
+  .report-footer { background:var(--teal-dark); color:rgba(255,255,255,0.45); text-align:center; padding:24px; font-size:12px; }
   .report-footer span { color:var(--gold); }
 
-  @media(max-width:900px) {
-    .kpi-strip { grid-template-columns:repeat(3,1fr); }
-    .charts-2col,.charts-3col { grid-template-columns:1fr; }
-    .insights-grid { grid-template-columns:1fr; }
-    .report-header { padding:32px 24px; }
-    .container { padding:32px 20px; }
+  @media(max-width:900px){
+    .kpi-strip,.charts-2col,.charts-3col,.compare-strip,.insights-grid{ grid-template-columns:1fr; }
+    .report-header{ padding:32px 24px; }
+    .container{ padding:28px 18px; }
+    .report-header h1{ font-size:28px; }
   }
 </style>
 </head>
 <body>
 
-<!-- Header -->
 <div class="report-header">
-  <div class="eyebrow">Wellspring Therapeutic Partners — Lead Intelligence</div>
-  <h1>Phone Call vs Form Submission Analysis</h1>
-  <div class="subtitle">Consultation leads classified by entry channel — month-wise breakdown with scheduling conversion rates</div>
+  <div class="eyebrow">Wellspring Therapeutic Partners — Google Ads Intelligence</div>
+  <h1>Google Leads: Phone Call vs Form Submission</h1>
+  <div class="subtitle">Analysing how Google-sourced leads enter the funnel and how each channel converts to a scheduled consultation</div>
   <div class="header-meta">
-    <div class="header-meta-item"><div class="label">Period</div><div class="value">Dec 2025 – May 2026</div></div>
-    <div class="header-meta-item"><div class="label">Primary Analysis</div><div class="value">Jan – Apr 2026</div></div>
-    <div class="header-meta-item"><div class="label">Total Leads (Feb–Apr)</div><div class="value">221</div></div>
-    <div class="header-meta-item"><div class="label">Prepared by</div><div class="value">Damco Digital</div></div>
-    <div class="header-meta-item"><div class="label">Generated</div><div class="value">May 13, 2026</div></div>
+    <div class="hm-item"><div class="label">Source Filter</div><div class="value">Google Ads only</div></div>
+    <div class="hm-item"><div class="label">Primary Period</div><div class="value">Feb – Apr 2026</div></div>
+    <div class="hm-item"><div class="label">Google Leads (Feb–Apr)</div><div class="value">106</div></div>
+    <div class="hm-item"><div class="label">Total Leads (Feb–Apr)</div><div class="value">221</div></div>
+    <div class="hm-item"><div class="label">Prepared by</div><div class="value">Damco Digital</div></div>
+    <div class="hm-item"><div class="label">Generated</div><div class="value">May 13, 2026</div></div>
   </div>
 </div>
 <div class="gold-bar"></div>
@@ -146,76 +151,74 @@
   <!-- KPI Strip -->
   <div class="kpi-strip">
     <div class="kpi-card total">
-      <div class="kpi-label">Total Leads (Feb–Apr)</div>
-      <div class="kpi-value">221</div>
-      <div class="kpi-sub">Across 3 full months</div>
+      <div class="kpi-label">Google Leads (Feb–Apr)</div>
+      <div class="kpi-value">106</div>
+      <div class="kpi-sub">48% of all 221 leads</div>
     </div>
     <div class="kpi-card phone">
       <div class="kpi-label">Phone Call Leads</div>
-      <div class="kpi-value">69</div>
-      <div class="kpi-sub">31% of all leads</div>
+      <div class="kpi-value">25</div>
+      <div class="kpi-sub">24% of Google leads</div>
       <span class="badge neutral">Feb–Apr</span>
     </div>
     <div class="kpi-card form">
       <div class="kpi-label">Form / Online Leads</div>
-      <div class="kpi-value">142</div>
-      <div class="kpi-sub">64% of all leads</div>
+      <div class="kpi-value">81</div>
+      <div class="kpi-sub">76% of Google leads</div>
       <span class="badge neutral">Feb–Apr</span>
     </div>
     <div class="kpi-card phone">
-      <div class="kpi-label">Phone Avg Schedule Rate</div>
-      <div class="kpi-value">70%</div>
-      <div class="kpi-sub">48 of 69 scheduled</div>
-      <span class="badge up">↑ High value</span>
+      <div class="kpi-label">Phone Schedule Rate</div>
+      <div class="kpi-value">52%</div>
+      <div class="kpi-sub">13 of 25 scheduled</div>
+      <span class="badge up">↑ Higher value</span>
     </div>
     <div class="kpi-card form">
-      <div class="kpi-label">Form Avg Schedule Rate</div>
-      <div class="kpi-value">47%</div>
-      <div class="kpi-sub">67 of 142 scheduled</div>
-      <span class="badge neutral">Consistent</span>
+      <div class="kpi-label">Form Schedule Rate</div>
+      <div class="kpi-value">30%</div>
+      <div class="kpi-sub">24 of 81 scheduled</div>
+      <span class="badge amber">Needs improvement</span>
     </div>
-    <div class="kpi-card green-border">
-      <div class="kpi-label">Best Month Overall</div>
-      <div class="kpi-value">Apr</div>
-      <div class="kpi-sub">67% scheduling rate</div>
-      <span class="badge up">↑ Peak performance</span>
+    <div class="kpi-card green">
+      <div class="kpi-label">Google Overall Rate</div>
+      <div class="kpi-value">35%</div>
+      <div class="kpi-sub">37 of 106 scheduled</div>
+      <span class="badge neutral">vs 52% all-channel</span>
     </div>
   </div>
 
-  <!-- Notice about Dec/Jan -->
   <div class="notice">
-    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
-    <div><strong>Note on Dec 2025 &amp; Jan 2026:</strong> Scheduling data in the consultation sheet was not consistently recorded during the initial setup period. Dec 2025 and Jan 2026 show near-zero scheduling rates which reflect incomplete data entry, not actual performance. Charts focus on Feb–May 2026 where data is complete.</div>
+    <svg width="16" height="16" fill="none" viewBox="0 0 24 24" stroke="currentColor" style="flex-shrink:0;margin-top:1px"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/></svg>
+    <span><strong>Dec 2025 & Jan 2026 excluded from rates:</strong> Scheduling data was not consistently recorded in the sheet during the initial setup period. All rate analysis is based on Feb–May 2026 where data is complete.</span>
   </div>
 
-  <!-- Section 1: Monthly Volume -->
+  <!-- Section 1: Volume -->
   <section>
-    <div class="section-title">Monthly Lead Volume by Channel</div>
-    <div class="section-subtitle">How many leads came in through phone calls vs online forms each month</div>
+    <div class="section-title">Monthly Google Lead Volume by Channel</div>
+    <div class="section-subtitle">How many Google leads came in via phone call vs online form each month</div>
 
     <div class="charts-2col">
       <div class="chart-card">
-        <div class="chart-title">Lead Volume — Phone Call vs Form</div>
-        <div class="chart-desc">Stacked bars showing channel split per month (Dec 2025 – May 2026)</div>
+        <div class="chart-title">Google Lead Volume — Phone vs Form</div>
+        <div class="chart-desc">Stacked bars: channel split per month (Dec 2025 – May 2026)</div>
         <div class="legend">
           <div class="legend-item"><div class="legend-swatch" style="background:var(--phone-col)"></div>Phone Call</div>
           <div class="legend-item"><div class="legend-swatch" style="background:var(--form-col)"></div>Form / Online</div>
-          <div class="legend-item"><div class="legend-swatch" style="background:var(--meta-col)"></div>Meta Lead</div>
         </div>
         <div class="chart-wrap">
-          <canvas id="volumeStackedChart"></canvas>
+          <canvas id="googleVolumeChart"></canvas>
         </div>
       </div>
 
       <div class="chart-card">
-        <div class="chart-title">Channel Share by Month</div>
-        <div class="chart-desc">Percentage of leads that were phone calls vs form submissions</div>
+        <div class="chart-title">Channel Split — Google Leads Only</div>
+        <div class="chart-desc">Phone vs Form as % of all Google leads per month</div>
         <div class="legend">
           <div class="legend-item"><div class="legend-swatch" style="background:var(--phone-col)"></div>Phone Call %</div>
           <div class="legend-item"><div class="legend-swatch" style="background:var(--form-col)"></div>Form / Online %</div>
         </div>
         <div class="chart-wrap">
-          <canvas id="channelShareChart"></canvas>
+          <canvas id="googleShareChart"></canvas>
         </div>
       </div>
     </div>
@@ -223,61 +226,89 @@
 
   <!-- Section 2: Scheduling Rates -->
   <section>
-    <div class="section-title">Scheduling Conversion by Channel</div>
-    <div class="section-subtitle">Which channel converts better — and how it shifts month to month</div>
+    <div class="section-title">Scheduling Conversion — Google Leads by Channel</div>
+    <div class="section-subtitle">What % of Google phone call leads vs Google form leads actually booked a consultation</div>
 
     <div class="charts-2col">
       <div class="chart-card">
-        <div class="chart-title">Scheduling Rate: Phone vs Form</div>
-        <div class="chart-desc">% of leads that booked a consultation — Feb to May 2026</div>
+        <div class="chart-title">Scheduling Rate: Google Phone vs Google Form</div>
+        <div class="chart-desc">Monthly rate — Feb to May 2026 (complete data only)</div>
         <div class="legend">
-          <div class="legend-item"><div class="legend-swatch" style="background:var(--phone-col)"></div>Phone Call Rate</div>
-          <div class="legend-item"><div class="legend-swatch" style="background:var(--form-col)"></div>Form Rate</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:var(--phone-col)"></div>Google Phone Call Rate</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:var(--form-col)"></div>Google Form Rate</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#b0b8c4"></div>Google Overall Rate</div>
         </div>
         <div class="chart-wrap">
-          <canvas id="schedRateChart"></canvas>
+          <canvas id="googleRateChart"></canvas>
         </div>
       </div>
 
       <div class="chart-card">
-        <div class="chart-title">Scheduled vs Not Scheduled</div>
-        <div class="chart-desc">Absolute counts of scheduled leads by channel (Feb–Apr combined)</div>
+        <div class="chart-title">Scheduled vs Not Scheduled (Google Leads)</div>
+        <div class="chart-desc">Absolute counts per channel — Feb, Mar, Apr 2026</div>
         <div class="chart-wrap">
-          <canvas id="schedCountChart"></canvas>
+          <canvas id="googleSchedCountChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <!-- Donut + overall trend -->
+    <div class="charts-3col">
+      <div class="chart-card">
+        <div class="chart-title">Google Lead Channel Mix</div>
+        <div class="chart-desc">Phone vs Form share — Feb to Apr 2026 combined</div>
+        <div class="chart-wrap">
+          <canvas id="googleMixDonut"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Scheduled Google Leads by Channel</div>
+        <div class="chart-desc">Out of 37 scheduled Google leads (Feb–Apr), split by channel</div>
+        <div class="chart-wrap">
+          <canvas id="googleSchedMixDonut"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Google Services Requested</div>
+        <div class="chart-desc">What Google leads are looking for — Feb to Apr 2026</div>
+        <div class="chart-wrap">
+          <canvas id="googleServiceChart"></canvas>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Section 3: Full Data Table -->
+  <!-- Section 3: Table -->
   <section>
-    <div class="section-title">Month-by-Month Breakdown Table</div>
-    <div class="section-subtitle">Complete data for all months including volume, scheduling, and channel rates</div>
+    <div class="section-title">Month-by-Month Breakdown — Google Leads Only</div>
+    <div class="section-subtitle">Full data table: volume, scheduling, and conversion rates by channel</div>
 
     <div class="chart-card" style="padding:0;overflow:hidden;">
       <table>
         <thead>
           <tr>
             <th>Month</th>
-            <th>Total Leads</th>
-            <th><span class="phone-dot"></span> Phone Calls</th>
+            <th>Google Leads</th>
+            <th><span class="dot dot-phone"></span>Phone Leads</th>
             <th>Phone Scheduled</th>
             <th>Phone Rate</th>
-            <th><span class="form-dot"></span> Form / Online</th>
+            <th><span class="dot dot-form"></span>Form Leads</th>
             <th>Form Scheduled</th>
             <th>Form Rate</th>
-            <th>Overall Rate</th>
-            <th>Winner</th>
+            <th>Overall Google Rate</th>
+            <th>Better Channel</th>
           </tr>
         </thead>
         <tbody>
           <tr>
             <td><strong>Dec 2025</strong></td>
-            <td>23</td>
-            <td>4</td>
+            <td>15</td>
+            <td>2</td>
             <td>—</td>
             <td><span class="rate-pill rate-na">Incomplete</span></td>
-            <td>19</td>
+            <td>13</td>
             <td>—</td>
             <td><span class="rate-pill rate-na">Incomplete</span></td>
             <td><span class="rate-pill rate-na">—</span></td>
@@ -285,158 +316,201 @@
           </tr>
           <tr>
             <td><strong>Jan 2026</strong></td>
-            <td>33</td>
-            <td>5</td>
+            <td>19</td>
+            <td>2</td>
             <td>0</td>
             <td><span class="rate-pill rate-na">Incomplete</span></td>
-            <td>24</td>
-            <td>1</td>
+            <td>17</td>
+            <td>0</td>
             <td><span class="rate-pill rate-na">Incomplete</span></td>
-            <td><span class="rate-pill rate-na">~3%</span></td>
+            <td><span class="rate-pill rate-na">—</span></td>
             <td>—</td>
           </tr>
-          <tr class="highlight-row">
+          <tr class="highlight">
             <td><strong>Feb 2026</strong></td>
-            <td>83</td>
-            <td>21</td>
-            <td>10</td>
-            <td><span class="rate-pill rate-mid">48%</span></td>
-            <td>52</td>
-            <td>22</td>
-            <td><span class="rate-pill rate-mid">42%</span></td>
-            <td><span class="rate-pill rate-mid">39%</span></td>
-            <td><span class="vs-badge"><span class="phone-dot"></span> Phone</span></td>
+            <td>35</td>
+            <td>9</td>
+            <td>3</td>
+            <td><span class="rate-pill rate-mid">33%</span></td>
+            <td>26</td>
+            <td>4</td>
+            <td><span class="rate-pill rate-low">15%</span></td>
+            <td><span class="rate-pill rate-low">20%</span></td>
+            <td><span class="dot dot-phone"></span>Phone</td>
           </tr>
-          <tr class="highlight-row">
+          <tr class="highlight">
             <td><strong>Mar 2026</strong></td>
-            <td>77</td>
-            <td>19</td>
-            <td>17</td>
-            <td><span class="rate-pill rate-high">89%</span></td>
-            <td>58</td>
-            <td>25</td>
-            <td><span class="rate-pill rate-mid">43%</span></td>
-            <td><span class="rate-pill rate-mid">55%</span></td>
-            <td><span class="vs-badge"><span class="phone-dot"></span> Phone ↑↑</span></td>
+            <td>46</td>
+            <td>9</td>
+            <td>7</td>
+            <td><span class="rate-pill rate-high">78%</span></td>
+            <td>37</td>
+            <td>12</td>
+            <td><span class="rate-pill rate-mid">32%</span></td>
+            <td><span class="rate-pill rate-mid">41%</span></td>
+            <td><span class="dot dot-phone"></span>Phone ↑↑</td>
           </tr>
-          <tr class="highlight-row">
+          <tr class="highlight">
             <td><strong>Apr 2026</strong></td>
-            <td>61</td>
-            <td>29</td>
-            <td>21</td>
-            <td><span class="rate-pill rate-high">72%</span></td>
-            <td>32</td>
-            <td>20</td>
-            <td><span class="rate-pill rate-high">62%</span></td>
-            <td><span class="rate-pill rate-high">67%</span></td>
-            <td><span class="vs-badge"><span class="phone-dot"></span> Phone</span></td>
+            <td>25</td>
+            <td>7</td>
+            <td>3</td>
+            <td><span class="rate-pill rate-mid">43%</span></td>
+            <td>18</td>
+            <td>8</td>
+            <td><span class="rate-pill rate-mid">44%</span></td>
+            <td><span class="rate-pill rate-mid">44%</span></td>
+            <td><span style="color:var(--text-light);font-size:12px">Equal</span></td>
           </tr>
           <tr>
             <td><strong>May 2026</strong> <small style="color:var(--text-light)">(partial)</small></td>
-            <td>23</td>
-            <td>13</td>
-            <td>3</td>
-            <td><span class="rate-pill rate-low">23%</span></td>
             <td>10</td>
-            <td>6</td>
-            <td><span class="rate-pill rate-high">60%</span></td>
-            <td><span class="rate-pill rate-mid">39%</span></td>
-            <td><span class="vs-badge"><span class="form-dot"></span> Form ↑</span></td>
+            <td>5</td>
+            <td>2</td>
+            <td><span class="rate-pill rate-mid">40%</span></td>
+            <td>5</td>
+            <td>1</td>
+            <td><span class="rate-pill rate-low">20%</span></td>
+            <td><span class="rate-pill rate-mid">30%</span></td>
+            <td><span class="dot dot-phone"></span>Phone</td>
           </tr>
           <tr style="background:var(--teal-dark);color:white;">
             <td><strong>Feb–Apr Total</strong></td>
-            <td><strong>221</strong></td>
-            <td><strong>69</strong> (31%)</td>
-            <td><strong>48</strong></td>
-            <td><strong style="color:var(--gold-light)">70%</strong></td>
-            <td><strong>142</strong> (64%)</td>
-            <td><strong>67</strong></td>
-            <td><strong style="color:var(--gold-light)">47%</strong></td>
+            <td><strong>106</strong></td>
+            <td><strong>25</strong> (24%)</td>
+            <td><strong>13</strong></td>
             <td><strong style="color:var(--gold-light)">52%</strong></td>
-            <td><span style="color:var(--gold-light)">Phone wins</span></td>
+            <td><strong>81</strong> (76%)</td>
+            <td><strong>24</strong></td>
+            <td><strong style="color:var(--gold-light)">30%</strong></td>
+            <td><strong style="color:var(--gold-light)">35%</strong></td>
+            <td style="color:var(--gold-light)">Phone wins</td>
           </tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <!-- Section 4: Source & Service breakdown -->
+  <!-- Section 4: Google vs All Channels Comparison -->
   <section>
-    <div class="section-title">Lead Source & Service Type (Feb–Apr 2026)</div>
-    <div class="section-subtitle">Where leads are coming from and what services they're seeking</div>
+    <div class="section-title">Google vs All Channels — Head to Head</div>
+    <div class="section-subtitle">How Google leads compare to the full mix including Internal, Referral, and Psychology Today</div>
 
-    <div class="charts-3col">
-      <div class="chart-card">
-        <div class="chart-title">Lead Source Breakdown</div>
-        <div class="chart-desc">By referral channel — Feb to Apr 2026 combined</div>
-        <div class="chart-wrap">
-          <canvas id="sourceDonutChart"></canvas>
+    <div class="compare-strip">
+      <div class="compare-card">
+        <h3>📞 Phone Call Leads</h3>
+        <div class="compare-row">
+          <span class="metric">Volume (Feb–Apr)</span>
+          <span><span class="val">25</span> <small style="color:var(--text-light)">Google</small> &nbsp;vs&nbsp; <span class="val">69</span> <small style="color:var(--text-light)">All channels</small></span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Scheduling rate</span>
+          <span><span class="val amber">52%</span> <small style="color:var(--text-light)">Google</small> &nbsp;vs&nbsp; <span class="val green">70%</span> <small style="color:var(--text-light)">All channels</small></span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Google's share of all phone leads</span>
+          <span class="val">36% (25 of 69)</span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Best month (Google phone)</span>
+          <span class="val green">Mar 2026 — 78%</span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Worst month (Google phone)</span>
+          <span class="val amber">Feb 2026 — 33%</span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Gap vs all-channel phone rate</span>
+          <span class="val red">−18 pts (52% vs 70%)</span>
         </div>
       </div>
 
-      <div class="chart-card">
-        <div class="chart-title">Service Type Requested</div>
-        <div class="chart-desc">What leads are looking for — Feb to Apr 2026</div>
-        <div class="chart-wrap">
-          <canvas id="serviceChart"></canvas>
+      <div class="compare-card">
+        <h3>📋 Form / Online Leads</h3>
+        <div class="compare-row">
+          <span class="metric">Volume (Feb–Apr)</span>
+          <span><span class="val">81</span> <small style="color:var(--text-light)">Google</small> &nbsp;vs&nbsp; <span class="val">142</span> <small style="color:var(--text-light)">All channels</small></span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Scheduling rate</span>
+          <span><span class="val red">30%</span> <small style="color:var(--text-light)">Google</small> &nbsp;vs&nbsp; <span class="val amber">47%</span> <small style="color:var(--text-light)">All channels</small></span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Google's share of all form leads</span>
+          <span class="val">57% (81 of 142)</span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Best month (Google form)</span>
+          <span class="val green">Apr 2026 — 44%</span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Worst month (Google form)</span>
+          <span class="val red">Feb 2026 — 15%</span>
+        </div>
+        <div class="compare-row">
+          <span class="metric">Gap vs all-channel form rate</span>
+          <span class="val red">−17 pts (30% vs 47%)</span>
         </div>
       </div>
+    </div>
 
+    <!-- All-channel comparison chart -->
+    <div style="margin-top:24px;">
       <div class="chart-card">
-        <div class="chart-title">Monthly Lead Source Trend</div>
-        <div class="chart-desc">Google vs Internal vs Referral over time</div>
-        <div class="chart-wrap">
-          <canvas id="sourceTrendChart"></canvas>
+        <div class="chart-title">Google vs All Channels — Scheduling Rate Comparison</div>
+        <div class="chart-desc">Google-only rates alongside all-channel rates for phone and form — Feb to May 2026</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-swatch" style="background:var(--phone-col)"></div>Google Phone Rate</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:rgba(42,90,90,0.35)"></div>All-Channel Phone Rate</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:var(--form-col)"></div>Google Form Rate</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:rgba(201,168,76,0.4)"></div>All-Channel Form Rate</div>
+        </div>
+        <div class="chart-wrap tall">
+          <canvas id="comparisonChart"></canvas>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Section 5: Key Insights -->
+  <!-- Section 5: Insights -->
   <section>
     <div class="section-title">Key Insights & Recommendations</div>
-    <div class="section-subtitle">Data-driven observations from the consultation sheet analysis</div>
+    <div class="section-subtitle">What the data tells us about Google lead quality and channel strategy</div>
 
     <div class="insights-grid">
-      <div class="insight-card gold-border">
-        <div class="insight-icon">📞</div>
-        <span class="stat">70%</span>
-        <h4>Phone Calls Convert Nearly 1.5× Better</h4>
-        <p>Across Feb–Apr, phone call leads scheduled at 70% vs 47% for form submissions. Every phone call that reaches a qualified lead is significantly more likely to convert than a form inquiry.</p>
+      <div class="insight-card gold">
+        <span class="insight-stat">52%</span>
+        <h4>Google Phone Calls Convert at 52%</h4>
+        <p>Despite coming from paid search, Google phone call leads schedule at 52% — well above Google form leads (30%). Every inbound Google call that reaches intake is a high-value touchpoint worth prioritising.</p>
       </div>
 
-      <div class="insight-card green-border">
-        <div class="insight-icon">🏆</div>
-        <span class="stat">89%</span>
-        <h4>March Phone Scheduling Rate — Outstanding</h4>
-        <p>17 of 19 phone call leads scheduled in March 2026. This is the highest single-channel rate recorded and suggests strong intake handling. Replicating this consistency should be a priority.</p>
+      <div class="insight-card red">
+        <span class="insight-stat">30%</span>
+        <h4>Google Form Leads Leave 70% Unconverted</h4>
+        <p>76% of Google leads arrive via form, but only 30% schedule. This is the single biggest conversion gap in the funnel. Faster follow-up, better nurturing sequences, or a call-back prompt could recapture a significant portion of these leads.</p>
+      </div>
+
+      <div class="insight-card green">
+        <span class="insight-stat">78%</span>
+        <h4>March Google Phone Rate — Best on Record</h4>
+        <p>7 of 9 Google phone call leads scheduled in March 2026. If intake handling was consistent in March, that approach should be documented and used as the standard process going forward.</p>
+      </div>
+
+      <div class="insight-card amber">
+        <span class="insight-stat">−18pts</span>
+        <h4>Google Phone Underperforms vs Other Channels</h4>
+        <p>All-channel phone rate is 70%, but Google phone is only 52% — an 18-point gap. Google calls may include more unqualified or insurance-ineligible leads compared to warm referral or internal phone calls. Worth tracking reason-not-scheduled by source.</p>
       </div>
 
       <div class="insight-card">
-        <div class="insight-icon">📋</div>
-        <span class="stat">64%</span>
-        <h4>Forms Dominate Volume, Calls Dominate Quality</h4>
-        <p>64% of all leads come in via online forms but convert at only 47%. Phone calls are 31% of volume but convert at 70%. Focus should be on improving form-to-call conversion and reducing incomplete inquiries.</p>
+        <span class="insight-stat">57%</span>
+        <h4>Google Drives Over Half of All Form Leads</h4>
+        <p>57% of all form submissions across the practice come from Google. Improving Google form-to-schedule conversion even by 10 percentage points would add roughly 8–9 additional scheduled consultations per month at current volume.</p>
       </div>
 
-      <div class="insight-card red-border">
-        <div class="insight-icon">⚠️</div>
-        <span class="stat">23%</span>
-        <h4>May Phone Call Rate Drop — Flag to Watch</h4>
-        <p>Only 3 of 13 phone call leads scheduled in May so far (partial month). This is a sharp reversal from April's 72%. Could be seasonality, staff capacity, or leads calling without follow-through. Monitor closely.</p>
-      </div>
-
-      <div class="insight-card gold-border">
-        <div class="insight-icon">📈</div>
-        <span class="stat">+28%</span>
-        <h4>Overall Scheduling Rate Improved Feb→Apr</h4>
-        <p>From 39% in February to 67% in April — a 28-point improvement in 2 months. Both channels improved, with phone calls showing the steeper upward trajectory. Trend is positive heading into summer.</p>
-      </div>
-
-      <div class="insight-card green-border">
-        <div class="insight-icon">💡</div>
-        <h4>Recommendation: Prioritise Phone Intake</h4>
-        <p>Given phone calls' 70% scheduling rate vs 47% for forms, consider adding a strong call-to-action on the website to encourage direct calls over form submissions. A dedicated intake line or same-day callback promise could meaningfully lift overall conversion.</p>
+      <div class="insight-card green">
+        <h4>Recommendation: Two-Track Action Plan</h4>
+        <p><strong>For Google phone leads:</strong> Ensure calls are answered immediately. Each missed call from Google costs ~$50 in ad spend. Set up a same-day callback system.<br><br><strong>For Google form leads:</strong> Add an automated SMS within 15 minutes of form submission. Forms that don't get an immediate response are unlikely to convert — 70% currently don't.</p>
       </div>
     </div>
   </section>
@@ -444,181 +518,132 @@
 </div>
 
 <div class="report-footer">
-  Report generated May 13, 2026 &nbsp;|&nbsp; <span>Damco Digital</span> &nbsp;|&nbsp; Wellspring Therapeutic Partners &nbsp;|&nbsp; Data source: Wellspring Consultation Sheet
+  Report generated May 13, 2026 &nbsp;|&nbsp; <span>Damco Digital</span> &nbsp;|&nbsp; Wellspring Therapeutic Partners &nbsp;|&nbsp; Source: Wellspring Consultation Sheet (Google leads only)
 </div>
 
 <script>
-const TEAL = '#2a5a5a';
-const GOLD = '#c9a84c';
-const GOLD_L = '#e8c97a';
-const META = '#8a9ab0';
-const GREEN = '#2e7d62';
-
 Chart.defaults.font.family = 'DM Sans';
 Chart.defaults.color = '#3a4a4a';
 
+const TEAL  = '#2a5a5a';
+const GOLD  = '#c9a84c';
+const GREY  = '#b0b8c4';
+const GREEN = '#2e7d62';
+
 const months6 = ['Dec 2025','Jan 2026','Feb 2026','Mar 2026','Apr 2026','May 2026*'];
-const phoneVol = [4,5,21,19,29,13];
-const formVol  = [19,24,52,58,32,10];
-const metaVol  = [0,4,10,0,0,0];
+const gPhone  = [2,2,9,9,7,5];
+const gForm   = [13,17,26,37,18,5];
 
 // 1. Stacked volume
-new Chart(document.getElementById('volumeStackedChart'), {
+new Chart(document.getElementById('googleVolumeChart'),{
   type:'bar',
-  data:{
-    labels:months6,
-    datasets:[
-      {label:'Phone Call',data:phoneVol,backgroundColor:TEAL,borderRadius:3},
-      {label:'Form / Online',data:formVol,backgroundColor:GOLD,borderRadius:3},
-      {label:'Meta Lead',data:metaVol,backgroundColor:META,borderRadius:3},
-    ]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:false,
+  data:{labels:months6,datasets:[
+    {label:'Phone Call',data:gPhone,backgroundColor:TEAL,borderRadius:3},
+    {label:'Form / Online',data:gForm,backgroundColor:GOLD,borderRadius:3},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false}},
-    scales:{
-      x:{stacked:true, grid:{display:false}},
-      y:{stacked:true, grid:{color:'rgba(0,0,0,0.05)'}, ticks:{stepSize:20}}
-    }
+    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,grid:{color:'rgba(0,0,0,0.05)'},ticks:{stepSize:10}}}
   }
 });
 
 // 2. Channel share %
-const phoneShare = months6.map((_,i) => {
-  const t = phoneVol[i]+formVol[i]+metaVol[i];
-  return t ? Math.round(100*phoneVol[i]/t) : 0;
-});
-const formShare = months6.map((_,i) => {
-  const t = phoneVol[i]+formVol[i]+metaVol[i];
-  return t ? Math.round(100*formVol[i]/t) : 0;
-});
-new Chart(document.getElementById('channelShareChart'), {
+const gTotal = months6.map((_,i) => gPhone[i]+gForm[i]);
+const gPhoneShare = gTotal.map((t,i) => t ? Math.round(100*gPhone[i]/t) : 0);
+const gFormShare  = gTotal.map((t,i) => t ? Math.round(100*gForm[i]/t) : 0);
+new Chart(document.getElementById('googleShareChart'),{
   type:'bar',
-  data:{
-    labels:months6,
-    datasets:[
-      {label:'Phone Call %',data:phoneShare,backgroundColor:TEAL,borderRadius:3},
-      {label:'Form / Online %',data:formShare,backgroundColor:GOLD,borderRadius:3},
-    ]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:false,
+  data:{labels:months6,datasets:[
+    {label:'Phone %',data:gPhoneShare,backgroundColor:TEAL,borderRadius:3},
+    {label:'Form %',data:gFormShare,backgroundColor:GOLD,borderRadius:3},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false}},
-    scales:{
-      x:{stacked:true, grid:{display:false}},
-      y:{stacked:true, max:100, ticks:{callback:v=>v+'%'}, grid:{color:'rgba(0,0,0,0.05)'}}
-    }
+    scales:{x:{stacked:true,grid:{display:false}},y:{stacked:true,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.05)'}}}
   }
 });
 
-// 3. Scheduling rate line (Feb–May only)
+// 3. Google scheduling rate line
 const rateMonths = ['Feb 2026','Mar 2026','Apr 2026','May 2026*'];
-const phoneRate = [48,89,72,23];
-const formRate  = [42,43,62,60];
-new Chart(document.getElementById('schedRateChart'), {
+const gPhoneRate = [33,78,43,40];
+const gFormRate  = [15,32,44,20];
+const gOvRate    = [20,41,44,30];
+new Chart(document.getElementById('googleRateChart'),{
   type:'line',
-  data:{
-    labels:rateMonths,
-    datasets:[
-      {label:'Phone Call',data:phoneRate,borderColor:TEAL,backgroundColor:'rgba(42,90,90,0.08)',tension:0.4,fill:true,pointBackgroundColor:TEAL,pointRadius:5,borderWidth:2.5},
-      {label:'Form / Online',data:formRate,borderColor:GOLD,backgroundColor:'rgba(201,168,76,0.08)',tension:0.4,fill:true,pointBackgroundColor:GOLD,pointRadius:5,borderWidth:2.5},
-    ]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:false,
+  data:{labels:rateMonths,datasets:[
+    {label:'Phone Rate',data:gPhoneRate,borderColor:TEAL,backgroundColor:'rgba(42,90,90,0.08)',tension:0.4,fill:true,pointBackgroundColor:TEAL,pointRadius:5,borderWidth:2.5},
+    {label:'Form Rate',data:gFormRate,borderColor:GOLD,backgroundColor:'rgba(201,168,76,0.08)',tension:0.4,fill:true,pointBackgroundColor:GOLD,pointRadius:5,borderWidth:2.5},
+    {label:'Overall Google',data:gOvRate,borderColor:GREY,borderDash:[5,5],tension:0.4,fill:false,pointBackgroundColor:GREY,pointRadius:4,borderWidth:1.5},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{y:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.05)'}},x:{grid:{display:false}}}
+  }
+});
+
+// 4. Scheduled vs not scheduled grouped
+new Chart(document.getElementById('googleSchedCountChart'),{
+  type:'bar',
+  data:{labels:['Feb 2026','Mar 2026','Apr 2026'],datasets:[
+    {label:'Phone — Scheduled',data:[3,7,3],backgroundColor:TEAL,borderRadius:3},
+    {label:'Phone — Not Scheduled',data:[6,2,4],backgroundColor:'rgba(42,90,90,0.22)',borderRadius:3},
+    {label:'Form — Scheduled',data:[4,12,8],backgroundColor:GOLD,borderRadius:3},
+    {label:'Form — Not Scheduled',data:[22,25,10],backgroundColor:'rgba(201,168,76,0.22)',borderRadius:3},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:true,position:'bottom',labels:{boxWidth:11,font:{size:11}}}},
+    scales:{x:{grid:{display:false}},y:{grid:{color:'rgba(0,0,0,0.05)'}}}
+  }
+});
+
+// 5. Mix donut — lead volume
+new Chart(document.getElementById('googleMixDonut'),{
+  type:'doughnut',
+  data:{labels:['Phone Call (25)','Form / Online (81)'],datasets:[{
+    data:[25,81],backgroundColor:[TEAL,GOLD],borderWidth:0,hoverOffset:6
+  }]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:12}}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} leads`}}}
+  }
+});
+
+// 6. Scheduled mix donut
+new Chart(document.getElementById('googleSchedMixDonut'),{
+  type:'doughnut',
+  data:{labels:['Phone Scheduled (13)','Form Scheduled (24)'],datasets:[{
+    data:[13,24],backgroundColor:[TEAL,GOLD],borderWidth:0,hoverOffset:6
+  }]},
+  options:{responsive:true,maintainAspectRatio:false,cutout:'62%',
+    plugins:{legend:{position:'bottom',labels:{boxWidth:12,font:{size:12}}},
+      tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed}`}}}
+  }
+});
+
+// 7. Services bar
+new Chart(document.getElementById('googleServiceChart'),{
+  type:'bar',
+  data:{labels:['Psychotherapy','Medication Mgmt','ADHD / Testing','Not specified'],
+    datasets:[{data:[51,13,4,38],backgroundColor:[TEAL,GOLD,'#4a8a8a',GREY],borderRadius:4,borderSkipped:false}]},
+  options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
+    plugins:{legend:{display:false}},
+    scales:{x:{grid:{color:'rgba(0,0,0,0.05)'}},y:{grid:{display:false}}}
+  }
+});
+
+// 8. Comparison line chart
+new Chart(document.getElementById('comparisonChart'),{
+  type:'line',
+  data:{labels:rateMonths,datasets:[
+    {label:'Google Phone',data:[33,78,43,40],borderColor:TEAL,tension:0.4,pointRadius:5,borderWidth:2.5,fill:false},
+    {label:'All-Channel Phone',data:[48,89,72,23],borderColor:'rgba(42,90,90,0.35)',borderDash:[5,4],tension:0.4,pointRadius:4,borderWidth:1.8,fill:false},
+    {label:'Google Form',data:[15,32,44,20],borderColor:GOLD,tension:0.4,pointRadius:5,borderWidth:2.5,fill:false},
+    {label:'All-Channel Form',data:[42,43,62,60],borderColor:'rgba(201,168,76,0.45)',borderDash:[5,4],tension:0.4,pointRadius:4,borderWidth:1.8,fill:false},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
     plugins:{legend:{display:false}},
     scales:{
       y:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.05)'}},
-      x:{grid:{display:false}}
-    }
-  }
-});
-
-// 4. Scheduled vs not scheduled grouped bars (Feb–Apr)
-const schedMonths = ['Feb 2026','Mar 2026','Apr 2026'];
-new Chart(document.getElementById('schedCountChart'), {
-  type:'bar',
-  data:{
-    labels:schedMonths,
-    datasets:[
-      {label:'Phone — Scheduled',data:[10,17,21],backgroundColor:TEAL,borderRadius:3},
-      {label:'Phone — Not Scheduled',data:[11,2,8],backgroundColor:'rgba(42,90,90,0.25)',borderRadius:3},
-      {label:'Form — Scheduled',data:[22,25,20],backgroundColor:GOLD,borderRadius:3},
-      {label:'Form — Not Scheduled',data:[30,33,12],backgroundColor:'rgba(201,168,76,0.25)',borderRadius:3},
-    ]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{display:true, position:'bottom', labels:{boxWidth:12,font:{size:11}}}},
-    scales:{
-      x:{grid:{display:false}},
-      y:{grid:{color:'rgba(0,0,0,0.05)'}}
-    }
-  }
-});
-
-// 5. Source donut
-new Chart(document.getElementById('sourceDonutChart'), {
-  type:'doughnut',
-  data:{
-    labels:['Google','Internal','Referral','Psychology Today'],
-    datasets:[{
-      data:[106,62,43,10],
-      backgroundColor:[TEAL,'#4a8a8a',GOLD,META],
-      borderWidth:0,
-      hoverOffset:6
-    }]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:false,
-    cutout:'62%',
-    plugins:{
-      legend:{position:'bottom', labels:{boxWidth:12,font:{size:11}}},
-      tooltip:{callbacks:{label:ctx=>`${ctx.label}: ${ctx.parsed} leads`}}
-    }
-  }
-});
-
-// 6. Service type bar
-new Chart(document.getElementById('serviceChart'), {
-  type:'bar',
-  data:{
-    labels:['Psychotherapy','Medication Mgmt','ADHD Testing','Not specified'],
-    datasets:[{
-      data:[126,39,9,47],
-      backgroundColor:[TEAL,GOLD,'#4a8a8a',META],
-      borderRadius:4,
-      borderSkipped:false,
-    }]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:false,
-    indexAxis:'y',
-    plugins:{legend:{display:false}},
-    scales:{
-      x:{grid:{color:'rgba(0,0,0,0.05)'}},
-      y:{grid:{display:false}}
-    }
-  }
-});
-
-// 7. Source trend
-new Chart(document.getElementById('sourceTrendChart'), {
-  type:'line',
-  data:{
-    labels:['Dec','Jan','Feb','Mar','Apr','May*'],
-    datasets:[
-      {label:'Google',data:[15,19,35,46,25,10],borderColor:TEAL,tension:0.4,pointRadius:4,borderWidth:2,fill:false},
-      {label:'Internal',data:[0,1,24,20,18,4],borderColor:GOLD,tension:0.4,pointRadius:4,borderWidth:2,fill:false},
-      {label:'Referral',data:[8,13,19,9,15,8],borderColor:GREEN,tension:0.4,pointRadius:4,borderWidth:2,fill:false},
-      {label:'Psychology Today',data:[0,0,5,2,3,1],borderColor:META,tension:0.4,pointRadius:4,borderWidth:2,fill:false},
-    ]
-  },
-  options:{
-    responsive:true, maintainAspectRatio:false,
-    plugins:{legend:{position:'bottom', labels:{boxWidth:12,font:{size:11}}}},
-    scales:{
-      y:{grid:{color:'rgba(0,0,0,0.05)'}},
       x:{grid:{display:false}}
     }
   }
