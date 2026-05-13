@@ -694,19 +694,23 @@ function classifySource(row, colMap) {
   // Rule 1: Internal
   if (source === 'internal') return 'Internal';
 
-  // Rule 2: Google explicit
-  if (source === 'google ads' || hear === 'google') return 'Google';
+  // Rule 2: Google explicit — any variation of "google" in source or hear
+  if (source === 'google ads' || hear.includes('google')) return 'Google';
 
-  // Rule 3: Google implicit (no referral info)
-  if (hear === '' || hear === '-' || hear === 'other' || hear === 'online') return 'Google';
+  // Rule 3: Google implicit — unspecified or generic web/search entries
+  const impliedGoogle = ['', '-', 'other', 'online', 'internet', 'web', 'search', 'online search', 'searched online'];
+  if (impliedGoogle.includes(hear)) return 'Google';
 
   // Rule 4: Psychology Today
   if (hear.includes('psychology today')) return 'Psychology Today';
 
-  // Rule 5: Referral — Col K is "external" or Col J has a named person/org
-  if (source === 'external' || source === 'referral' || hear.length > 0) return 'Referral';
+  // Rule 5: Explicit referral source label
+  if (source === 'external' || source === 'referral') return 'Referral';
 
-  // Rule 6: Google — unidentified sources fall to Google (no other bracket applies)
+  // Rule 6: Named hear value not matched above — specific person or org referral
+  if (hear.length > 0) return 'Referral';
+
+  // Rule 7: Fallback — unidentified, no hear, no source
   return 'Google';
 }
 function normaliseServices(raw) {
