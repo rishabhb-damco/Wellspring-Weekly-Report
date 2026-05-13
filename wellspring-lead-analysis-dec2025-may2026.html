@@ -472,7 +472,88 @@
     </div>
   </section>
 
-  <!-- Section 5: Insights -->
+  <!-- Section 5: Source Mix — Why May Dropped -->
+  <section>
+    <div class="section-title">Why Did the May Scheduling Rate Drop?</div>
+    <div class="section-subtitle">Source mix analysis — the rate decline is not a Google or channel problem. It is a volume and quality shift in Internal and Referral leads.</div>
+
+    <!-- 3 diagnosis cards -->
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:28px;">
+
+      <div style="background:white;border-radius:12px;padding:24px;box-shadow:0 2px 14px rgba(26,58,58,0.07);border-top:4px solid var(--green);">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);margin-bottom:10px;">Root Cause #1</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--teal-dark);line-height:1;margin-bottom:8px;">18 → 4</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--teal-dark);margin-bottom:8px;">Internal leads collapsed</div>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.6;">Internal leads (word-of-mouth, existing patients) have a <strong>94% scheduling rate</strong>. April had 18 — May had only 4. That alone removed ~13 scheduled consultations from the pipeline.</p>
+      </div>
+
+      <div style="background:white;border-radius:12px;padding:24px;box-shadow:0 2px 14px rgba(26,58,58,0.07);border-top:4px solid var(--amber);">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);margin-bottom:10px;">Root Cause #2</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--teal-dark);line-height:1;margin-bottom:8px;">67% → 25%</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--teal-dark);margin-bottom:8px;">Referral quality deteriorated</div>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.6;">Referral leads had a 67% scheduling rate in April. In May that fell to 25% — only 2 of 8 referrals scheduled. This may indicate warmer referrals (existing connections) were replaced by more distant ones.</p>
+      </div>
+
+      <div style="background:white;border-radius:12px;padding:24px;box-shadow:0 2px 14px rgba(26,58,58,0.07);border-top:4px solid var(--teal-light);">
+        <div style="font-size:11px;letter-spacing:2px;text-transform:uppercase;color:var(--text-light);margin-bottom:10px;">Google's Role</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:700;color:var(--teal-dark);line-height:1;margin-bottom:8px;">Stable</div>
+        <div style="font-family:'Cormorant Garamond',serif;font-size:17px;font-weight:600;color:var(--teal-dark);margin-bottom:8px;">Not the cause of the drop</div>
+        <p style="font-size:13px;color:var(--text-mid);line-height:1.6;">Google leads went from 44% scheduling in April to 30% in May — a modest dip, largely because volume fell (25 → 10 leads). The Google ads performance itself is not the driver of the overall rate decline.</p>
+      </div>
+
+    </div>
+
+    <!-- Charts row -->
+    <div class="charts-2col" style="margin-bottom:28px;">
+
+      <div class="chart-card">
+        <div class="chart-title">Lead Volume by Source — Monthly</div>
+        <div class="chart-desc">See how Internal and Referral volumes shrank in May while Google stayed proportionally similar</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-swatch" style="background:#2a5a5a"></div>Google</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#c9a84c"></div>Internal</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#4a8a6a"></div>Referral</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#8a9ab0"></div>Psychology Today</div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="srcVolumeChart"></canvas>
+        </div>
+      </div>
+
+      <div class="chart-card">
+        <div class="chart-title">Scheduling Rate by Source — Monthly</div>
+        <div class="chart-desc">Internal stays consistently high. Referral swings wildly. Google is the most predictable (and improvable) source.</div>
+        <div class="legend">
+          <div class="legend-item"><div class="legend-swatch" style="background:#2a5a5a"></div>Google</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#c9a84c"></div>Internal</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#4a8a6a"></div>Referral</div>
+          <div class="legend-item"><div class="legend-swatch" style="background:#8a9ab0"></div>Psychology Today</div>
+        </div>
+        <div class="chart-wrap">
+          <canvas id="srcRateChart"></canvas>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- Scheduled leads stacked — where the bookings actually came from -->
+    <div class="chart-card" style="margin-bottom:0;">
+      <div class="chart-title">Where Did Scheduled Consultations Actually Come From?</div>
+      <div class="chart-desc">Stacked bars show the composition of each month's total scheduled leads by source — April's 41 bookings were driven heavily by Internal + Referral; May's 9 bookings were mostly Google</div>
+      <div class="legend">
+        <div class="legend-item"><div class="legend-swatch" style="background:#2a5a5a"></div>Google Scheduled</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#c9a84c"></div>Internal Scheduled</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#4a8a6a"></div>Referral Scheduled</div>
+        <div class="legend-item"><div class="legend-swatch" style="background:#8a9ab0"></div>Psychology Today Scheduled</div>
+      </div>
+      <div class="chart-wrap" style="height:240px;margin-top:8px;">
+        <canvas id="schedBySourceChart"></canvas>
+      </div>
+    </div>
+
+  </section>
+
+  <!-- Section 6: Insights -->
   <section>
     <div class="section-title">Key Insights & Recommendations</div>
     <div class="section-subtitle">What the data tells us about Google lead quality and channel strategy</div>
@@ -628,6 +709,68 @@ new Chart(document.getElementById('googleServiceChart'),{
   options:{responsive:true,maintainAspectRatio:false,indexAxis:'y',
     plugins:{legend:{display:false}},
     scales:{x:{grid:{color:'rgba(0,0,0,0.05)'}},y:{grid:{display:false}}}
+  }
+});
+
+// --- SOURCE MIX SECTION CHARTS ---
+const srcMonths = ['Feb 2026','Mar 2026','Apr 2026','May 2026*'];
+const SRC_GOOGLE   = '#2a5a5a';
+const SRC_INTERNAL = '#c9a84c';
+const SRC_REFERRAL = '#4a8a6a';
+const SRC_PT       = '#8a9ab0';
+
+// 9. Source volume stacked bar
+new Chart(document.getElementById('srcVolumeChart'),{
+  type:'bar',
+  data:{labels:srcMonths,datasets:[
+    {label:'Google',   data:[35,46,25,10],backgroundColor:SRC_GOOGLE,  borderRadius:3},
+    {label:'Internal', data:[24,20,18, 4],backgroundColor:SRC_INTERNAL,borderRadius:3},
+    {label:'Referral', data:[19, 9,15, 8],backgroundColor:SRC_REFERRAL,borderRadius:3},
+    {label:'Psych Today',data:[5, 2, 3, 1],backgroundColor:SRC_PT,    borderRadius:3},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{stacked:true,grid:{display:false}},
+      y:{stacked:true,grid:{color:'rgba(0,0,0,0.05)'},ticks:{stepSize:20}}
+    }
+  }
+});
+
+// 10. Source scheduling rate lines
+new Chart(document.getElementById('srcRateChart'),{
+  type:'line',
+  data:{labels:srcMonths,datasets:[
+    {label:'Google',    data:[20,41,44,30],borderColor:SRC_GOOGLE,  pointBackgroundColor:SRC_GOOGLE,  tension:0.4,fill:false,pointRadius:5,borderWidth:2.5},
+    {label:'Internal',  data:[79,70,94,75],borderColor:SRC_INTERNAL,pointBackgroundColor:SRC_INTERNAL,tension:0.4,fill:false,pointRadius:5,borderWidth:2.5},
+    {label:'Referral',  data:[16,89,67,25],borderColor:SRC_REFERRAL,pointBackgroundColor:SRC_REFERRAL,tension:0.4,fill:false,pointRadius:5,borderWidth:2.5},
+    {label:'Psych Today',data:[60,50,100,100],borderColor:SRC_PT,  pointBackgroundColor:SRC_PT,       tension:0.4,fill:false,pointRadius:5,borderWidth:2,borderDash:[4,3]},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      y:{min:0,max:100,ticks:{callback:v=>v+'%'},grid:{color:'rgba(0,0,0,0.05)'}},
+      x:{grid:{display:false}}
+    }
+  }
+});
+
+// 11. Scheduled leads by source stacked
+new Chart(document.getElementById('schedBySourceChart'),{
+  type:'bar',
+  data:{labels:srcMonths,datasets:[
+    {label:'Google Scheduled',      data:[ 7,19,11, 3],backgroundColor:SRC_GOOGLE,  borderRadius:3},
+    {label:'Internal Scheduled',    data:[19,14,17, 3],backgroundColor:SRC_INTERNAL,borderRadius:3},
+    {label:'Referral Scheduled',    data:[ 3, 8,10, 2],backgroundColor:SRC_REFERRAL,borderRadius:3},
+    {label:'Psych Today Scheduled', data:[ 3, 1, 3, 1],backgroundColor:SRC_PT,      borderRadius:3},
+  ]},
+  options:{responsive:true,maintainAspectRatio:false,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{stacked:true,grid:{display:false}},
+      y:{stacked:true,grid:{color:'rgba(0,0,0,0.05)'},ticks:{stepSize:10},
+         title:{display:true,text:'Scheduled Consultations',font:{size:11},color:'#6a7a7a'}}
+    }
   }
 });
 
