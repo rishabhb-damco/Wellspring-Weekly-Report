@@ -1,0 +1,465 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Wellspring — Monthly Ads Report — April 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --navy: #1f2a44;
+  --teal: #3d7a6f;
+  --coral: #c8583a;
+  --cream: #f7f5f1;
+  --line: #e3ddd5;
+  --muted: #6b7280;
+  --fill: #fff8ec;
+  --fill-border: #f0c97a;
+  --benchmark: #f0f4f8;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'DM Sans', sans-serif; background: var(--cream); color: #22272f; font-size: 15px; line-height: 1.6; }
+
+/* TOP BANNER */
+.banner {
+  background: var(--navy);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.banner-logo { color: #fff; font-size: 16px; font-weight: 600; }
+.banner-logo span { color: var(--teal); font-size: 12px; font-weight: 400; margin-left: 8px; }
+.print-btn {
+  background: var(--teal);
+  color: #fff;
+  border: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  padding: 8px 20px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+.print-btn:hover { background: #2f6059; }
+
+/* INSTRUCTIONS */
+.instructions {
+  background: #fff8ec;
+  border-bottom: 2px solid var(--fill-border);
+  padding: 14px 40px;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 14px;
+  color: #7a5c1a;
+}
+.instructions .icon { font-size: 20px; }
+
+/* WRAPPER */
+.wrapper { max-width: 860px; margin: 32px auto; padding: 0 20px 60px; }
+
+/* HEADER */
+.doc-header {
+  background: #fff;
+  border: 1px solid var(--line);
+  border-radius: 12px;
+  padding: 28px 32px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+.doc-title h1 { font-size: 22px; font-weight: 600; color: var(--navy); margin-bottom: 4px; }
+.doc-title p { font-size: 13px; color: var(--muted); }
+.doc-meta { display: flex; flex-direction: column; gap: 8px; align-items: flex-end; }
+.meta-field { display: flex; flex-direction: column; align-items: flex-end; gap: 2px; }
+.meta-field label { font-size: 11px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); }
+.editable-inline {
+  border: 1.5px dashed var(--fill-border);
+  background: var(--fill);
+  border-radius: 6px;
+  padding: 6px 12px;
+  min-width: 120px;
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--navy);
+  text-align: center;
+  outline: none;
+}
+.editable-inline:focus { border-color: var(--coral); background: #fff; }
+
+/* SECTIONS */
+.section { background: #fff; border: 1px solid var(--line); border-radius: 12px; margin-bottom: 20px; overflow: hidden; }
+.section-head { background: var(--navy); padding: 14px 24px; display: flex; align-items: center; gap: 10px; }
+.section-head .num { width: 26px; height: 26px; border-radius: 50%; background: var(--teal); color: #fff; font-size: 13px; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+.section-head h2 { font-size: 15px; font-weight: 600; color: #fff; }
+.section-body { padding: 20px 24px; }
+
+/* TABLES */
+table { width: 100%; border-collapse: collapse; font-size: 14px; }
+th {
+  background: #f0f4f8;
+  color: var(--navy);
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: .8px;
+  font-weight: 600;
+  padding: 10px 12px;
+  text-align: left;
+  border-bottom: 2px solid var(--line);
+}
+td { padding: 10px 12px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+tr:last-child td { border-bottom: none; }
+.benchmark-val { background: var(--benchmark); color: var(--muted); font-size: 13px; }
+.editable-cell {
+  background: var(--fill);
+  border: 1.5px dashed var(--fill-border);
+  border-radius: 5px;
+  padding: 6px 10px;
+  outline: none;
+  min-width: 60px;
+  display: inline-block;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--navy);
+  transition: all .15s;
+}
+.editable-cell:focus { background: #fff; border-color: var(--coral); border-style: solid; }
+[contenteditable]:empty:before { content: attr(data-placeholder); color: #bfa85a; font-style: italic; font-weight: 400; }
+.change-pos { color: #2f7a4f; font-weight: 600; }
+.change-neg { color: var(--coral); font-weight: 600; }
+
+/* ONE-LINER */
+.oneliner-label { font-size: 12px; text-transform: uppercase; letter-spacing: 1px; color: var(--muted); margin-bottom: 8px; font-weight: 600; }
+.oneliner-box {
+  border: 1.5px dashed var(--fill-border);
+  background: var(--fill);
+  border-radius: 8px;
+  padding: 14px 16px;
+  outline: none;
+  width: 100%;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--navy);
+  min-height: 44px;
+  display: block;
+  margin-top: 16px;
+  transition: all .15s;
+}
+.oneliner-box:focus { background: #fff; border-color: var(--coral); border-style: solid; }
+
+/* STORY BULLETS */
+.bullet-row { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 12px; }
+.bullet-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--teal); margin-top: 8px; flex-shrink: 0; }
+.bullet-field {
+  flex: 1;
+  border: 1.5px dashed var(--fill-border);
+  background: var(--fill);
+  border-radius: 8px;
+  padding: 10px 14px;
+  outline: none;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  color: var(--navy);
+  min-height: 40px;
+  transition: all .15s;
+}
+.bullet-field:focus { background: #fff; border-color: var(--coral); border-style: solid; }
+
+/* LEGEND */
+.legend { display: flex; gap: 20px; font-size: 12px; color: var(--muted); margin-bottom: 12px; }
+.legend-item { display: flex; align-items: center; gap: 6px; }
+.legend-swatch { width: 14px; height: 14px; border-radius: 3px; }
+.swatch-fill { background: var(--fill); border: 1.5px dashed var(--fill-border); }
+.swatch-bench { background: var(--benchmark); border: 1px solid var(--line); }
+
+/* FOOTNOTE */
+.footnote { font-size: 12px; color: var(--muted); margin-top: 12px; font-style: italic; }
+
+@media print {
+  .banner .print-btn { display: none; }
+  .instructions { display: none; }
+  body { background: #fff; }
+  .editable-cell, .oneliner-box, .bullet-field, .editable-inline {
+    border: 1px solid #ddd !important;
+    background: #fff !important;
+  }
+}
+</style>
+</head>
+<body>
+
+<div class="banner">
+  <div class="banner-logo">Wellspring Therapeutic Partners <span>Monthly Ads Report</span></div>
+  <button class="print-btn" onclick="window.print()">Save as PDF</button>
+</div>
+
+<div class="instructions">
+  <span class="icon">✏️</span>
+  <span><strong>Pre-filled for April 2026.</strong> Click any <span style="background:var(--fill);border:1px dashed var(--fill-border);padding:1px 6px;border-radius:4px;font-size:13px;">orange field</span> to edit. Grey cells are March benchmarks — leave them. When done, click <strong>Save as PDF</strong> and send to Harshit.</span>
+</div>
+
+<div class="wrapper">
+
+  <!-- HEADER -->
+  <div class="doc-header">
+    <div class="doc-title">
+      <h1>Google Ads — Monthly Report</h1>
+      <p>Prepared by Rishabh &nbsp;·&nbsp; Wellspring Therapeutic Partners</p>
+    </div>
+    <div class="doc-meta">
+      <div class="meta-field">
+        <label>Month</label>
+        <div class="editable-inline" contenteditable="true">April 2026</div>
+      </div>
+      <div class="meta-field">
+        <label>Prepared on</label>
+        <div class="editable-inline" contenteditable="true">14/05/2026</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- SECTION 1 — OVERVIEW -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">1</div>
+      <h2>Overview — This Month vs March Benchmark</h2>
+    </div>
+    <div class="section-body">
+      <div class="legend">
+        <div class="legend-item"><div class="legend-swatch swatch-fill"></div> This month (editable)</div>
+        <div class="legend-item"><div class="legend-swatch swatch-bench"></div> March benchmark (do not change)</div>
+      </div>
+      <table>
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>This Month</th>
+            <th>March Benchmark</th>
+            <th>Change</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Total Spend</td>
+            <td><div class="editable-cell" contenteditable="true">$1,529</div></td>
+            <td class="benchmark-val">$2,147</td>
+            <td><div class="editable-cell change-neg" contenteditable="true">-$618 (-29%)</div></td>
+          </tr>
+          <tr>
+            <td>Clicks</td>
+            <td><div class="editable-cell" contenteditable="true">413</div></td>
+            <td class="benchmark-val">520</td>
+            <td><div class="editable-cell change-neg" contenteditable="true">-107 (-21%)</div></td>
+          </tr>
+          <tr>
+            <td>Impressions</td>
+            <td><div class="editable-cell" contenteditable="true">6,837</div></td>
+            <td class="benchmark-val">8,016</td>
+            <td><div class="editable-cell change-neg" contenteditable="true">-1,179 (-15%)</div></td>
+          </tr>
+          <tr>
+            <td>CTR</td>
+            <td><div class="editable-cell" contenteditable="true">6.04%</div></td>
+            <td class="benchmark-val">6.89%</td>
+            <td><div class="editable-cell change-neg" contenteditable="true">-0.85%</div></td>
+          </tr>
+          <tr>
+            <td>Avg CPC</td>
+            <td><div class="editable-cell" contenteditable="true">$3.70</div></td>
+            <td class="benchmark-val">$4.13</td>
+            <td><div class="editable-cell change-pos" contenteditable="true">-$0.43 (-10%)</div></td>
+          </tr>
+          <tr>
+            <td>Form Submissions</td>
+            <td><div class="editable-cell" contenteditable="true">12</div></td>
+            <td class="benchmark-val">22</td>
+            <td><div class="editable-cell change-neg" contenteditable="true">-10 (-45%)</div></td>
+          </tr>
+          <tr>
+            <td>Phone Call Conversions</td>
+            <td><div class="editable-cell" contenteditable="true">18</div></td>
+            <td class="benchmark-val">22</td>
+            <td><div class="editable-cell change-neg" contenteditable="true">-4 (-18%)</div></td>
+          </tr>
+          <tr>
+            <td><strong>Total Platform Leads</strong></td>
+            <td><div class="editable-cell" contenteditable="true">30</div></td>
+            <td class="benchmark-val"><strong>44</strong></td>
+            <td><div class="editable-cell change-neg" contenteditable="true">-14 (-32%)</div></td>
+          </tr>
+          <tr>
+            <td>CPL (blended)</td>
+            <td><div class="editable-cell" contenteditable="true">$50.95</div></td>
+            <td class="benchmark-val">$97.60</td>
+            <td><div class="editable-cell change-pos" contenteditable="true">-$46.65 (-48%)</div></td>
+          </tr>
+          <tr>
+            <td>Scheduling Rate</td>
+            <td><div class="editable-cell" contenteditable="true">44%</div></td>
+            <td class="benchmark-val">50%</td>
+            <td><div class="editable-cell change-neg" contenteditable="true">-6%</div></td>
+          </tr>
+          <tr>
+            <td>Cost per Scheduled</td>
+            <td><div class="editable-cell" contenteditable="true">$139</div></td>
+            <td class="benchmark-val">$165</td>
+            <td><div class="editable-cell change-pos" contenteditable="true">-$26 (-16%)</div></td>
+          </tr>
+        </tbody>
+      </table>
+      <div class="oneliner-label" style="margin-top:18px">Your one-line summary of this month</div>
+      <div class="oneliner-box" contenteditable="true">Volume fell 32% on a reduced budget, but CPL nearly halved to $50.95 — best efficiency on record — and cost per scheduled appointment dropped $26 vs March.</div>
+    </div>
+  </div>
+
+  <!-- SECTION 2 — TOP KEYWORDS -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">2</div>
+      <h2>Top 3 Keywords — by Conversions</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Keyword</th><th>Conversions</th><th>Clicks</th><th>CTR</th><th>CPC</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><div class="editable-cell" contenteditable="true">therapist near me</div></td>
+            <td><div class="editable-cell" contenteditable="true">—*</div></td>
+            <td><div class="editable-cell" contenteditable="true">15</div></td>
+            <td><div class="editable-cell" contenteditable="true">—</div></td>
+            <td><div class="editable-cell" contenteditable="true">$5.33</div></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><div class="editable-cell" contenteditable="true">wellspring therapeutic partners</div></td>
+            <td><div class="editable-cell" contenteditable="true">—*</div></td>
+            <td><div class="editable-cell" contenteditable="true">35</div></td>
+            <td><div class="editable-cell" contenteditable="true">—</div></td>
+            <td><div class="editable-cell" contenteditable="true">$0.87</div></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><div class="editable-cell" contenteditable="true">wellspring therapy</div></td>
+            <td><div class="editable-cell" contenteditable="true">—*</div></td>
+            <td><div class="editable-cell" contenteditable="true">18</div></td>
+            <td><div class="editable-cell" contenteditable="true">—</div></td>
+            <td><div class="editable-cell" contenteditable="true">$1.06</div></td>
+          </tr>
+        </tbody>
+      </table>
+      <p class="footnote">* Most form conversions (7 of 12) are attributed to "Other search terms" in the Google Ads report — keyword-level conversion breakdown is not available for April. Table ranked by clicks as a proxy. CTR not available from search terms export.</p>
+    </div>
+  </div>
+
+  <!-- SECTION 3 — TOP HEADLINES -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">3</div>
+      <h2>Top 3 Headlines — by CTR</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Headline</th><th>CTR</th><th>Impressions</th><th>Clicks</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><div class="editable-cell" contenteditable="true">Child &amp; Teen Therapy Near You</div></td>
+            <td><div class="editable-cell" contenteditable="true">7.03%</div></td>
+            <td><div class="editable-cell" contenteditable="true">697</div></td>
+            <td><div class="editable-cell" contenteditable="true">49</div></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><div class="editable-cell" contenteditable="true">Psychiatrist in Troy MI</div></td>
+            <td><div class="editable-cell" contenteditable="true">6.54%</div></td>
+            <td><div class="editable-cell" contenteditable="true">1,651</div></td>
+            <td><div class="editable-cell" contenteditable="true">108</div></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><div class="editable-cell" contenteditable="true">Best Therapist in Troy MI</div></td>
+            <td><div class="editable-cell" contenteditable="true">4.98%</div></td>
+            <td><div class="editable-cell" contenteditable="true">843</div></td>
+            <td><div class="editable-cell" contenteditable="true">42</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 4 — TOP DESCRIPTIONS -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">4</div>
+      <h2>Top 3 Descriptions — by CTR</h2>
+    </div>
+    <div class="section-body">
+      <table>
+        <thead>
+          <tr><th>#</th><th>Description</th><th>CTR</th><th>Impressions</th><th>Clicks</th></tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>1</td>
+            <td><div class="editable-cell" contenteditable="true">Trusted local therapists ready to help you manage uneasiness and find calm.</div></td>
+            <td><div class="editable-cell" contenteditable="true">6.94%</div></td>
+            <td><div class="editable-cell" contenteditable="true">461</div></td>
+            <td><div class="editable-cell" contenteditable="true">32</div></td>
+          </tr>
+          <tr>
+            <td>2</td>
+            <td><div class="editable-cell" contenteditable="true">Healing starts with feeling heard! Our expert team is here to support your next step.</div></td>
+            <td><div class="editable-cell" contenteditable="true">5.57%</div></td>
+            <td><div class="editable-cell" contenteditable="true">1,597</div></td>
+            <td><div class="editable-cell" contenteditable="true">89</div></td>
+          </tr>
+          <tr>
+            <td>3</td>
+            <td><div class="editable-cell" contenteditable="true">Accepting new patients now. Get personalized mental health support that fits your life.</div></td>
+            <td><div class="editable-cell" contenteditable="true">4.46%</div></td>
+            <td><div class="editable-cell" contenteditable="true">2,331</div></td>
+            <td><div class="editable-cell" contenteditable="true">104</div></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SECTION 5 — THE STORY -->
+  <div class="section">
+    <div class="section-head">
+      <div class="num">5</div>
+      <h2>The Story — 3 bullets, one sentence each</h2>
+    </div>
+    <div class="section-body">
+      <p style="font-size:13px;color:var(--muted);margin-bottom:16px">Keep each bullet to one honest sentence. What worked, what didn't, and what changed.</p>
+      <div class="bullet-row">
+        <div class="bullet-dot" style="background:#2f7a4f"></div>
+        <div class="bullet-field" contenteditable="true">DSA was the standout campaign at $32 CPL, outperforming Generic Search by 2.6x — and CPL overall nearly halved to $50.95, the best efficiency we've recorded for this account.</div>
+      </div>
+      <div class="bullet-row">
+        <div class="bullet-dot" style="background:var(--coral)"></div>
+        <div class="bullet-field" contenteditable="true">Total lead volume dropped to 30 (down 14 from March) as the monthly budget was reduced by $618 — the volume decline is a direct consequence of the spend cut, not a quality issue.</div>
+      </div>
+      <div class="bullet-row">
+        <div class="bullet-dot" style="background:var(--navy)"></div>
+        <div class="bullet-field" contenteditable="true">Regional Search campaign launched on May 6, just outside the April window — April performance reflects only Generic Search and DSA, so May will be the first full read on all three campaigns together.</div>
+      </div>
+      <div class="oneliner-label" style="margin-top:18px">What to watch next month</div>
+      <div class="oneliner-box" contenteditable="true">May — if Regional Search adds 10+ leads without pushing blended CPL above $65, that's the signal to increase monthly budget and scale toward March-level volume at April-level efficiency.</div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>
