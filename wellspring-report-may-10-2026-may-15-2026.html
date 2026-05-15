@@ -1,0 +1,670 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Wellspring — May 10 – 15, 2026</title>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+  :root{--cream:#F7F3EE;--cream-dark:#EDE7DC;--charcoal:#1C1C1A;--warm-mid:#6B6460;--teal:#3D7A72;--teal-light:#5A9E95;--teal-pale:#EAF3F2;--rust:#C25B3F;--amber:#C9882A;--violet:#5C4E9E;--green:#3D8A60;--pink:#C4527A;--red:#C44040;--border:#DDD5C8;}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  body{background:#f0ece6;font-family:'DM Sans',sans-serif;color:var(--charcoal);font-size:13px;line-height:1.6;}
+  .page{max-width:1100px;margin:0 auto;padding:28px 32px;background:var(--cream);min-height:100vh;}
+  .header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:1.5px solid var(--border);margin-bottom:16px;}
+  .logo-name{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:500;letter-spacing:-0.5px;color:var(--charcoal);line-height:1;}
+  .logo-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-top:4px;font-weight:500;}
+  .header-meta{text-align:right;}
+  .report-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--warm-mid);font-weight:500;}
+  .report-week{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--charcoal);margin-top:2px;}
+  .report-prepared{font-size:11px;color:var(--warm-mid);margin-top:4px;}
+  .section-label{font-size:9px;text-transform:uppercase;letter-spacing:3px;color:var(--teal);font-weight:500;margin-bottom:8px;}
+  .section-divider{margin:20px 0 14px;padding-top:18px;border-top:2px solid var(--cream-dark);display:flex;align-items:center;gap:12px;}
+  .section-divider .sdot{width:9px;height:9px;border-radius:50%;background:var(--teal);flex-shrink:0;}
+  .section-divider h2{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--charcoal);}
+  .section-divider .stag{font-size:10px;color:var(--warm-mid);font-weight:400;font-family:'DM Sans',sans-serif;}
+  .kpi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}
+  .kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 18px;position:relative;overflow:hidden;}
+  .kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);border-radius:10px 10px 0 0;}
+  .kpi-card.amber::before{background:var(--amber);}.kpi-card.violet::before{background:var(--violet);}
+  .kpi-card.green::before{background:var(--green);}.kpi-card.rust::before{background:var(--rust);}.kpi-card.pink::before{background:var(--pink);}
+  .kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-bottom:4px;}
+  .kpi-value{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;color:var(--charcoal);line-height:1;}
+  .kpi-sub{font-size:11px;color:var(--warm-mid);margin-top:3px;}
+  .kpi-badge{display:inline-block;font-size:9.5px;padding:2px 7px;border-radius:20px;margin-top:4px;font-weight:500;}
+  .badge-up{background:#E8F5EC;color:#2E7D4F;}.badge-warn{background:#FDF6EC;color:#C9882A;}.badge-down{background:#FDF1EE;color:#C25B3F;}
+  .badge-cpl-ok{background:#E8F5EC;color:#2E7D4F;font-size:9px;padding:1px 6px;border-radius:10px;display:inline-block;margin-top:2px;}
+  .badge-cpl-warn{background:#FDF6EC;color:#C9882A;font-size:9px;padding:1px 6px;border-radius:10px;display:inline-block;margin-top:2px;}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}
+  .panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;}
+  .panel-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--charcoal);margin-bottom:10px;display:flex;align-items:center;gap:8px;}
+  .panel-title .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;}
+  .campaign-table{width:100%;border-collapse:collapse;}
+  .campaign-table th{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;padding:8px 10px;text-align:right;border-bottom:1px solid var(--border);white-space:nowrap;}
+  .campaign-table th:first-child{text-align:left;}
+  .campaign-table td{padding:11px 10px;font-size:12.5px;text-align:right;border-bottom:1px solid #F0EDE8;color:var(--charcoal);}
+  .campaign-table td:first-child{text-align:left;}
+  .campaign-table tr.total-row td{border-bottom:none;font-weight:500;background:var(--teal-pale);}
+  .campaign-table tr.total-row td:first-child{border-radius:6px 0 0 6px;}
+  .campaign-table tr.total-row td:last-child{border-radius:0 6px 6px 0;}
+  .campaign-name{font-size:11px;color:var(--warm-mid);max-width:180px;line-height:1.3;}
+  .campaign-name strong{display:block;font-size:12px;color:var(--charcoal);font-weight:500;}
+  .badge-tag{display:inline-block;font-size:8.5px;padding:2px 6px;border-radius:4px;font-weight:500;margin-top:3px;}
+  .tag-search{background:#EAF0FF;color:#3D5FA0;}.tag-dsa{background:#EEF9EC;color:#2E7D4F;}
+  .metric-highlight{display:inline-block;background:var(--teal-pale);color:var(--teal);font-weight:500;border-radius:4px;padding:1px 6px;font-size:12px;}
+  .highlight-green{color:var(--green);font-weight:600;}
+  .hbar-row{display:flex;align-items:center;gap:10px;margin-bottom:11px;}
+  .hbar-label{font-size:11.5px;color:var(--charcoal);min-width:200px;flex-shrink:0;}
+  .hbar-track{flex:1;background:var(--cream-dark);border-radius:4px;height:26px;}
+  .hbar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-width:48px;}
+  .hbar-pct{font-size:11px;font-weight:600;color:#fff;white-space:nowrap;}
+  .hbar-count{font-size:12px;color:var(--warm-mid);min-width:20px;text-align:right;font-weight:600;}
+  .insight-card{border-left:3px solid var(--teal);padding:8px 12px;margin-bottom:7px;background:var(--teal-pale);border-radius:0 8px 8px 0;font-size:12px;line-height:1.5;}
+  .insight-card.amber{border-left-color:var(--amber);background:#FDF6EC;}
+  .insight-card.rust{border-left-color:var(--rust);background:#FDF1EE;}
+  .insight-card strong{font-weight:500;color:var(--charcoal);}
+  .next-step{display:flex;gap:10px;align-items:flex-start;margin-bottom:8px;}
+  .step-num{width:22px;height:22px;border-radius:50%;background:var(--teal);color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+  .step-text{font-size:12px;line-height:1.6;color:var(--charcoal);}
+  .step-text strong{font-weight:500;}
+  .notice-inline{background:#FDF6EC;border:1px solid #F0D9B5;border-radius:8px;padding:9px 14px;font-size:11px;color:var(--charcoal);margin-bottom:14px;}
+  .notice-inline strong{font-weight:500;}
+  .trend-card{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:10px 12px;text-align:center;}
+  .trend-card.current{background:var(--teal-pale);border-color:#b2d8d4;}
+  .trend-week{font-size:9px;text-transform:uppercase;letter-spacing:1px;color:var(--warm-mid);font-weight:500;margin-bottom:6px;}
+  .trend-metric{font-family:'Cormorant Garamond',serif;font-size:22px;font-weight:600;color:var(--charcoal);line-height:1;}
+  .trend-sub{font-size:10px;color:var(--warm-mid);margin-top:3px;}
+  .trend-badge{font-size:9px;padding:2px 6px;border-radius:10px;display:inline-block;margin-top:4px;}
+  .tb-up{background:#E8F5EC;color:#2E7D4F;}.tb-down{background:#FDF1EE;color:#C25B3F;}.tb-flat{background:#F0EDE8;color:#6B6460;}
+  .source-chips{display:flex;gap:8px;flex-wrap:wrap;margin-top:8px;}
+  .chip{background:var(--cream);border:1px solid var(--border);border-radius:20px;padding:5px 12px;font-size:11px;display:flex;align-items:center;gap:6px;}
+  .chip-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;}
+  .footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}
+  .footer-left{font-size:10.5px;color:var(--warm-mid);line-height:1.7;}
+  .footer-right{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:500;color:var(--teal);}
+  .divider{border:none;border-top:1px solid var(--border);margin:14px 0;}
+  canvas{max-height:220px;}
+  @media print{body{background:white;}.page{padding:16px 20px;}.notice-inline{display:none;}}
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div>
+      <div class="logo-name">Wellspring</div>
+      <div class="logo-sub">Therapeutic Partners</div>
+    </div>
+    <div class="header-meta">
+      <div class="report-label">Performance Report</div>
+      <div class="report-week">May 10 – 15, 2026</div>
+      <div class="report-prepared">Prepared by Damco Digital &nbsp;·&nbsp; Google Ads + CRM</div>
+    </div>
+  </div>
+
+  <!-- DATA NOTICE -->
+  <div class="notice-inline">
+    <strong>Data note:</strong> Google Ads data reflects sheet export through approximately 13 May. May 14–15 platform data may not yet be reflected in spend and conversion totals. Lead quality data (CRM) is current through 14 May.
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 1 — GOOGLE ADS PERFORMANCE
+  ═══════════════════════════════════════════════ -->
+  <div class="section-label">Google Ads — Platform Performance</div>
+
+  <!-- KPI CARDS -->
+  <div class="kpi-grid">
+    <div class="kpi-card">
+      <div class="kpi-label">Google Conversions (Forms)</div>
+      <div class="kpi-value">3</div>
+      <div class="kpi-sub">Generic Search · May 10–15 (partial data)</div>
+      <span class="kpi-badge badge-down">&#8595; vs 10 forms last week</span>
+    </div>
+    <div class="kpi-card amber">
+      <div class="kpi-label">Total Spend</div>
+      <div class="kpi-value">$307</div>
+      <div class="kpi-sub">May 10–15 · 3 active campaigns</div>
+      <span class="kpi-badge badge-warn">&#8595; &#8211;$42 vs prior week</span>
+    </div>
+    <div class="kpi-card rust">
+      <div class="kpi-label">Cost Per Lead (Forms)</div>
+      <div class="kpi-value">$102</div>
+      <div class="kpi-sub">3 form conv. · Generic Search only</div>
+      <span class="badge-cpl-warn">&#9651; Above $100 benchmark</span>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Total Impressions</div>
+      <div class="kpi-value">880</div>
+      <div class="kpi-sub">880 impressions across 3 campaigns</div>
+    </div>
+    <div class="kpi-card violet">
+      <div class="kpi-label">Avg. CTR</div>
+      <div class="kpi-value">6.14%</div>
+      <div class="kpi-sub">Generic: 6.89% · DSA: 2.61%</div>
+    </div>
+    <div class="kpi-card pink">
+      <div class="kpi-label">DSA Spend This Week</div>
+      <div class="kpi-value">$9<span style="font-size:20px;color:var(--warm-mid);font-weight:400;"></span></div>
+      <div class="kpi-sub">4 clicks only — significant drop</div>
+      <span class="kpi-badge badge-down">&#8595; vs $96 last week — investigate</span>
+    </div>
+  </div>
+
+  <!-- CAMPAIGN TABLE + 4-WEEK TREND -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot"></span> Campaign Performance — May 10–15, 2026</div>
+      <table class="campaign-table">
+        <thead>
+          <tr>
+            <th>Campaign</th>
+            <th>Impr.</th>
+            <th>Clicks</th>
+            <th>CTR</th>
+            <th>CPC</th>
+            <th>Cost</th>
+            <th>Conv.</th>
+            <th>CPL</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="campaign-name">
+                <strong>Generic Search</strong>
+                Damco_WS_Generic_Search
+                <span class="badge-tag tag-search">Search</span>
+              </div>
+            </td>
+            <td>711</td><td>49</td>
+            <td><span class="metric-highlight">6.89%</span></td>
+            <td>$5.98</td><td>$293.23</td><td>3</td>
+            <td style="color:var(--amber);font-weight:500;">$97.74</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="campaign-name">
+                <strong>DSA Campaign</strong>
+                Damco_DSA_Wellspring
+                <span class="badge-tag tag-dsa">DSA</span>
+              </div>
+            </td>
+            <td>153</td><td>4</td>
+            <td><span class="metric-highlight">2.61%</span></td>
+            <td>$2.30</td><td>$9.21</td><td>0</td>
+            <td style="color:var(--warm-mid);">—</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="campaign-name">
+                <strong>Regional Search</strong>
+                Damco_WS_Regional_Search
+                <span class="badge-tag tag-search" style="background:#FFF3E0;color:#E65100;">Regional</span>
+              </div>
+            </td>
+            <td>16</td><td>1</td>
+            <td><span class="metric-highlight">6.25%</span></td>
+            <td>$4.28</td><td>$4.28</td><td>0</td>
+            <td style="color:var(--warm-mid);">—</td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>Total</strong></td>
+            <td><strong>880</strong></td><td><strong>54</strong></td>
+            <td><strong>6.14%</strong></td>
+            <td><strong>$5.68</strong></td><td><strong>$306.72</strong></td>
+            <td><strong>3</strong></td>
+            <td><strong>$102.24</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:10px;background:#FDF1EE;border-radius:8px;padding:9px 12px;border-left:3px solid var(--rust);font-size:11.5px;line-height:1.6;">
+        <strong>DSA alert:</strong> Only $9.21 spend this week vs $95.81 last week. DSA served only 4 clicks in 3 days — delivery issue likely. Check bid strategy, budget, and eligibility in Google Ads UI immediately.
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> 4-Week Platform Trend</div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;">
+        <div class="trend-card">
+          <div class="trend-week">Apr 26–May 2</div>
+          <div class="trend-metric">8</div>
+          <div class="trend-sub">conv · $263 spend</div>
+          <span class="trend-badge tb-up">$33 CPA</span>
+        </div>
+        <div class="trend-card">
+          <div class="trend-week">May 3–9</div>
+          <div class="trend-metric">15</div>
+          <div class="trend-sub">conv · $349 spend</div>
+          <span class="trend-badge tb-up">$23 CPA ✓</span>
+        </div>
+        <div class="trend-card current">
+          <div class="trend-week">May 10–15</div>
+          <div class="trend-metric">3</div>
+          <div class="trend-sub">conv · $307 spend</div>
+          <span class="trend-badge tb-down">$102 CPA ↑</span>
+        </div>
+        <div class="trend-card" style="background:#FDF6EC;border-color:#F0D9B5;">
+          <div class="trend-week" style="color:var(--amber);">Note</div>
+          <div style="font-size:10px;color:var(--warm-mid);margin-top:4px;line-height:1.5;">May 10–15 data through ~13 May. Final numbers may be higher.</div>
+        </div>
+      </div>
+      <div style="margin-top:4px;position:relative;height:180px;width:100%;"><canvas id="trendChart"></canvas></div>
+    </div>
+  </div>
+
+  <!-- PRIOR WEEK COMPARISON + KEY OBSERVATIONS -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Prior Week: May 3–9 (Comparison)</div>
+      <table class="campaign-table">
+        <thead>
+          <tr>
+            <th>Campaign</th>
+            <th>Clicks</th>
+            <th>CTR</th>
+            <th>CPC</th>
+            <th>Cost</th>
+            <th>Conv.</th>
+            <th>Phone</th>
+            <th>CPA</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>
+              <div class="campaign-name">
+                <strong>Generic Search</strong>
+                <span class="badge-tag tag-search">Search</span>
+              </div>
+            </td>
+            <td>51</td><td>4.20%</td><td>$3.61</td><td>$183.89</td>
+            <td>6</td><td>2</td>
+            <td style="color:var(--green);font-weight:600;">$23.00</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="campaign-name">
+                <strong>DSA Wellspring</strong>
+                <span class="badge-tag tag-dsa">DSA</span>
+              </div>
+            </td>
+            <td>48</td><td>13.41%</td><td>$2.00</td><td>$95.81</td>
+            <td>3</td><td>3</td>
+            <td style="color:var(--green);font-weight:600;">$15.97</td>
+          </tr>
+          <tr>
+            <td>
+              <div class="campaign-name">
+                <strong>Regional Search</strong>
+                <span class="badge-tag tag-search" style="background:#FFF3E0;color:#E65100;">Regional</span>
+              </div>
+            </td>
+            <td>11</td><td>17.46%</td><td>$6.28</td><td>$69.10</td>
+            <td>1</td><td>0</td>
+            <td style="color:var(--amber);font-weight:600;">$69.10</td>
+          </tr>
+          <tr class="total-row">
+            <td><strong>Total</strong></td>
+            <td><strong>110</strong></td><td><strong>6.72%</strong></td>
+            <td><strong>$3.17</strong></td><td><strong>$348.80</strong></td>
+            <td><strong>10</strong></td><td><strong>5</strong></td>
+            <td><strong>$23.25</strong></td>
+          </tr>
+        </tbody>
+      </table>
+      <div style="margin-top:14px;display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+        <div style="background:var(--teal-pale);border-radius:8px;padding:10px 12px;text-align:center;">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);font-weight:500;margin-bottom:4px;">Prior Week Total Conv.</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--green);">15</div>
+          <div style="font-size:10px;color:var(--warm-mid);">10 forms + 5 phone calls</div>
+        </div>
+        <div style="background:#FDF1EE;border-radius:8px;padding:10px 12px;text-align:center;">
+          <div style="font-size:9px;text-transform:uppercase;letter-spacing:1.5px;color:var(--rust);font-weight:500;margin-bottom:4px;">This Week Conv.</div>
+          <div style="font-family:'Cormorant Garamond',serif;font-size:26px;font-weight:600;color:var(--rust);">3</div>
+          <div style="font-size:10px;color:var(--warm-mid);">Partial data — forms only</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--teal)"></span> Key Observations — Google</div>
+      <div class="insight-card rust">
+        <strong>DSA has nearly stopped running this week.</strong> Only $9.21 spend (4 clicks) vs $95.81 (48 clicks) last week — a 90% drop. DSA has been our most efficient campaign ($15.97 CPA last week). This needs to be checked in Google Ads immediately: budget exhausted early, bid strategy issue, or quality score change.
+      </div>
+      <div class="insight-card amber">
+        <strong>Generic Search CPL rose to $97.74 from $23 last week.</strong> The week's entire conversion load is on Generic Search — 3 form conversions from 49 clicks at $5.98 CPC. CPC has also risen from $3.61 to $5.98 (+66%). Auction competitiveness increasing.
+      </div>
+      <div class="insight-card amber">
+        <strong>Regional Search still very early-stage.</strong> Only 1 click, $4.28 spend, 0 conversions across 3 days. No data to evaluate yet — needs 2–3 more full weeks before any budget decision.
+      </div>
+      <div class="insight-card">
+        <strong>Impression volume is rebuilding.</strong> 880 impressions this week vs ~536 for May 3–9 (sheet data). Generic Search driving strong impression growth (711) which may convert better as the week closes with full data.
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════════════
+       SECTION 2 — OVERALL LEAD ANALYSIS
+  ═══════════════════════════════════════════════ -->
+  <div class="section-divider">
+    <span class="sdot" style="background:var(--amber)"></span>
+    <h2>Overall Lead Analysis — May 10–15, 2026</h2>
+    <span class="stag">13 leads across all sources · CRM data through 14 May</span>
+  </div>
+
+  <!-- CRM KPI MINI ROW -->
+  <div class="kpi-grid" style="margin-bottom:14px;">
+    <div class="kpi-card">
+      <div class="kpi-label">Total Leads</div>
+      <div class="kpi-value">13</div>
+      <div class="kpi-sub">All sources · 1 outcome pending</div>
+      <span class="kpi-badge badge-warn">= Same count as last week</span>
+    </div>
+    <div class="kpi-card green">
+      <div class="kpi-label">Confirmed Scheduled</div>
+      <div class="kpi-value">6</div>
+      <div class="kpi-sub">50.0% scheduling rate (confirmed)</div>
+      <span class="kpi-badge badge-warn">&#8595; vs 53.8% last week</span>
+    </div>
+    <div class="kpi-card rust">
+      <div class="kpi-label">Not Scheduled</div>
+      <div class="kpi-value">6</div>
+      <div class="kpi-sub">46.2% · 1 lead outcome pending</div>
+    </div>
+  </div>
+
+  <!-- SCHEDULE DONUT + REASONS -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Scheduling Breakdown</div>
+      <div style="display:flex;align-items:center;gap:16px;">
+        <div style="width:140px;flex-shrink:0;"><canvas id="scheduleDonut"></canvas></div>
+        <div style="flex:1;">
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--teal);flex-shrink:0;"></div>
+            <span style="font-size:11.5px;">Scheduled</span>
+            <strong style="margin-left:auto;">6 (50.0%)</strong>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--rust);flex-shrink:0;"></div>
+            <span style="font-size:11.5px;">Not Scheduled</span>
+            <strong style="margin-left:auto;">6 (46.2%)</strong>
+          </div>
+          <div style="display:flex;align-items:center;gap:6px;margin-bottom:12px;">
+            <div style="width:10px;height:10px;border-radius:50%;background:var(--amber);flex-shrink:0;"></div>
+            <span style="font-size:11.5px;">Pending</span>
+            <strong style="margin-left:auto;">1 (7.7%)</strong>
+          </div>
+          <div class="source-chips">
+            <div class="chip"><div class="chip-dot" style="background:var(--teal);"></div>Internal: 4/4 sched. ✓</div>
+            <div class="chip"><div class="chip-dot" style="background:var(--amber);"></div>Google: 1/5 sched.</div>
+            <div class="chip"><div class="chip-dot" style="background:var(--violet);"></div>Referral: 0/2 sched.</div>
+            <div class="chip"><div class="chip-dot" style="background:var(--pink);"></div>Psych. Today: 1/1</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--rust)"></span> Reason Not Scheduled (6 leads)</div>
+      <div class="hbar-row">
+        <div class="hbar-label">TE Waitlist (ADHD Testing capacity)</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:33%;background:var(--violet);"><span class="hbar-pct">33%</span></div></div>
+        <div class="hbar-count">2</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">Insurance Ineligibility</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:33%;background:var(--red);"><span class="hbar-pct">33%</span></div></div>
+        <div class="hbar-count">2</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">Didn't Answer Consult Call</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:17%;background:var(--red);"><span class="hbar-pct">17%</span></div></div>
+        <div class="hbar-count">1</div>
+      </div>
+      <div class="hbar-row">
+        <div class="hbar-label">Wrong Number / Not Seeking</div>
+        <div class="hbar-track"><div class="hbar-fill" style="width:17%;background:#A0A0A0;"><span class="hbar-pct">17%</span></div></div>
+        <div class="hbar-count">1</div>
+      </div>
+      <p style="font-size:10.5px;color:var(--warm-mid);margin-top:8px;line-height:1.6;">
+        Insurance: Lead #1 (wants Medicaid-accepting therapist) + Lead #7 (UHC Community Plan — Medicaid-adjacent). TE Waitlist = Testing Evaluation capacity full for 2 ADHD inquiries.
+      </p>
+    </div>
+  </div>
+
+  <!-- SERVICE TYPE + SOURCE BREAKDOWN -->
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Lead Service Type</div>
+      <canvas id="serviceBar" style="max-height:200px;"></canvas>
+    </div>
+    <div class="panel">
+      <div class="panel-title"><span class="dot" style="background:var(--teal)"></span> Lead Source Breakdown</div>
+      <canvas id="sourceBar" style="max-height:200px;"></canvas>
+    </div>
+  </div>
+
+  <!-- SOURCE SCHEDULING DETAIL TABLE -->
+  <div class="panel" style="margin-bottom:12px;">
+    <div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Source Scheduling Detail — May 10–15</div>
+    <table class="campaign-table">
+      <thead>
+        <tr>
+          <th>Source</th>
+          <th style="text-align:center;">Leads</th>
+          <th style="text-align:center;">Scheduled</th>
+          <th style="text-align:center;">Not Scheduled</th>
+          <th style="text-align:center;">Pending</th>
+          <th style="text-align:center;">Sched. Rate</th>
+          <th style="text-align:right;">vs Benchmark</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td><strong>Internal / Referral (patient)</strong></td>
+          <td style="text-align:center;">5</td>
+          <td style="text-align:center;color:var(--green);font-weight:600;">4</td>
+          <td style="text-align:center;">0</td>
+          <td style="text-align:center;color:var(--amber);">1</td>
+          <td style="text-align:center;"><strong style="color:var(--green);">100%</strong> (confirmed)</td>
+          <td style="text-align:right;font-size:11px;color:var(--green);">&#8593; vs 73.3% bench.</td>
+        </tr>
+        <tr>
+          <td><strong>Google (ads + implied)</strong></td>
+          <td style="text-align:center;">5</td>
+          <td style="text-align:center;color:var(--amber);font-weight:600;">1</td>
+          <td style="text-align:center;color:var(--rust);">4</td>
+          <td style="text-align:center;">0</td>
+          <td style="text-align:center;"><strong style="color:var(--rust);">20.0%</strong></td>
+          <td style="text-align:right;font-size:11px;color:var(--rust);">&#8595; vs 39.2% bench.</td>
+        </tr>
+        <tr>
+          <td><strong>Referral (external)</strong></td>
+          <td style="text-align:center;">2</td>
+          <td style="text-align:center;">0</td>
+          <td style="text-align:center;color:var(--rust);">2</td>
+          <td style="text-align:center;">0</td>
+          <td style="text-align:center;"><strong style="color:var(--rust);">0%</strong> (TE Waitlist)</td>
+          <td style="text-align:right;font-size:11px;color:var(--rust);">Capacity issue</td>
+        </tr>
+        <tr>
+          <td><strong>Psychology Today</strong></td>
+          <td style="text-align:center;">1</td>
+          <td style="text-align:center;color:var(--green);font-weight:600;">1</td>
+          <td style="text-align:center;">0</td>
+          <td style="text-align:center;">0</td>
+          <td style="text-align:center;"><strong style="color:var(--green);">100%</strong></td>
+          <td style="text-align:right;font-size:11px;color:var(--green);">&#8593; vs 34% bench.</td>
+        </tr>
+        <tr class="total-row">
+          <td><strong>Total</strong></td>
+          <td style="text-align:center;"><strong>13</strong></td>
+          <td style="text-align:center;"><strong>6</strong></td>
+          <td style="text-align:center;"><strong>6</strong></td>
+          <td style="text-align:center;"><strong>1</strong></td>
+          <td style="text-align:center;"><strong>50.0%</strong></td>
+          <td style="text-align:right;font-size:11px;">vs 53.8% last week</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- NEW FLAG: TE WAITLIST -->
+  <div class="notice-inline" style="border-color:#C0D0E8;background:#EEF2FA;">
+    <strong>New flag — TE Waitlist:</strong> 2 leads this week were placed on a Testing Evaluation (ADHD) waitlist by Wellspring. These are qualified, willing-to-schedule leads lost to internal capacity — not a campaign problem. Wellspring team to review ADHD testing provider capacity urgently. This is separate from the therapy scheduling backlog.
+  </div>
+
+<hr class="divider">
+
+  <!-- ACTIONS -->
+  <div class="two-col">
+    <div>
+      <div class="section-label">Key Observations</div>
+      <div class="insight-card rust">
+        <strong>DSA campaign is the critical issue this week.</strong> $9.21 spend vs $95.81 last week — a 90% drop. Last week DSA delivered $15.97 CPA, the best on record. If it had run normally this week, the total conversion count would look very different. Priority action: check Google Ads UI today.
+      </div>
+      <div class="insight-card amber">
+        <strong>Google lead scheduling rate dropped to 20% (1 of 5).</strong> Disqualifications: 1 wrong-number, 1 no-answer, 1 insurance (UHC Community Plan = Medicaid-adjacent), 1 ADHD waitlist. Only Lead #10 converted to an appointment. This is below the 30% minimum benchmark.
+      </div>
+      <div class="insight-card">
+        <strong>Internal referrals continue to be the most reliable channel.</strong> 4 of 4 confirmed scheduled this week (100%), zero ad spend. 1 additional internal lead (friends referral, Lead #13) is pending email follow-up. This channel is underinvested in.
+      </div>
+      <div class="insight-card amber">
+        <strong>Insurance disqualification continues — UHC Community Plan added.</strong> Lead #1 wanted a Medicaid therapist; Lead #7 had UHC Community Plan (a Medicaid-managed plan). HAP status still unconfirmed. Insurance remains the top non-capacity loss reason.
+      </div>
+    </div>
+    <div>
+      <div class="section-label">Actions and Recommendations</div>
+      <div class="next-step">
+        <div class="step-num">1</div>
+        <div class="step-text"><strong>Check DSA campaign in Google Ads UI today.</strong> 90% spend drop in one week is not normal. Check: daily budget status, bid strategy changes, quality score, ad approval status. DSA at $15.97 CPA is the most efficient campaign — restoring it is the highest-priority action.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">2</div>
+        <div class="step-text"><strong>Alert Wellspring team on ADHD Testing waitlist.</strong> 2 qualified ADHD leads placed on TE Waitlist this week. These are willing-to-schedule patients lost to capacity. If testing evaluation slots open, these 2 leads should be first-contact. Ask Wellspring: when can TE capacity increase?</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">3</div>
+        <div class="step-text"><strong>Confirm UHC Community Plan is excluded like HAP.</strong> Lead #7 had UHC Community Plan — a Medicaid-managed care plan. If not accepted, add it to ad form exclusion logic and negative keyword guidance. This is the same pattern as the unresolved HAP question.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">4</div>
+        <div class="step-text"><strong>Same-day callback system for Google Ads form leads.</strong> Lead #12 (Generic Search) didn't answer the consultation call. Lead #9 was a wrong number. At least 1 of these could have converted with an immediate SMS trigger after form submission. This recommendation has been made in prior reports — now needs to be actioned.</div>
+      </div>
+      <div class="next-step">
+        <div class="step-num">5</div>
+        <div class="step-text"><strong>Shift budget from Generic Search to DSA once DSA is back running.</strong> This week's data confirms what every prior week has shown: Generic Search CPC at $5.98 vs DSA at $2.30. As soon as DSA delivery is restored, move budget accordingly. Target DSA at $200+ / week.</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-left">
+      Prepared by <strong>Damco Digital</strong> &nbsp;·&nbsp; Confidential: For Wellspring Team Use Only<br>
+      Data source: Google Ads (through ~13 May) + CRM (through 14 May) &nbsp;·&nbsp; May 10 – 15, 2026
+    </div>
+    <div class="footer-right">Wellspring Therapeutic Partners</div>
+  </div>
+
+</div>
+
+<script>
+window.addEventListener('load', function() {
+
+  // 4-week trend chart (conv + CPL)
+  new Chart(document.getElementById('trendChart').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Apr 26–May 2', 'May 3–9', 'May 10–15 *'],
+      datasets: [
+        {
+          label: 'Conv.',
+          data: [8, 15, 3],
+          backgroundColor: ['#C0D8D5', '#C0D8D5', '#C25B3F'],
+          borderRadius: 4,
+          barPercentage: 0.6,
+          categoryPercentage: 0.7,
+          yAxisID: 'y'
+        },
+        {
+          label: 'CPL ($)',
+          data: [33, 23, 102],
+          type: 'line',
+          borderColor: '#C9882A',
+          backgroundColor: 'transparent',
+          pointBackgroundColor: ['#C9882A','#C9882A','#C25B3F'],
+          pointRadius: 4,
+          borderWidth: 2,
+          yAxisID: 'y2',
+          tension: 0.3
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: true, labels: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460', boxWidth: 10 } }
+      },
+      scales: {
+        x: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460' } },
+        y: { position: 'left', grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460', stepSize: 3 } },
+        y2: { position: 'right', grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#C9882A', callback: v => '$' + v } }
+      }
+    }
+  });
+
+  // Schedule donut
+  new Chart(document.getElementById('scheduleDonut').getContext('2d'), {
+    type: 'doughnut',
+    data: {
+      labels: ['Scheduled', 'Not Scheduled', 'Pending'],
+      datasets: [{ data: [6, 6, 1], backgroundColor: ['#3D7A72', '#C25B3F', '#C9882A'], borderWidth: 0, hoverOffset: 4 }]
+    },
+    options: {
+      cutout: '70%',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.label}: ${ctx.raw}` } } }
+    }
+  });
+
+  // Service type bar
+  new Chart(document.getElementById('serviceBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Psychotherapy', 'ADHD / Testing', 'Unknown / Other'],
+      datasets: [{ label: 'Leads', data: [7, 3, 3], backgroundColor: ['#5C4E9E', '#3D8A60', '#9E9589'], borderRadius: 5, borderSkipped: false }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw} leads` } } },
+      scales: {
+        x: { grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460', stepSize: 1 } },
+        y: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#1C1C1A' } }
+      }
+    }
+  });
+
+  // Source breakdown bar
+  new Chart(document.getElementById('sourceBar').getContext('2d'), {
+    type: 'bar',
+    data: {
+      labels: ['Google (ads + implied)', 'Internal / Patient Ref.', 'External Referral', 'Psychology Today'],
+      datasets: [{ label: 'Leads', data: [5, 5, 2, 1], backgroundColor: ['#3D7A72', '#C9882A', '#5C4E9E', '#C4527A'], borderRadius: 5, borderSkipped: false }]
+    },
+    options: {
+      indexAxis: 'y',
+      plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ` ${ctx.raw} leads` } } },
+      scales: {
+        x: { grid: { color: '#EDE7DC' }, ticks: { font: { family: 'DM Sans', size: 11 }, color: '#6B6460', stepSize: 1 } },
+        y: { grid: { display: false }, ticks: { font: { family: 'DM Sans', size: 10 }, color: '#1C1C1A' } }
+      }
+    }
+  });
+
+});
+</script>
+</body>
+</html>
