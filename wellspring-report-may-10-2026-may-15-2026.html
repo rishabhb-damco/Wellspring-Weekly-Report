@@ -10,6 +10,19 @@
   :root{--cream:#F7F3EE;--cream-dark:#EDE7DC;--charcoal:#1C1C1A;--warm-mid:#6B6460;--teal:#3D7A72;--teal-light:#5A9E95;--teal-pale:#EAF3F2;--rust:#C25B3F;--amber:#C9882A;--violet:#5C4E9E;--green:#3D8A60;--pink:#C4527A;--red:#C44040;--border:#DDD5C8;}
   *{margin:0;padding:0;box-sizing:border-box;}
   body{background:#f0ece6;font-family:'DM Sans',sans-serif;color:var(--charcoal);font-size:13px;line-height:1.6;}
+  #pw-gate{position:fixed;inset:0;background:#1a2e2b;display:flex;align-items:center;justify-content:center;z-index:9999;}
+  #pw-gate.hidden{display:none;}
+  .pw-box{background:#F7F3EE;border-radius:14px;padding:40px 48px;width:360px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.4);}
+  .pw-logo{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;color:#1C1C1A;line-height:1;}
+  .pw-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#C25B3F;margin-top:4px;font-weight:500;}
+  .pw-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#6B6460;font-weight:500;margin:24px 0 8px;}
+  .pw-input{width:100%;padding:10px 14px;border:1.5px solid #DDD5C8;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1C1C1A;background:#fff;outline:none;text-align:center;letter-spacing:2px;}
+  .pw-input:focus{border-color:#3D7A72;}
+  .pw-btn{width:100%;margin-top:14px;padding:11px;background:#3D7A72;color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;letter-spacing:.5px;}
+  .pw-btn:hover{background:#2e5e58;}
+  .pw-error{font-size:11.5px;color:#C25B3F;margin-top:10px;min-height:18px;}
+  .pw-footer{font-size:10px;color:#6B6460;margin-top:20px;}
+  .pw-footer strong{color:#1C1C1A;}
   .page{max-width:1100px;margin:0 auto;padding:28px 32px;background:var(--cream);min-height:100vh;}
   .header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:1.5px solid var(--border);margin-bottom:16px;}
   .logo-name{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:500;letter-spacing:-0.5px;color:var(--charcoal);line-height:1;}
@@ -88,6 +101,48 @@
 </style>
 </head>
 <body>
+
+<!-- PASSWORD GATE -->
+<div id="pw-gate">
+  <div class="pw-box">
+    <div class="pw-logo">Wellspring</div>
+    <div class="pw-sub">Therapeutic Partners</div>
+    <div class="pw-label">Enter report password</div>
+    <input id="pw-input" class="pw-input" type="password" placeholder="••••••••••••" autocomplete="off" />
+    <button class="pw-btn" onclick="checkPassword()">View Report</button>
+    <div id="pw-error" class="pw-error"></div>
+    <div class="pw-footer">Confidential · Prepared by <strong>Damco Digital</strong></div>
+  </div>
+</div>
+
+<script>
+  (function(){
+    if(sessionStorage.getItem('ws_auth')==='1'){
+      document.addEventListener('DOMContentLoaded',function(){
+        document.getElementById('pw-gate').classList.add('hidden');
+      });
+    }
+  })();
+  function checkPassword(){
+    var val = document.getElementById('pw-input').value;
+    if(val === 'Wellspring123'){
+      sessionStorage.setItem('ws_auth','1');
+      document.getElementById('pw-gate').classList.add('hidden');
+    } else {
+      document.getElementById('pw-error').textContent = 'Incorrect password. Please try again.';
+      document.getElementById('pw-input').value = '';
+      document.getElementById('pw-input').focus();
+    }
+  }
+  document.addEventListener('DOMContentLoaded',function(){
+    var input = document.getElementById('pw-input');
+    if(input){
+      input.addEventListener('keydown',function(e){ if(e.key==='Enter') checkPassword(); });
+      if(sessionStorage.getItem('ws_auth')!=='1') input.focus();
+    }
+  });
+</script>
+
 <div class="page">
 
   <!-- HEADER -->
