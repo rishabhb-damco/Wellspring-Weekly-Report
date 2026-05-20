@@ -162,11 +162,6 @@
     </div>
   </div>
 
-  <!-- URGENT FLAG — HAP -->
-  <div class="notice-inline red">
-    <strong>&#9888; Urgent — HAP Insurance confirmed again:</strong> Lead #17 this week was disqualified at scheduling with reason "HAP." This is the 3rd+ consecutive week HAP appears as a loss reason. Action required from Wellspring: confirm HAP is not accepted → Damco will add to form exclusion logic and negative keyword list immediately.
-  </div>
-
   <!-- ══════════════════════════════════════════════
        SECTION 1 — GOOGLE ADS PERFORMANCE
   ═══════════════════════════════════════════════ -->
@@ -275,32 +270,33 @@
 
     <div class="panel">
       <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> 4-Week Platform Trend</div>
-      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px;">
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:6px;">
         <div class="trend-card">
           <div class="trend-week">Apr 19–25</div>
           <div class="trend-metric">3</div>
-          <div class="trend-sub">conv · $285 spend</div>
-          <span class="trend-badge tb-down">$95 CPA</span>
+          <div class="trend-sub">conv · $161 spend</div>
+          <span class="trend-badge tb-down">$54 CPA</span>
         </div>
         <div class="trend-card">
           <div class="trend-week">Apr 26–May 2</div>
-          <div class="trend-metric">8</div>
-          <div class="trend-sub">conv · $263 spend</div>
-          <span class="trend-badge tb-up">$33 CPA</span>
+          <div class="trend-metric">3</div>
+          <div class="trend-sub">conv · $105 spend</div>
+          <span class="trend-badge tb-flat">$35 CPA</span>
         </div>
         <div class="trend-card">
           <div class="trend-week">May 3–9</div>
-          <div class="trend-metric">15</div>
-          <div class="trend-sub">conv · $349 spend</div>
-          <span class="trend-badge tb-up">$23 CPA ✓</span>
+          <div class="trend-metric">3</div>
+          <div class="trend-sub">conv · $72 spend</div>
+          <span class="trend-badge tb-up">$24 CPA</span>
         </div>
         <div class="trend-card current">
           <div class="trend-week">May 10–16</div>
           <div class="trend-metric">7</div>
           <div class="trend-sub">conv · $371 spend</div>
-          <span class="trend-badge tb-down">$74 CPA ↑</span>
+          <span class="trend-badge tb-down">$53 CPA</span>
         </div>
       </div>
+      <p style="font-size:9.5px;color:var(--warm-mid);margin-bottom:8px;line-height:1.5;">All weeks use the same Google Ads sheet logic. Sheet exports are partial (4–6 days per week); all figures are directly comparable to this week's data.</p>
       <div style="position:relative;height:170px;width:100%;"><canvas id="trendChart"></canvas></div>
     </div>
   </div>
@@ -598,10 +594,10 @@ window.addEventListener('load', function() {
     data: {
       labels: ['Apr 19–25', 'Apr 26–May 2', 'May 3–9', 'May 10–16'],
       datasets: [
-        { label: 'Conv.', data: [3, 8, 15, 7],
+        { label: 'Conv.', data: [3, 3, 3, 7],
           backgroundColor: ['#C0D8D5','#C0D8D5','#C0D8D5','#3D7A72'],
           borderRadius: 4, barPercentage: 0.6, categoryPercentage: 0.7, yAxisID: 'y' },
-        { label: 'CPL ($)', data: [95, 33, 23, 74],
+        { label: 'CPA ($)', data: [54, 35, 24, 53],
           type: 'line', borderColor: '#C9882A', backgroundColor: 'transparent',
           pointBackgroundColor: ['#C9882A','#C9882A','#C9882A','#C25B3F'],
           pointRadius: 4, borderWidth: 2, yAxisID: 'y2', tension: 0.3 }
