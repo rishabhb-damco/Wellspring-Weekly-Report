@@ -61,6 +61,17 @@
   </div>
 </div>
 
+<div class="panel" style="margin-bottom:12px;"><div class="panel-title"><span class="dot" style="background:var(--rust)"></span> Scheduling Rate &mdash; Last 4 Weeks</div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:10px;">
+    <div class="trend-card"><div class="trend-week">Jul 12&ndash;18</div><div class="trend-metric">67%</div><div class="trend-sub">10 of 15 booked</div></div>
+    <div class="trend-card"><div class="trend-week">Jul 19&ndash;25</div><div class="trend-metric">73%</div><div class="trend-sub">8 of 11 booked</div></div>
+    <div class="trend-card"><div class="trend-week">Jul 26&ndash;Aug 1</div><div class="trend-metric">69%</div><div class="trend-sub">11 of 16 booked</div></div>
+    <div class="trend-card current"><div class="trend-week">Aug 2&ndash;8</div><div class="trend-metric" style="color:var(--rust);">33%</div><div class="trend-sub">4 of 12 booked</div><span class="trend-badge tb-down">&#8595; 36 pts</span></div>
+  </div>
+  <div style="position:relative;height:150px;"><canvas id="schedRateChart"></canvas></div>
+  <p style="font-size:10px;color:var(--warm-mid);margin-top:6px;">This week&rsquo;s 33% rate is a significant step back from the 67&ndash;73% range over the prior three weeks. The drop is driven by specific disqualifying issues &mdash; Medicaid block, insurance friction, cost concern &mdash; not a shift in campaign quality. Recovery is achievable once those root causes are addressed.</p>
+</div>
+
 <div class="panel" style="margin-bottom:12px;"><div class="panel-title"><span class="dot" style="background:var(--teal)"></span> Key Observations</div>
   <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:14px;">
     <div class="insight-card rust" style="margin-bottom:0;"><strong>No appointments were booked from Google Ads this week &mdash; the first time on record.</strong> All 4 Google leads had a specific disqualifying issue: one was on Medicaid (still not filtered by negative keywords after 7 weeks), two stopped mid-inquiry at the insurance step, and one cited cost as a barrier. The click and impression numbers were healthy (113 clicks, 6.34% CTR) so the campaigns are delivering traffic &mdash; but the leads are not converting. Each failure reason has a specific fix.</div>
@@ -98,6 +109,37 @@ window.addEventListener('load',function(){
       datasets:[{label:'People',data:[9,2,1],backgroundColor:['#5C4E9E','#3D7A72','#9E9589'],borderRadius:5,borderSkipped:false}]
     },
     options:{indexAxis:'y',plugins:{legend:{display:false}},scales:{x:{grid:{color:'#EDE7DC'},ticks:{font:{family:'DM Sans',size:11},color:'#6B6460',stepSize:1}},y:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#1C1C1A'}}}}
+  });
+  new Chart(document.getElementById('schedRateChart').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:['Jul 12–18','Jul 19–25','Jul 26–Aug 1','Aug 2–8'],
+      datasets:[{
+        label:'Scheduling Rate',
+        data:[67,73,69,33],
+        borderColor:'#3D7A72',
+        backgroundColor:'rgba(61,122,114,0.08)',
+        pointBackgroundColor:['#3D7A72','#3D7A72','#3D7A72','#C25B3F'],
+        pointBorderColor:['#3D7A72','#3D7A72','#3D7A72','#C25B3F'],
+        pointRadius:6,
+        pointHoverRadius:8,
+        borderWidth:2.5,
+        fill:true,
+        tension:0.3
+      }]
+    },
+    options:{
+      responsive:true,
+      maintainAspectRatio:false,
+      plugins:{
+        legend:{display:false},
+        tooltip:{callbacks:{label:function(ctx){return ctx.parsed.y+'%';}}}
+      },
+      scales:{
+        x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#6B6460'}},
+        y:{min:0,max:100,grid:{color:'#EDE7DC'},ticks:{font:{family:'DM Sans',size:11},color:'#6B6460',callback:function(v){return v+'%';},stepSize:20}}
+      }
+    }
   });
 });
 </script>
