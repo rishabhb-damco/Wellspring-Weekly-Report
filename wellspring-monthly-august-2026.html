@@ -1,0 +1,544 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wellspring — August 2026 Monthly Report</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,600;0,700;1,400&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<style>
+:root {
+  --teal:#3D7A72; --teal-dark:#1C2B2A; --gold:#C9A84C;
+  --amber:#C9882A; --rust:#C25B3F; --green:#3D8A60; --red:#C44040;
+  --cream:#F7F3EE; --cream-dark:#EDE7DC; --charcoal:#1C1C1A;
+  --mid:#6B6B6B; --border:#DDD5C8;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+
+/* ── PASSWORD GATE ── */
+#pw-gate{position:fixed;inset:0;background:var(--teal-dark);display:flex;
+  align-items:center;justify-content:center;z-index:9999;}
+#pw-gate.hidden{display:none}
+.pw-box{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.15);
+  border-radius:12px;padding:48px 56px;text-align:center;max-width:400px;width:90%}
+.pw-logo{font-family:'Cormorant Garamond',serif;font-size:28px;color:#fff;margin-bottom:8px}
+.pw-sub{font-family:'DM Sans',sans-serif;font-size:13px;color:rgba(255,255,255,.5);margin-bottom:32px}
+.pw-input{width:100%;padding:14px 16px;border-radius:8px;border:1px solid rgba(255,255,255,.2);
+  background:rgba(255,255,255,.08);color:#fff;font-family:'DM Sans',sans-serif;font-size:15px;
+  outline:none;margin-bottom:12px;text-align:center;letter-spacing:2px}
+.pw-input::placeholder{color:rgba(255,255,255,.35);letter-spacing:normal}
+.pw-btn{width:100%;padding:13px;background:var(--gold);border:none;border-radius:8px;
+  font-family:'DM Sans',sans-serif;font-size:14px;font-weight:600;color:var(--teal-dark);cursor:pointer}
+.pw-btn:hover{opacity:.88}
+.pw-err{font-family:'DM Sans',sans-serif;font-size:12px;color:var(--rust);margin-top:8px;min-height:16px}
+
+/* ── SCROLL SNAP ── */
+html{scroll-snap-type:y mandatory;overflow-y:scroll;height:100%;scroll-behavior:smooth}
+body{height:100%;font-family:'DM Sans',sans-serif;color:var(--charcoal)}
+.slide{height:100vh;scroll-snap-align:start;display:flex;flex-direction:column;
+  padding:48px 68px;position:relative;overflow:hidden}
+.dark{background:var(--teal-dark);color:#fff}
+.chapter{background:var(--teal);color:#fff}
+.light{background:var(--cream);color:var(--charcoal)}
+
+/* ── NAV DOTS ── */
+.nav-dots{position:fixed;right:22px;top:50%;transform:translateY(-50%);
+  display:flex;flex-direction:column;gap:10px;z-index:100}
+.dot{width:8px;height:8px;border-radius:50%;border:none;cursor:pointer;
+  background:rgba(255,255,255,.3);transition:all .25s;padding:0}
+.dot.active{transform:scale(1.45)}
+
+/* ── TYPOGRAPHY ── */
+.eyebrow{font-family:'DM Sans',sans-serif;font-size:11px;letter-spacing:3px;
+  text-transform:uppercase;color:var(--gold);margin-bottom:14px}
+.slide-label{font-size:10px;letter-spacing:3px;text-transform:uppercase;
+  color:var(--teal);margin-bottom:5px}
+.slide-label.inv{color:var(--gold)}
+.slide-title{font-family:'Cormorant Garamond',serif;font-size:clamp(28px,3.2vw,44px);
+  font-weight:600;line-height:1.15;margin-bottom:28px}
+.on-dark{color:#fff}
+.cover-period{font-size:13px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.45);margin-bottom:36px}
+.cover-title{font-family:'Cormorant Garamond',serif;font-size:clamp(44px,6vw,76px);
+  font-weight:400;line-height:1.08;margin-bottom:20px}
+.cover-line{width:56px;height:2px;background:var(--gold);margin:20px 0}
+.cover-sub{font-size:14px;color:rgba(255,255,255,.5);letter-spacing:.4px}
+.cover-tags{margin-top:auto;display:flex;gap:12px;flex-wrap:wrap}
+.ctag{font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:rgba(255,255,255,.38);border:1px solid rgba(255,255,255,.12);
+  padding:7px 14px;border-radius:4px}
+
+/* ── KPI CARDS ── */
+.g3{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+.g2{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.kpi{background:#fff;border:1px solid var(--border);border-radius:10px;padding:22px 20px}
+.kpi-label{font-size:10px;letter-spacing:1.5px;text-transform:uppercase;
+  color:var(--mid);margin-bottom:8px}
+.kpi-val{font-family:'Cormorant Garamond',serif;font-size:38px;font-weight:600;line-height:1}
+.kpi-sub{font-size:11px;color:var(--mid);margin-top:5px}
+.delta{display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:500;
+  padding:3px 8px;border-radius:20px;margin-top:6px}
+.d-up{background:#e8f5ef;color:var(--green)}
+.d-dn{background:#fbeaea;color:var(--red)}
+.d-neu{background:rgba(0,0,0,.06);color:var(--mid)}
+
+/* ── SPOTLIGHT ── */
+.spot{background:#fff;border:1px solid var(--border);border-radius:12px;
+  padding:30px 24px;text-align:center}
+.spot-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;color:var(--mid);margin-bottom:10px}
+.spot-val{font-family:'Cormorant Garamond',serif;font-size:54px;font-weight:600;line-height:1}
+.spot-delta{font-size:13px;font-weight:500;margin-top:9px}
+
+/* ── NARRATIVE ── */
+.narrative{background:#fff;border:1px solid var(--border);border-left:4px solid var(--teal);
+  border-radius:0 10px 10px 0;padding:20px 24px;font-size:13.5px;line-height:1.75;margin-top:18px}
+.narrative strong{color:var(--teal)}
+
+/* ── PANEL ── */
+.panel{background:#fff;border:1px solid var(--border);border-radius:10px;
+  padding:22px;display:flex;flex-direction:column}
+.panel-label{font-size:10px;letter-spacing:2px;text-transform:uppercase;
+  color:var(--mid);margin-bottom:14px}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:18px;flex:1;min-height:0}
+
+/* ── CHART ── */
+.chart-wrap{position:relative;flex:1;min-height:0}
+
+/* ── BAR ROWS ── */
+.br{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+.br-lbl{font-size:12px;color:var(--charcoal);min-width:190px}
+.br-track{flex:1;height:26px;background:var(--cream-dark);border-radius:4px;overflow:hidden}
+.br-fill{height:100%;border-radius:4px;display:flex;align-items:center;
+  padding-left:8px;font-size:11px;font-weight:600;color:#fff;white-space:nowrap}
+.br-cnt{font-size:12px;font-weight:600;color:var(--mid);min-width:28px;text-align:right}
+
+/* ── INSIGHT ── */
+.insight{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.18);
+  border-radius:10px;padding:24px}
+.insight-icon{font-size:22px;margin-bottom:10px}
+.insight-title{font-family:'Cormorant Garamond',serif;font-size:21px;font-weight:600;
+  color:#fff;margin-bottom:8px}
+.insight-body{font-size:12.5px;line-height:1.65;color:rgba(255,255,255,.75)}
+
+/* ── PRIORITY ── */
+.pgrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:auto}
+.pcard{background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.14);
+  border-radius:10px;padding:22px}
+.ptag{display:inline-block;font-size:10px;letter-spacing:1px;text-transform:uppercase;
+  padding:3px 10px;border-radius:20px;margin-bottom:10px}
+.tag-crit{background:rgba(194,91,63,.25);color:#f0a090}
+.tag-high{background:rgba(201,136,42,.25);color:#f0c070}
+.pnum{font-family:'Cormorant Garamond',serif;font-size:46px;font-weight:600;
+  color:var(--gold);line-height:1;margin-bottom:6px}
+.ptitle{font-size:14px;font-weight:600;color:#fff;margin-bottom:5px}
+.pbody{font-size:12px;color:rgba(255,255,255,.65);line-height:1.6}
+
+/* ── FOOTNOTE ── */
+.fn{font-size:10px;color:var(--mid);margin-top:8px;font-style:italic}
+</style>
+</head>
+<body>
+
+<!-- PASSWORD GATE -->
+<div id="pw-gate">
+  <div class="pw-box">
+    <div class="pw-logo">Wellspring</div>
+    <div class="pw-sub">Enter password to view this report</div>
+    <input class="pw-input" type="password" id="pw-input" placeholder="Password" autocomplete="off">
+    <button class="pw-btn" onclick="checkPw()">View Report</button>
+    <div class="pw-err" id="pw-err"></div>
+  </div>
+</div>
+
+<!-- NAV DOTS -->
+<nav class="nav-dots" id="nav">
+  <button class="dot active" onclick="goTo(0)"></button>
+  <button class="dot" onclick="goTo(1)"></button>
+  <button class="dot" onclick="goTo(2)"></button>
+  <button class="dot" onclick="goTo(3)"></button>
+  <button class="dot" onclick="goTo(4)"></button>
+  <button class="dot" onclick="goTo(5)"></button>
+  <button class="dot" onclick="goTo(6)"></button>
+  <button class="dot" onclick="goTo(7)"></button>
+</nav>
+
+<!-- ═══════════════════ SLIDE 0: COVER ═══════════════════ -->
+<section class="slide dark" id="s0">
+  <div class="eyebrow">Wellspring Therapeutic Partners</div>
+  <div class="cover-period">August 2026 · Monthly Performance Report</div>
+  <div class="cover-title">Google Ads<br>+ Lead Quality<br>Monthly Review</div>
+  <div class="cover-line"></div>
+  <div class="cover-sub">Prepared by Damco Digital &nbsp;·&nbsp; Rishabh B &nbsp;·&nbsp; September 2026</div>
+  <div class="cover-tags">
+    <span class="ctag">Google Ads</span>
+    <span class="ctag">Consultation Sheet</span>
+    <span class="ctag">58 Leads Analysed</span>
+    <span class="ctag">July vs August Comparison</span>
+  </div>
+</section>
+
+<!-- ═══════════════════ SLIDE 1: MONTH AT A GLANCE ═══════════════════ -->
+<section class="slide light" id="s1">
+  <div class="slide-label">Overview</div>
+  <div class="slide-title">Month at a Glance</div>
+  <div class="g3" style="margin-bottom:18px">
+    <div class="spot">
+      <div class="spot-label">Google Ads Leads</div>
+      <div class="spot-val">21</div>
+      <div class="spot-delta" style="color:var(--green)">↑ 50% vs July (14)</div>
+    </div>
+    <div class="spot">
+      <div class="spot-label">Cost Per Lead</div>
+      <div class="spot-val">$96</div>
+      <div class="spot-delta" style="color:var(--green)">↓ 44% vs July ($172)</div>
+    </div>
+    <div class="spot">
+      <div class="spot-label">Google Ads Booking Rate</div>
+      <div class="spot-val">48%</div>
+      <div class="spot-delta" style="color:var(--red)">↓ 16pp vs July (64%)</div>
+    </div>
+  </div>
+  <div class="narrative">
+    August delivered <strong>50% more Google Ads leads at 44% lower cost</strong> — driven by a cleaner campaign structure after winding down the underperforming Broad Match test (paused mid-August). But the booking rate declined from <strong>64% to 48%</strong> on Google Ads and from 63% to 47% overall. More volume arrived without a proportional quality filter: insurance mismatches (Medicaid, Cigna, Medicare) and no-response leads account for the majority of non-bookings. HAP status remains unresolved and continues to block leads each week.
+  </div>
+</section>
+
+<!-- ═══════════════════ SLIDE 2: FULL SCORECARD ═══════════════════ -->
+<section class="slide light" id="s2">
+  <div class="slide-label">Scorecard</div>
+  <div class="slide-title" style="margin-bottom:18px">August vs July — Full Comparison</div>
+  <div class="g3" style="margin-bottom:14px">
+    <div class="kpi">
+      <div class="kpi-label">Total Google Ads Spend</div>
+      <div class="kpi-val">~$2,014</div>
+      <span class="delta d-neu">↓ 16% vs $2,402</span>
+      <div class="kpi-sub">Aug 2–31 · weekly log + est. Aug 30–31</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total Leads (All Sources)</div>
+      <div class="kpi-val">58</div>
+      <span class="delta d-neu">↓ 3% vs 60</span>
+      <div class="kpi-sub">Consultation sheet · source of truth</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Google Ads Leads</div>
+      <div class="kpi-val">21</div>
+      <span class="delta d-up">↑ 50% vs 14</span>
+      <div class="kpi-sub">From consultation sheet</div>
+    </div>
+  </div>
+  <div class="g3">
+    <div class="kpi">
+      <div class="kpi-label">Overall Booking Rate</div>
+      <div class="kpi-val">47%</div>
+      <span class="delta d-dn">↓ 16pp vs 63%</span>
+      <div class="kpi-sub">27 of 58 leads scheduled</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Google Ads Booking Rate</div>
+      <div class="kpi-val">48%</div>
+      <span class="delta d-dn">↓ 16pp vs 64%</span>
+      <div class="kpi-sub">10 of 21 Google leads booked</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Google Ads CPL</div>
+      <div class="kpi-val">$96</div>
+      <span class="delta d-up">↓ 44% vs $172</span>
+      <div class="kpi-sub">Spend ÷ Google Ads leads</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SLIDE 3: WEEKLY TREND ═══════════════════ -->
+<section class="slide light" id="s3">
+  <div class="slide-label">Google Ads Performance</div>
+  <div class="slide-title" style="margin-bottom:12px">August — Weekly Spend &amp; Google Ads Lead Volume</div>
+  <div class="chart-wrap">
+    <canvas id="weeklyChart"></canvas>
+  </div>
+  <div class="fn">* Aug 30–31 excluded from weekly chart; those 2 days add an estimated $123 spend and 3 Google Ads leads to the monthly total.</div>
+</section>
+
+<!-- ═══════════════════ SLIDE 4: LEAD QUALITY BY CHANNEL ═══════════════════ -->
+<section class="slide light" id="s4">
+  <div class="slide-label">Lead Quality</div>
+  <div class="slide-title" style="margin-bottom:14px">Booking Rate by Source Channel</div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-label">July 2026 — All 60 Leads by Source</div>
+      <div class="chart-wrap">
+        <canvas id="julySrcChart"></canvas>
+      </div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px;min-height:0">
+      <div class="panel" style="flex:1;min-height:0">
+        <div class="panel-label">August 2026 — Google Ads vs All Other Sources</div>
+        <div class="chart-wrap">
+          <canvas id="augSrcChart"></canvas>
+        </div>
+      </div>
+      <div class="panel" style="flex:0 0 auto">
+        <div class="panel-label">Quality Signal</div>
+        <p style="font-size:13px;line-height:1.7;color:var(--charcoal)">
+          <strong>Internal referrals remain the most reliable channel</strong> — historically 70%+ booking rate in both months.
+          Psychology Today leads (3 in July, 67% booked) continue to outperform Google Ads on quality.
+          August non-Google sources booked at 46% (17 of 37) — similar to Google Ads' 48%, suggesting a clinic-side capacity factor in the overall booking rate decline.
+        </p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SLIDE 5: DECLINE ANALYSIS ═══════════════════ -->
+<section class="slide light" id="s5">
+  <div class="slide-label">Lead Quality</div>
+  <div class="slide-title" style="margin-bottom:16px">Why Google Ads Leads Didn't Book</div>
+  <div class="two-col">
+    <div class="panel">
+      <div class="panel-label">July 2026 — 5 Non-Bookings (of 14 Google Ads leads)</div>
+      <div class="br">
+        <div class="br-lbl">Medicaid / insurance mismatch</div>
+        <div class="br-track"><div class="br-fill" style="width:60%;background:var(--amber)">60%</div></div>
+        <div class="br-cnt">3</div>
+      </div>
+      <div class="br">
+        <div class="br-lbl">No response / didn't answer</div>
+        <div class="br-track"><div class="br-fill" style="width:20%;background:var(--mid)">20%</div></div>
+        <div class="br-cnt">1</div>
+      </div>
+      <div class="br">
+        <div class="br-lbl">Cost — private pay rate</div>
+        <div class="br-track"><div class="br-fill" style="width:20%;background:var(--teal)">20%</div></div>
+        <div class="br-cnt">1</div>
+      </div>
+      <div class="narrative" style="margin-top:14px;font-size:12px;padding:14px 18px">
+        Medicaid was the dominant blocker in July — all 3 insurance declines were Medicaid-related. <strong>Medicaid negative keywords were not yet live in July.</strong>
+      </div>
+    </div>
+    <div class="panel">
+      <div class="panel-label">August 2026 — 11 Non-Bookings (of 21 Google Ads leads)</div>
+      <div class="br">
+        <div class="br-lbl">Insurance mismatch (Medicaid ×3, Cigna ×2, Medicare ×1)</div>
+        <div class="br-track"><div class="br-fill" style="width:55%;background:var(--rust)">55%</div></div>
+        <div class="br-cnt">6</div>
+      </div>
+      <div class="br">
+        <div class="br-lbl">No response / NCNS / no-show</div>
+        <div class="br-track"><div class="br-fill" style="width:27%;background:var(--mid)">27%</div></div>
+        <div class="br-cnt">3</div>
+      </div>
+      <div class="br">
+        <div class="br-lbl">Out of area</div>
+        <div class="br-track"><div class="br-fill" style="width:9%;background:var(--teal)">9%</div></div>
+        <div class="br-cnt">1</div>
+      </div>
+      <div class="br">
+        <div class="br-lbl">Service not offered (addiction)</div>
+        <div class="br-track"><div class="br-fill" style="width:9%;background:var(--teal)">9%</div></div>
+        <div class="br-cnt">1</div>
+      </div>
+      <div class="narrative" style="margin-top:14px;font-size:12px;padding:14px 18px">
+        Medicaid negatives added Aug 19 stopped all Medicaid blocks post-Aug 19. <strong>Cigna, Medicare, and addiction terms remain unfiltered</strong> — next immediate action.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SLIDE 6: KEY SIGNALS ═══════════════════ -->
+<section class="slide chapter" id="s6">
+  <div class="slide-label inv">Analysis</div>
+  <div class="slide-title on-dark" style="margin-bottom:22px">Three Signals from August</div>
+  <div class="g3" style="flex:1;align-items:stretch">
+    <div class="insight">
+      <div class="insight-icon">📉</div>
+      <div class="insight-title">Efficiency Up, Quality Down</div>
+      <div class="insight-body">CPL dropped 44% ($172 → $96) and lead volume grew 50%. But booking rate fell 16 percentage points. More leads at lower cost reflects the winding-down of the Broad Match test — but the quality filter hasn't caught up. Negative keyword coverage and ad copy qualification need to close the gap before October budget decisions are made.</div>
+    </div>
+    <div class="insight">
+      <div class="insight-icon">🚫</div>
+      <div class="insight-title">Insurance Exclusions: Still the #1 Blocker</div>
+      <div class="insight-body">55% of Google Ads non-bookings in August were insurance mismatches — Medicaid ×3, Cigna ×2, Medicare ×1. The Medicaid negatives added Aug 19 worked: zero Medicaid blocks after that date. But Cigna, Medicare, and HAP remain uncovered. HAP has blocked leads in multiple weeks and has been an open action for 4+ months with no resolution.</div>
+    </div>
+    <div class="insight">
+      <div class="insight-icon">📞</div>
+      <div class="insight-title">DSA Call Attribution Gap</div>
+      <div class="insight-body">DSA recorded 7+ call extension clicks in the Aug 30–Sep 5 week with 0 Google Ads form conversions — the third consecutive week of this pattern. Either call-driven bookings aren't being attributed in the platform (tracking gap), or the calls aren't converting. This needs a conversion tracking audit before DSA's CPL figures are used for budget reallocation decisions.</div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════════════════ SLIDE 7: SEPTEMBER PRIORITIES ═══════════════════ -->
+<section class="slide dark" id="s7">
+  <div class="slide-label inv">Actions</div>
+  <div class="slide-title on-dark" style="margin-bottom:18px">September Priorities</div>
+  <div class="pgrid">
+    <div class="pcard">
+      <span class="ptag tag-crit">Critical · This Week</span>
+      <div class="pnum">01</div>
+      <div class="ptitle">Add Medicare + Addiction Negatives</div>
+      <div class="pbody">Add "medicare", "medicare insurance", "addiction treatment", "substance abuse", "drug rehab" as negatives across both active campaigns. Both triggered unqualified August leads that Medicaid negatives didn't catch. Fast, low-risk fix with immediate impact on lead quality.</div>
+    </div>
+    <div class="pcard">
+      <span class="ptag tag-crit">Critical · ASAP — Open 4+ Months</span>
+      <div class="pnum">02</div>
+      <div class="ptitle">Resolve HAP Insurance Status</div>
+      <div class="pbody">HAP has blocked multiple leads across multiple weeks. Open since April 2026 with no resolution. A confirmed yes/no from Wellspring unlocks a patient segment or enables a HAP-specific negative keyword. Every week without an answer is a week of wasted ad spend on a filterable decline reason.</div>
+    </div>
+    <div class="pcard">
+      <span class="ptag tag-crit">Critical · This Month</span>
+      <div class="pnum">03</div>
+      <div class="ptitle">Fix Paperwork Completion Drop-Off</div>
+      <div class="pbody">35% of leads who schedule a consultation never complete intake paperwork — 283 scheduled vs 184 completed (Dec 2025–Aug 2026). No campaign optimisation recovers revenue lost here. A reminder sequence or simplified paperwork process on Wellspring's side is the fix; this is not an ad problem.</div>
+    </div>
+    <div class="pcard">
+      <span class="ptag tag-high">High · This Month</span>
+      <div class="pnum">04</div>
+      <div class="ptitle">Audit the Booking Rate Decline</div>
+      <div class="pbody">Overall booking rate fell from 63% to 47% month-over-month. Insurance mismatches explain part of the drop, but non-Google sources also booked at only 46% in August — suggesting a clinic-side capacity factor. Confirm with Wellspring whether August had fewer available appointment slots before attributing the full decline to ad quality.</div>
+    </div>
+  </div>
+</section>
+
+<script>
+/* ── PASSWORD ── */
+(function(){
+  if(sessionStorage.getItem('ws_auth')==='1') document.getElementById('pw-gate').classList.add('hidden');
+  document.getElementById('pw-input').addEventListener('keydown',e=>{ if(e.key==='Enter') checkPw(); });
+})();
+function checkPw(){
+  if(document.getElementById('pw-input').value==='Wellspring123'){
+    sessionStorage.setItem('ws_auth','1');
+    document.getElementById('pw-gate').classList.add('hidden');
+  } else {
+    document.getElementById('pw-err').textContent='Incorrect password. Please try again.';
+    document.getElementById('pw-input').value='';
+    document.getElementById('pw-input').focus();
+  }
+}
+
+/* ── NAV DOTS ── */
+const slides=document.querySelectorAll('.slide');
+const dots=document.querySelectorAll('.dot');
+function goTo(i){ slides[i].scrollIntoView({behavior:'smooth'}); }
+const io=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(!e.isIntersecting) return;
+    const i=Array.from(slides).indexOf(e.target);
+    const dark=e.target.classList.contains('dark')||e.target.classList.contains('chapter');
+    dots.forEach((d,j)=>{
+      d.classList.toggle('active',j===i);
+      d.style.background=j===i ? (dark?'#fff':'var(--teal-dark)') : (dark?'rgba(255,255,255,.3)':'rgba(0,0,0,.2)');
+    });
+  });
+},{threshold:0.5});
+slides.forEach(s=>io.observe(s));
+
+/* ── CHART DEFAULTS ── */
+Chart.defaults.font.family='DM Sans';
+Chart.defaults.color='#6B6B6B';
+
+/* ── WEEKLY TREND ── */
+new Chart(document.getElementById('weeklyChart'),{
+  type:'bar',
+  data:{
+    labels:['Aug 2–8','Aug 9–15','Aug 16–22','Aug 23–29'],
+    datasets:[
+      {
+        label:'Weekly Spend ($)',
+        data:[571,524,474,322],
+        backgroundColor:'rgba(61,122,114,0.72)',
+        borderColor:'#3D7A72',
+        borderWidth:1,
+        yAxisID:'y',
+        borderRadius:4,
+      },
+      {
+        label:'Google Ads Leads',
+        data:[4,7,2,5],
+        type:'line',
+        borderColor:'#C9A84C',
+        backgroundColor:'rgba(201,168,76,.12)',
+        borderWidth:2.5,
+        pointBackgroundColor:'#C9A84C',
+        pointRadius:6,
+        pointHoverRadius:8,
+        yAxisID:'y1',
+        fill:true,
+        tension:0.35,
+      }
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:12},padding:20}},
+      tooltip:{mode:'index',intersect:false}
+    },
+    scales:{
+      y:{type:'linear',position:'left',
+        title:{display:true,text:'Spend ($)',font:{size:11}},
+        grid:{color:'rgba(0,0,0,.05)'},
+        ticks:{callback:v=>'$'+v,font:{size:11}}
+      },
+      y1:{type:'linear',position:'right',
+        title:{display:true,text:'Google Ads Leads',font:{size:11}},
+        grid:{drawOnChartArea:false},
+        ticks:{stepSize:1,font:{size:11},color:'#C9A84C'},
+        min:0,max:10
+      },
+      x:{grid:{display:false},ticks:{font:{size:11}}}
+    }
+  }
+});
+
+/* ── JULY SOURCE (stacked horizontal bar) ── */
+new Chart(document.getElementById('julySrcChart'),{
+  type:'bar',
+  data:{
+    labels:['Google Ads','Internal','Other / Unknown','External / Referral','Psychology Today'],
+    datasets:[
+      {label:'Booked',   data:[9,16,9,2,2], backgroundColor:'rgba(61,138,96,.82)'},
+      {label:'Not Booked',data:[5, 6,8,2,1], backgroundColor:'rgba(196,64,64,.45)'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    indexAxis:'y',
+    plugins:{
+      legend:{position:'bottom',labels:{font:{size:11},padding:14}},
+      tooltip:{mode:'index',intersect:false}
+    },
+    scales:{
+      x:{stacked:true,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10}}},
+      y:{stacked:true,grid:{display:false},ticks:{font:{size:10}}}
+    }
+  }
+});
+
+/* ── AUG SOURCE (Google vs Other) ── */
+new Chart(document.getElementById('augSrcChart'),{
+  type:'bar',
+  data:{
+    labels:['Google Ads','All Other Sources'],
+    datasets:[
+      {label:'Booked',    data:[10,17], backgroundColor:'rgba(61,138,96,.82)'},
+      {label:'Not Booked',data:[11,20], backgroundColor:'rgba(196,64,64,.45)'}
+    ]
+  },
+  options:{
+    responsive:true,maintainAspectRatio:false,
+    plugins:{
+      legend:{display:false},
+      tooltip:{mode:'index',intersect:false}
+    },
+    scales:{
+      x:{stacked:true,grid:{display:false},ticks:{font:{size:11}}},
+      y:{stacked:true,grid:{color:'rgba(0,0,0,.05)'},ticks:{font:{size:10}}}
+    }
+  }
+});
+</script>
+</body>
+</html>
