@@ -1,0 +1,267 @@
+<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1.0"><title>Wellspring — Jun–Aug 2026 Quarterly Review</title><link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet"><script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script><style>:root{--cream:#F7F3EE;--cream-dark:#EDE7DC;--charcoal:#1C1C1A;--warm-mid:#6B6460;--teal:#3D7A72;--teal-pale:#EAF3F2;--rust:#C25B3F;--amber:#C9882A;--violet:#5C4E9E;--green:#3D8A60;--red:#C44040;--border:#DDD5C8;}*{margin:0;padding:0;box-sizing:border-box;}body{background:#f0ece6;font-family:'DM Sans',sans-serif;color:var(--charcoal);font-size:13px;line-height:1.6;}#pw-gate{position:fixed;inset:0;background:#1a2e2b;display:flex;align-items:center;justify-content:center;z-index:9999;}#pw-gate.hidden{display:none;}.pw-box{background:#F7F3EE;border-radius:14px;padding:40px 48px;width:360px;text-align:center;box-shadow:0 24px 60px rgba(0,0,0,0.4);}.pw-logo{font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:500;color:#1C1C1A;}.pw-sub{font-size:9px;letter-spacing:3px;text-transform:uppercase;color:#C25B3F;margin-top:4px;font-weight:500;}.pw-label{font-size:11px;text-transform:uppercase;letter-spacing:1.5px;color:#6B6460;font-weight:500;margin:24px 0 8px;}.pw-input{width:100%;padding:10px 14px;border:1.5px solid #DDD5C8;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:14px;color:#1C1C1A;background:#fff;outline:none;text-align:center;letter-spacing:2px;}.pw-input:focus{border-color:#3D7A72;}.pw-btn{width:100%;margin-top:14px;padding:11px;background:#3D7A72;color:#fff;border:none;border-radius:8px;font-family:'DM Sans',sans-serif;font-size:13px;font-weight:500;cursor:pointer;}.pw-btn:hover{background:#2e5e58;}.pw-error{font-size:11.5px;color:#C25B3F;margin-top:10px;min-height:18px;}.pw-footer{font-size:10px;color:#6B6460;margin-top:20px;}.pw-footer strong{color:#1C1C1A;}.page{max-width:1100px;margin:0 auto;padding:28px 32px;background:var(--cream);min-height:100vh;}.header{display:flex;align-items:flex-start;justify-content:space-between;padding-bottom:16px;border-bottom:1.5px solid var(--border);margin-bottom:16px;}.logo-name{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:500;letter-spacing:-0.5px;color:var(--charcoal);line-height:1;}.logo-sub{font-size:10px;letter-spacing:3px;text-transform:uppercase;color:var(--rust);margin-top:4px;font-weight:500;}.report-label{font-size:10px;text-transform:uppercase;letter-spacing:2px;color:var(--warm-mid);font-weight:500;}.report-week{font-family:'Cormorant Garamond',serif;font-size:20px;font-weight:600;color:var(--charcoal);margin-top:2px;}.report-prepared{font-size:11px;color:var(--warm-mid);margin-top:4px;}.section-divider{margin:22px 0 14px;padding-top:18px;border-top:2px solid var(--cream-dark);display:flex;align-items:center;gap:12px;}.section-divider .sdot{width:9px;height:9px;border-radius:50%;background:var(--teal);flex-shrink:0;}.section-divider h2{font-family:'Cormorant Garamond',serif;font-size:18px;font-weight:600;color:var(--charcoal);}.section-divider .stag{font-size:10px;color:var(--warm-mid);font-family:'DM Sans',sans-serif;}.kpi-4{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:16px;}.kpi-3{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:16px;}.kpi-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:16px 20px;position:relative;overflow:hidden;}.kpi-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;background:var(--teal);border-radius:10px 10px 0 0;}.kpi-card.amber::before{background:var(--amber);}.kpi-card.green::before{background:var(--green);}.kpi-card.rust::before{background:var(--rust);}.kpi-card.violet::before{background:var(--violet);}.kpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-bottom:6px;}.kpi-value{font-family:'Cormorant Garamond',serif;font-size:44px;font-weight:600;color:var(--charcoal);line-height:1;}.kpi-explain{font-size:11.5px;color:var(--warm-mid);margin-top:5px;line-height:1.5;}.kpi-badge{display:inline-block;font-size:9.5px;padding:3px 8px;border-radius:20px;margin-top:6px;font-weight:500;}.badge-up{background:#E8F5EC;color:#2E7D4F;}.badge-warn{background:#FDF6EC;color:#C9882A;}.badge-down{background:#FDF1EE;color:#C25B3F;}.panel{background:#fff;border:1px solid var(--border);border-radius:12px;padding:16px 18px;margin-bottom:12px;}.panel-title{font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:var(--charcoal);margin-bottom:10px;display:flex;align-items:center;gap:8px;}.panel-title .dot{width:8px;height:8px;border-radius:50%;background:var(--teal);flex-shrink:0;}.two-col{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;}.three-col{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:12px;}.month-card{background:#fff;border:1px solid var(--border);border-radius:10px;padding:14px 16px;border-left:4px solid var(--teal);}.month-card.amber{border-left-color:var(--amber);}.month-card.rust{border-left-color:var(--rust);}.month-card.violet{border-left-color:var(--violet);}.month-name{font-size:10px;text-transform:uppercase;letter-spacing:2px;font-weight:600;color:var(--warm-mid);margin-bottom:8px;}.month-big{font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;color:var(--charcoal);line-height:1;}.month-row{display:flex;justify-content:space-between;align-items:center;padding:4px 0;border-bottom:1px solid var(--cream-dark);font-size:11.5px;color:var(--charcoal);}.month-row:last-child{border-bottom:none;}.month-row .val{font-weight:600;color:var(--teal);}.week-link{display:block;padding:9px 12px;border-radius:7px;background:var(--cream);border:1px solid var(--border);margin-bottom:5px;display:flex;align-items:center;justify-content:space-between;text-decoration:none;color:var(--charcoal);}.week-link:hover{background:#EAF3F2;border-color:#b2d8d4;}.week-link .wl-label{font-size:11.5px;font-weight:500;}.week-link .wl-meta{font-size:10.5px;color:var(--warm-mid);}.week-link .wl-arrow{font-size:11px;color:var(--teal);}.hbar-row{display:flex;align-items:center;gap:10px;margin-bottom:8px;}.hbar-label{font-size:11.5px;color:var(--charcoal);min-width:180px;flex-shrink:0;}.hbar-track{flex:1;background:var(--cream-dark);border-radius:4px;height:24px;}.hbar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-width:28px;}.hbar-pct{font-size:11px;font-weight:600;color:#fff;}.hbar-count{font-size:12px;color:var(--warm-mid);min-width:24px;text-align:right;font-weight:600;}.insight-card{border-left:3px solid var(--teal);padding:10px 14px;margin-bottom:8px;background:var(--teal-pale);border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.6;}.insight-card.amber{border-left-color:var(--amber);background:#FDF6EC;}.insight-card.rust{border-left-color:var(--rust);background:#FDF1EE;}.insight-card.violet{border-left-color:var(--violet);background:#F2F0F9;}.insight-card.green{border-left-color:var(--green);background:#EBF5F0;}.quarter-chip{display:inline-block;background:var(--teal);color:#fff;font-size:9px;text-transform:uppercase;letter-spacing:2px;padding:3px 8px;border-radius:20px;font-weight:500;margin-right:6px;}.phone-stat-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}.phone-stat{background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:12px 14px;text-align:center;}.phone-stat-val{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--charcoal);line-height:1;}.phone-stat-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-top:4px;}.footer{margin-top:20px;padding-top:14px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;}.footer-left{font-size:10.5px;color:var(--warm-mid);line-height:1.7;}.footer-right{font-family:'Cormorant Garamond',serif;font-size:15px;font-weight:500;color:var(--teal);}.divider{border:none;border-top:1px solid var(--border);margin:14px 0;}canvas{max-height:220px;}</style></head><body>
+<div id="pw-gate"><div class="pw-box"><div class="pw-logo">Wellspring</div><div class="pw-sub">Therapeutic Partners</div><div class="pw-label">Enter report password</div><input id="pw-input" class="pw-input" type="password" placeholder="............" autocomplete="off"/><button class="pw-btn" onclick="checkPassword()">View Report</button><div id="pw-error" class="pw-error"></div><div class="pw-footer">Confidential &middot; Prepared by <strong>Damco Digital</strong></div></div></div>
+<script>(function(){if(sessionStorage.getItem('ws_auth')==='1'){document.addEventListener('DOMContentLoaded',function(){document.getElementById('pw-gate').classList.add('hidden');});}})();function checkPassword(){var val=document.getElementById('pw-input').value;if(val==='Wellspring123'){sessionStorage.setItem('ws_auth','1');document.getElementById('pw-gate').classList.add('hidden');}else{document.getElementById('pw-error').textContent='Incorrect password.';document.getElementById('pw-input').value='';document.getElementById('pw-input').focus();}}document.addEventListener('DOMContentLoaded',function(){var input=document.getElementById('pw-input');if(input){input.addEventListener('keydown',function(e){if(e.key==='Enter')checkPassword();});if(sessionStorage.getItem('ws_auth')!=='1')input.focus();}});</script>
+
+<div class="page">
+<div class="header"><div><div class="logo-name">Wellspring</div><div class="logo-sub">Therapeutic Partners</div></div><div class="header-meta"><div class="report-label">Quarterly Review &nbsp;&middot;&nbsp; <span class="quarter-chip">Q Jun–Aug 2026</span></div><div class="report-week">June &ndash; August 2026</div><div class="report-prepared">Compiled from 12 weekly reports &nbsp;&middot;&nbsp; Prepared by Damco Digital &nbsp;&middot;&nbsp; 13 Oct 2026</div></div></div>
+
+<!-- Quarter KPIs -->
+<div style="background:linear-gradient(135deg,#1a3530 0%,#2e5e58 100%);border-radius:12px;padding:18px 24px;margin-bottom:16px;color:#fff;">
+  <div style="font-size:9px;text-transform:uppercase;letter-spacing:3px;font-weight:500;opacity:0.7;margin-bottom:10px;">Quarter at a Glance — Google Ads + All Sources</div>
+  <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:10px;">
+    <div style="text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1;">74</div><div style="font-size:9px;opacity:0.75;text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Google leads</div></div>
+    <div style="text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1;">54%</div><div style="font-size:9px;opacity:0.75;text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Google rate</div></div>
+    <div style="text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1;">162</div><div style="font-size:9px;opacity:0.75;text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Total leads</div></div>
+    <div style="text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1;">56%</div><div style="font-size:9px;opacity:0.75;text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Overall rate</div></div>
+    <div style="text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1;">$5,934</div><div style="font-size:9px;opacity:0.75;text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Total spend</div></div>
+    <div style="text-align:center;"><div style="font-family:'Cormorant Garamond',serif;font-size:36px;font-weight:600;line-height:1;">$80</div><div style="font-size:9px;opacity:0.75;text-transform:uppercase;letter-spacing:1px;margin-top:3px;">Avg CPL</div></div>
+  </div>
+</div>
+
+<!-- Monthly breakdown -->
+<div class="three-col">
+  <div class="month-card">
+    <div class="month-name">June 2026 &nbsp;&middot;&nbsp; 4 weeks</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;"><div class="month-big">31</div><div style="font-size:13px;color:var(--warm-mid);">Google leads</div></div>
+    <div class="month-row"><span>Google booking rate</span><span class="val">52%</span></div>
+    <div class="month-row"><span>Total all-source leads</span><span class="val">52</span></div>
+    <div class="month-row"><span>Overall scheduling rate</span><span class="val">60%</span></div>
+    <div class="month-row"><span>Total spend</span><span class="val">$2,181</span></div>
+    <div class="month-row"><span>Blended CPL (Google)</span><span class="val">$70</span></div>
+    <div class="month-row"><span>Best week CPL</span><span class="val">$49 (Jun 14–21)</span></div>
+    <div style="margin-top:8px;font-size:10.5px;color:var(--warm-mid);">Highest month for lead volume. Jun 14–21 was the peak week: 12 Google leads, 67% booking rate, $49 CPL. Holiday week (Jun 28–Jul 4) skewed CPL high.</div>
+  </div>
+  <div class="month-card amber">
+    <div class="month-name">July 2026 &nbsp;&middot;&nbsp; 4 weeks</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;"><div class="month-big">25</div><div style="font-size:13px;color:var(--warm-mid);">Google leads</div></div>
+    <div class="month-row"><span>Google booking rate</span><span class="val">60%</span></div>
+    <div class="month-row"><span>Total all-source leads</span><span class="val">57</span></div>
+    <div class="month-row"><span>Overall scheduling rate</span><span class="val">61%</span></div>
+    <div class="month-row"><span>Total spend</span><span class="val">$1,970</span></div>
+    <div class="month-row"><span>Blended CPL (Google)</span><span class="val">$79</span></div>
+    <div class="month-row"><span>Best week CPL</span><span class="val">$48 (Jul 26–Aug 1)</span></div>
+    <div style="margin-top:8px;font-size:10.5px;color:var(--warm-mid);">Highest Google booking rate of the three months (60%). DSA was absent all week (Jul 5–11), then restored. Jul 26–Aug 1 was the best CPL week of the quarter at $48 — lower planned spend, strong quality.</div>
+  </div>
+  <div class="month-card rust">
+    <div class="month-name">August 2026 &nbsp;&middot;&nbsp; 4 weeks</div>
+    <div style="display:flex;align-items:baseline;gap:8px;margin-bottom:10px;"><div class="month-big">18</div><div style="font-size:13px;color:var(--warm-mid);">Google leads</div></div>
+    <div class="month-row"><span>Google booking rate</span><span class="val">50%</span></div>
+    <div class="month-row"><span>Total all-source leads</span><span class="val">53</span></div>
+    <div class="month-row"><span>Overall scheduling rate</span><span class="val">45%</span></div>
+    <div class="month-row"><span>Total spend</span><span class="val">$1,783 est.</span></div>
+    <div class="month-row"><span>Blended CPL (Google)</span><span class="val">$99 est.</span></div>
+    <div class="month-row"><span>Best week CPL</span><span class="val">~$43 (Aug 23–29)</span></div>
+    <div style="margin-top:8px;font-size:10.5px;color:var(--warm-mid);">Weakest Google lead volume (18). Aug 2–8 had zero bookings from Google (Medicaid + insurance drop-offs). Medicaid negatives added Aug 19. End of month showed strong quality recovery (80–100% Google rate).</div>
+  </div>
+</div>
+
+<!-- 12-week trend -->
+<div class="panel"><div class="panel-title"><span class="dot" style="background:var(--violet)"></span> 12-Week Performance Trend — Google Ads Leads &amp; CPL</div>
+  <div style="position:relative;height:200px;"><canvas id="weeklyTrend"></canvas></div>
+  <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-top:10px;">
+    <div style="background:var(--cream);border-radius:6px;padding:8px 10px;font-size:10.5px;"><span style="font-weight:600;color:var(--teal);">Peak volume:</span> Jun 14–21 (12 Google leads, $49 CPL)</div>
+    <div style="background:#FDF1EE;border-radius:6px;padding:8px 10px;font-size:10.5px;"><span style="font-weight:600;color:var(--rust);">Worst CPL:</span> Aug 16–22 ($237 — only 2 leads from ads)</div>
+    <div style="background:#EBF5F0;border-radius:6px;padding:8px 10px;font-size:10.5px;"><span style="font-weight:600;color:var(--green);">Best CPL:</span> Aug 23–29 (~$43 est.) &amp; Jul 26–Aug 1 ($48)</div>
+    <div style="background:#FDF6EC;border-radius:6px;padding:8px 10px;font-size:10.5px;"><span style="font-weight:600;color:var(--amber);">Anomaly:</span> Jun 28–Jul 4 ($141, Independence Day — not representative)</div>
+  </div>
+</div>
+
+<!-- Google scheduling rate by week -->
+<div class="panel"><div class="panel-title"><span class="dot" style="background:var(--teal)"></span> Google Ads Scheduling Rate — Week by Week</div>
+  <div style="position:relative;height:180px;"><canvas id="schedChart"></canvas></div>
+  <p style="font-size:10px;color:var(--warm-mid);margin-top:8px;">The 54% quarter average masks extreme week-to-week variation. One structural fix (Medicaid negative keywords) caused the Aug 2–8 crash and took 8 consecutive weeks to resolve. After the fix (added ~Aug 19), the Aug 23–29 Google rate recovered to 80%.</p>
+</div>
+
+<!-- Source breakdown -->
+<div class="section-divider"><span class="sdot" style="background:var(--amber)"></span><h2>Lead Sources — June to August 2026</h2><span class="stag">162 total leads across all channels</span></div>
+<div class="two-col">
+  <div class="panel"><div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Where leads came from (12-week total)</div>
+    <div class="hbar-row"><div class="hbar-label">Google Ads (paid)</div><div class="hbar-track"><div class="hbar-fill" style="width:46%;background:var(--teal);"><span class="hbar-pct">46%</span></div></div><div class="hbar-count">74</div></div>
+    <div class="hbar-row"><div class="hbar-label">Word of mouth / Internal</div><div class="hbar-track"><div class="hbar-fill" style="width:34%;background:var(--green);"><span class="hbar-pct">34%</span></div></div><div class="hbar-count">~55</div></div>
+    <div class="hbar-row"><div class="hbar-label">Psychology Today</div><div class="hbar-track"><div class="hbar-fill" style="width:10%;background:var(--violet);"><span class="hbar-pct">10%</span></div></div><div class="hbar-count">~16</div></div>
+    <div class="hbar-row" style="margin-bottom:0;"><div class="hbar-label">External referrals (PCP / Specialist)</div><div class="hbar-track"><div class="hbar-fill" style="width:10%;background:var(--amber);"><span class="hbar-pct">10%</span></div></div><div class="hbar-count">~17</div></div>
+    <div style="margin-top:10px;font-size:10.5px;color:var(--warm-mid);line-height:1.7;">Google Ads was the largest single channel (46% of all inbound) but the lowest-converting among qualified channels. Internal/word-of-mouth led every week at 67–100%. Psychology Today had inconsistent weeks — 100% in some, 0% in others (insurance drop-offs).</div>
+  </div>
+  <div class="panel"><div class="panel-title"><span class="dot" style="background:var(--teal)"></span> Booking rate by source</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:10px;">
+      <div style="background:#EBF5F0;border-radius:7px;padding:10px 12px;"><div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--green);">54%</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--warm-mid);font-weight:500;">Google Ads rate</div><div style="font-size:10.5px;color:var(--warm-mid);margin-top:3px;">40 booked of 74 leads. Best months: Jul (60%). Worst: Aug (50%, dragged by Aug 2–8 zero-booking week).</div></div>
+      <div style="background:#EBF5F0;border-radius:7px;padding:10px 12px;"><div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--green);">80%+</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--warm-mid);font-weight:500;">Internal referral rate</div><div style="font-size:10.5px;color:var(--warm-mid);margin-top:3px;">Consistently the highest-converting source every single week. Current patients referring friends/family rarely missed.</div></div>
+      <div style="background:#EAF3F2;border-radius:7px;padding:10px 12px;"><div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--teal);">~65%</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--warm-mid);font-weight:500;">Ext. referral rate</div><div style="font-size:10.5px;color:var(--warm-mid);margin-top:3px;">PCP and specialist referrals converted well when service was appropriate. Two substance-abuse referrals couldn't be seen (not Wellspring's scope).</div></div>
+      <div style="background:#FDF6EC;border-radius:7px;padding:10px 12px;"><div style="font-family:'Cormorant Garamond',serif;font-size:28px;font-weight:600;color:var(--amber);">~55%</div><div style="font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--warm-mid);font-weight:500;">Psychology Today rate</div><div style="font-size:10.5px;color:var(--warm-mid);margin-top:3px;">Wide range — 100% when insurance fits, 0% in weeks with drop-offs. Overall a reliable second channel alongside Google.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Campaign efficiency -->
+<div class="section-divider"><span class="sdot" style="background:var(--green)"></span><h2>Campaign Efficiency — DSA vs Generic / Broad Match</h2><span class="stag">12 weeks of side-by-side campaign data</span></div>
+<div class="two-col">
+  <div class="panel"><div class="panel-title"><span class="dot" style="background:var(--teal)"></span> Cost per click comparison — all active weeks</div>
+    <div style="display:flex;gap:8px;margin-bottom:10px;">
+      <div style="background:#EAF3F2;border-radius:8px;padding:14px 16px;flex:1;text-align:center;border:1.5px solid #b2d8d4;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--teal);font-weight:600;margin-bottom:6px;">DSA (Dynamic Search)</div><div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--teal);">$2.47</div><div style="font-size:10px;color:var(--warm-mid);margin-top:4px;">avg CPC · range $1.95–$3.73<br>Every week it ran: most efficient campaign</div></div>
+      <div style="background:#FDF6EC;border-radius:8px;padding:14px 16px;flex:1;text-align:center;"><div style="font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--amber);font-weight:600;margin-bottom:6px;">Generic / Broad Match</div><div style="font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;color:var(--amber);">$5.96</div><div style="font-size:10px;color:var(--warm-mid);margin-top:4px;">avg CPC · range $4.44–$8.33<br>Ran all 12 weeks · dominated spend (79–92%)</div></div>
+    </div>
+    <div style="background:var(--cream-dark);border-radius:7px;padding:10px 12px;font-size:11.5px;color:var(--charcoal);line-height:1.7;"><strong>DSA was 58% cheaper per click than Generic/Broad Match on average.</strong> Despite this, DSA's daily budget cap ($15/day) limited it to at most 20% of total spend every week. At DSA's CPC efficiency, doubling its budget allocation would have generated an estimated 4–6 additional leads per week at lower cost.</div>
+  </div>
+  <div class="panel"><div class="panel-title"><span class="dot" style="background:var(--violet)"></span> Notable campaign events this quarter</div>
+    <div class="insight-card amber" style="margin-bottom:6px;"><strong>Jun 21–27: DSA conflict resolved.</strong> DSA and Generic had been alternating delivery (not running the same day) for weeks prior. Fixed in this week — both ran all 7 days for the first time.</div>
+    <div class="insight-card rust" style="margin-bottom:6px;"><strong>Jul 5–11: DSA absent entire week.</strong> Zero spend across 7 days — cause investigated (change history). Led to ~3–5 missed enquiries. Restored Jul 12–18.</div>
+    <div class="insight-card amber" style="margin-bottom:6px;"><strong>Aug 9–15: Third campaign launched (New Broad Match).</strong> 3-campaign structure ran for 1 week alongside DSA + Generic. Broad Match paused end of that week; account returned to 2-campaign structure.</div>
+    <div class="insight-card green" style="margin-bottom:0;"><strong>Aug 19: Medicaid negative keywords added.</strong> 8 consecutive weeks with a Medicaid-blocked lead resolved in one 5-minute account change. Jul 19–25 was the only prior exception (no Medicaid block that week).</div>
+  </div>
+</div>
+
+<!-- Phone vs form -->
+<div class="section-divider"><span class="sdot" style="background:var(--violet)"></span><h2>Phone vs Form — Jun to Aug 2026</h2><span class="stag">DSA call extension data available from August only · consultation-level breakdown starts Sep 2026</span></div>
+<div class="panel">
+  <div style="display:flex;gap:16px;align-items:flex-start;flex-wrap:wrap;">
+    <div style="flex:1;min-width:260px;">
+      <div class="panel-title" style="margin-bottom:10px;"><span class="dot" style="background:var(--violet)"></span> What we can confirm from the data</div>
+      <div style="background:#F2F0F9;border:1px solid #c8c0e0;border-radius:8px;padding:12px 14px;margin-bottom:10px;">
+        <div style="font-size:11px;font-weight:600;color:var(--violet);margin-bottom:6px;">DSA phone call extension clicks — August 2026 only</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px;margin-bottom:8px;">
+          <div style="text-align:center;background:#fff;border-radius:6px;padding:8px;"><div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--violet);">11</div><div style="font-size:9px;color:var(--warm-mid);text-transform:uppercase;letter-spacing:1px;">Aug 9–15<br>call clicks</div></div>
+          <div style="text-align:center;background:#fff;border-radius:6px;padding:8px;"><div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--violet);">7</div><div style="font-size:9px;color:var(--warm-mid);text-transform:uppercase;letter-spacing:1px;">Aug 16–22<br>call clicks</div></div>
+          <div style="text-align:center;background:#fff;border-radius:6px;padding:8px;"><div style="font-family:'Cormorant Garamond',serif;font-size:24px;font-weight:600;color:var(--violet);">5</div><div style="font-size:9px;color:var(--warm-mid);text-transform:uppercase;letter-spacing:1px;">Aug 23–29<br>call clicks</div></div>
+        </div>
+        <p style="font-size:11px;color:var(--warm-mid);line-height:1.6;">These are <strong>platform-level phone extension clicks</strong> recorded in Google Ads — not all became booked consultations that appeared in the consultation sheet. The Aug 16–22 report flagged this gap explicitly: DSA drove 7 call clicks but 0 form conversions, and Wellspring was asked to confirm whether those calls became appointments.</p>
+      </div>
+    </div>
+    <div style="flex:1;min-width:260px;">
+      <div class="panel-title" style="margin-bottom:10px;"><span class="dot" style="background:var(--amber)"></span> Why systematic data isn&rsquo;t available for Jun–Aug</div>
+      <div class="insight-card amber">The consultation sheet did not systematically track <strong>Type of Consultation</strong> (phone call vs form submission) during June–August 2026. This field was used to distinguish call leads from form leads starting in September 2026, where the data became granular enough to extract a clean phone-vs-form split.</div>
+      <div class="insight-card violet" style="margin-bottom:0;">What we do know from qualitative report notes: internal referrals frequently arrived via phone call; Psychology Today and Google Ads both generated a mix of forms and calls; DSA (by design) generated more phone intent than form intent due to call extension prominence. From Sep 2026 onward, this split is tracked systematically per lead.</div>
+    </div>
+  </div>
+  <!-- Phone vs form from Sep data as context -->
+  <div style="border-top:1px solid var(--border);padding-top:12px;margin-top:12px;">
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:3px;color:var(--violet);font-weight:500;margin-bottom:8px;">Sep–Oct 2026 reference (first weeks with systematic phone vs form tracking)</div>
+    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:8px;">
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:600;color:var(--charcoal);margin-bottom:4px;">Sep 27–Oct 3, 2026</div>
+        <div style="font-size:11.5px;color:var(--warm-mid);">Scheduling rate: <strong>60%</strong><br>3 phone calls · 7 forms (est.)</div>
+      </div>
+      <div style="background:var(--cream);border:1px solid var(--border);border-radius:7px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:600;color:var(--charcoal);margin-bottom:4px;">Oct 4–10, 2026</div>
+        <div style="font-size:11.5px;color:var(--warm-mid);"><strong>Phones (3):</strong> 2 booked, 1 pending — 100% confirmed rate<br><strong>Forms (7):</strong> 4 booked, 1 not, 2 pending — 80% confirmed rate</div>
+      </div>
+      <div style="background:#EAF3F2;border:1px solid #b2d8d4;border-radius:7px;padding:10px 12px;">
+        <div style="font-size:11px;font-weight:600;color:var(--teal);margin-bottom:4px;">Pattern emerging</div>
+        <div style="font-size:11.5px;color:var(--warm-mid);">Phone call leads are showing higher confirmed scheduling rates than form submissions. This is consistent with the Aug 16–22 report note that <em>&ldquo;phone callers historically convert at a higher rate.&rdquo;</em></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Decline reasons quarterly -->
+<div class="section-divider"><span class="sdot" style="background:var(--rust)"></span><h2>Why Leads Didn&rsquo;t Book — Quarter Summary</h2><span class="stag">Compiled from all 12 weekly decline breakdowns</span></div>
+<div class="two-col">
+  <div class="panel"><div class="panel-title"><span class="dot" style="background:var(--rust)"></span> Top barriers (all sources, Jun–Aug)</div>
+    <div class="hbar-row"><div class="hbar-label">Insurance not accepted (Medicaid / HAP / Cigna)</div><div class="hbar-track"><div class="hbar-fill" style="width:38%;background:var(--red);"><span class="hbar-pct">38%</span></div></div><div class="hbar-count">#1</div></div>
+    <div class="hbar-row"><div class="hbar-label">No response / no-call no-show</div><div class="hbar-track"><div class="hbar-fill" style="width:24%;background:var(--warm-mid);"><span class="hbar-pct">24%</span></div></div><div class="hbar-count">#2</div></div>
+    <div class="hbar-row"><div class="hbar-label">Incomplete inquiry (dropped mid-process)</div><div class="hbar-track"><div class="hbar-fill" style="width:16%;background:var(--amber);"><span class="hbar-pct">16%</span></div></div><div class="hbar-count">#3</div></div>
+    <div class="hbar-row"><div class="hbar-label">Service not offered (substance abuse, out-of-state, minor MM)</div><div class="hbar-track"><div class="hbar-fill" style="width:13%;background:var(--violet);"><span class="hbar-pct">13%</span></div></div><div class="hbar-count">#4</div></div>
+    <div class="hbar-row" style="margin-bottom:0;"><div class="hbar-label">Cost / deductible concerns</div><div class="hbar-track"><div class="hbar-fill" style="width:9%;background:#9E9589;"><span class="hbar-pct">9%</span></div></div><div class="hbar-count">#5</div></div>
+    <div style="margin-top:10px;background:#FDF1EE;border-radius:7px;padding:10px 12px;font-size:11.5px;color:var(--charcoal);line-height:1.7;"><strong>Medicaid was the single biggest drag on the quarter.</strong> It appeared in 8 of 12 weeks — one lead blocked per week on average — before negative keywords were added on 19 Aug. Removing this alone would have recovered an estimated 6–8 additional bookings and lowered CPL across the entire period.</div>
+  </div>
+  <div class="panel"><div class="panel-title"><span class="dot" style="background:var(--amber)"></span> Key actions that emerged from the declines</div>
+    <div style="font-size:11.5px;line-height:1.8;color:var(--charcoal);">
+      <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;"><div style="width:20px;height:20px;border-radius:50%;background:#3D8A60;color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">✓</div><div><strong>Done (Aug 19):</strong> Medicaid + UHC negative keywords added to both campaigns. Took 8 weeks of flagging to action.</div></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;"><div style="width:20px;height:20px;border-radius:50%;background:#3D8A60;color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">✓</div><div><strong>Done (Aug 19):</strong> Broad Match test campaign (090626_Broad) wound down. Back to 2-campaign structure.</div></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;"><div style="width:20px;height:20px;border-radius:50%;background:#C9882A;color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">!</div><div><strong>Pending:</strong> 24-hour consultation reminder (call/text) to reduce NCNS rate. 2 NCNS appeared in Aug 9–15 alone.</div></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;margin-bottom:8px;"><div style="width:20px;height:20px;border-radius:50%;background:#C9882A;color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">!</div><div><strong>Pending:</strong> Insurance pre-screen earlier in the intake form — 3 leads dropped at the insurance verification step in Aug 2–8 alone.</div></div>
+      <div style="display:flex;gap:8px;align-items:flex-start;"><div style="width:20px;height:20px;border-radius:50%;background:#C9882A;color:#fff;font-size:10px;font-weight:500;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:2px;">!</div><div><strong>Pending:</strong> Confirm HAP insurance status — appeared in 3+ weeks during Jun–Aug, status still unresolved as of end of Aug.</div></div>
+    </div>
+  </div>
+</div>
+
+<!-- Report index -->
+<div class="section-divider"><span class="sdot" style="background:var(--charcoal)"></span><h2>All Weekly Reports — Live Links</h2><span class="stag">12 reports &nbsp;&middot;&nbsp; password: Wellspring123</span></div>
+<div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px;margin-bottom:16px;">
+  <div>
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--teal);font-weight:600;margin-bottom:6px;">June 2026</div>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-jun-7-2026-jun-13-2026.html" target="_blank"><span class="wl-label">Jun 7–13, 2026</span><span class="wl-meta">7 G leads · $56 CPL · $389</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-jun-14-2026-jun-21-2026.html" target="_blank"><span class="wl-label">Jun 14–21, 2026</span><span class="wl-meta">12 G leads · $49 CPL · $584 &#11088;</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-jun-21-2026-jun-27-2026.html" target="_blank"><span class="wl-label">Jun 21–27, 2026</span><span class="wl-meta">8 G leads · $81 CPL · $645</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-jun-28-2026-jul-4-2026.html" target="_blank"><span class="wl-label">Jun 28–Jul 4, 2026</span><span class="wl-meta">4 G leads · $141 CPL · $563 🎆</span><span class="wl-arrow">&#8599;</span></a>
+  </div>
+  <div>
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--amber);font-weight:600;margin-bottom:6px;">July 2026</div>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-jul-5-2026-jul-11-2026.html" target="_blank"><span class="wl-label">Jul 5–11, 2026</span><span class="wl-meta">7 G leads · $85 CPL · $594 (DSA absent)</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-jul-12-2026-jul-18-2026.html" target="_blank"><span class="wl-label">Jul 12–18, 2026</span><span class="wl-meta">7 G leads · $80 CPL · $557</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-jul-19-2026-jul-25-2026.html" target="_blank"><span class="wl-label">Jul 19–25, 2026</span><span class="wl-meta">5 G leads · $106 CPL · $532</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-jul-26-2026-aug-1-2026.html" target="_blank"><span class="wl-label">Jul 26–Aug 1, 2026</span><span class="wl-meta">6 G leads · $48 CPL · $287 &#11088;</span><span class="wl-arrow">&#8599;</span></a>
+  </div>
+  <div>
+    <div style="font-size:9px;text-transform:uppercase;letter-spacing:2px;color:var(--rust);font-weight:600;margin-bottom:6px;">August 2026</div>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-aug-2-2026-aug-8-2026.html" target="_blank"><span class="wl-label">Aug 2–8, 2026</span><span class="wl-meta">4 G leads · $143 CPL · 0 bookings &#9888;</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-aug-9-2026-aug-15-2026.html" target="_blank"><span class="wl-label">Aug 9–15, 2026</span><span class="wl-meta">7 G leads · $75 CPL · $524</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-aug-16-2026-aug-22-2026.html" target="_blank"><span class="wl-label">Aug 16–22, 2026</span><span class="wl-meta">2 G leads · $237 CPL · $474</span><span class="wl-arrow">&#8599;</span></a>
+    <a class="week-link" href="https://rishabhb-damco.github.io/Wellspring-Weekly-Report/wellspring-report-aug-23-2026-aug-29-2026.html" target="_blank"><span class="wl-label">Aug 23–29, 2026</span><span class="wl-meta">5 G leads · ~$43 CPL est. · partial data</span><span class="wl-arrow">&#8599;</span></a>
+  </div>
+</div>
+
+<!-- Quarter narrative -->
+<div class="panel"><div style="font-size:9px;text-transform:uppercase;letter-spacing:3px;color:var(--teal);font-weight:500;margin-bottom:12px;">Three Themes That Defined the Quarter</div>
+  <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;">
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:14px 16px;border-left:3px solid var(--red);">
+      <div style="font-size:11px;font-weight:600;color:var(--charcoal);margin-bottom:6px;">1. The Medicaid problem cost the quarter dearly</div>
+      <div style="font-size:11.5px;color:var(--warm-mid);line-height:1.7;">Medicaid-blocked leads appeared in 8 of 12 weeks — roughly 1 unqualified lead per week, costing an estimated $480–$640 in wasted spend over the quarter. The fix (negative keywords) took 8 weeks to implement. Adding it on Day 1 would have saved money and improved CPL throughout.</div>
+    </div>
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:14px 16px;border-left:3px solid var(--teal);">
+      <div style="font-size:11px;font-weight:600;color:var(--charcoal);margin-bottom:6px;">2. DSA was consistently the most efficient campaign — and chronically under-budgeted</div>
+      <div style="font-size:11.5px;color:var(--warm-mid);line-height:1.7;">DSA's CPC averaged $2.47 vs $5.96 for Generic/Broad — 58% cheaper per click, every single week. Its $15/day cap meant it never exceeded 20% of total spend. Doubling DSA's daily budget was the highest-ROI opportunity that sat on the table all quarter.</div>
+    </div>
+    <div style="background:var(--cream);border:1px solid var(--border);border-radius:8px;padding:14px 16px;border-left:3px solid var(--amber);">
+      <div style="font-size:11px;font-weight:600;color:var(--charcoal);margin-bottom:6px;">3. Scheduling rate is partly a capacity issue, not just a campaign issue</div>
+      <div style="font-size:11.5px;color:var(--warm-mid);line-height:1.7;">Internal referrals booked at 80%+ every week. Google Ads averaged 54%. The gap isn't quality — it's that Google leads sometimes face capacity constraints (ADHD testing waitlist, male therapist availability, specialist gaps) that internal referrals navigate around. Some of the "low" weeks were Wellspring-side, not campaign-side.</div>
+    </div>
+  </div>
+</div>
+
+<hr class="divider">
+<div class="footer"><div class="footer-left">Prepared by <strong>Damco Digital</strong> &nbsp;&middot;&nbsp; Confidential: For Wellspring Internal Use Only<br>Compiled from 12 weekly HTML reports (Jun 7 &ndash; Aug 29, 2026) &nbsp;&middot;&nbsp; All numbers sourced directly from published weekly reports &nbsp;&middot;&nbsp; Aug 23&ndash;29 spend estimated (~$214) due to partial export<br>Phone/form split: not systematically tracked in consultation sheet during Jun&ndash;Aug 2026. Tracking implemented Sep 2026.</div><div class="footer-right">Wellspring Therapeutic Partners</div></div>
+</div>
+</div>
+
+<script>
+window.addEventListener('load',function(){
+  var weeks=['Jun 7-13','Jun 14-21','Jun 21-27','Jun 28-Jul 4','Jul 5-11','Jul 12-18','Jul 19-25','Jul 26-Aug 1','Aug 2-8','Aug 9-15','Aug 16-22','Aug 23-29'];
+  var leads=[7,12,8,4,7,7,5,6,4,7,2,5];
+  var cpl=[56,49,81,141,85,80,106,48,143,75,237,43];
+  var bgColors=leads.map(function(l,i){
+    if(cpl[i]>130)return '#C25B3F';
+    if(cpl[i]<60)return '#3D8A60';
+    return '#3D7A72';
+  });
+
+  new Chart(document.getElementById('weeklyTrend').getContext('2d'),{
+    type:'bar',
+    data:{
+      labels:weeks,
+      datasets:[
+        {label:'Google Ads leads',data:leads,backgroundColor:bgColors,borderRadius:4,barPercentage:0.6,categoryPercentage:0.75,yAxisID:'y'},
+        {label:'CPL ($)',data:cpl,type:'line',borderColor:'#C9882A',backgroundColor:'rgba(201,136,42,0.06)',pointBackgroundColor:cpl.map(function(v){return v>130?'#C44040':v<60?'#3D8A60':'#C9882A';}),pointRadius:5,borderWidth:2.5,yAxisID:'y2',tension:0.35,fill:true}
+      ]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:true,labels:{font:{family:'DM Sans',size:11},color:'#6B6460',boxWidth:10}},annotation:{}},scales:{x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:10},color:'#6B6460',maxRotation:45}},y:{position:'left',min:0,max:16,grid:{color:'#EDE7DC'},ticks:{font:{family:'DM Sans',size:11},color:'#6B6460',stepSize:4},title:{display:true,text:'Leads',color:'#6B6460',font:{size:10}}},y2:{position:'right',min:0,max:260,grid:{display:false},ticks:{font:{family:'DM Sans',size:11},color:'#C9882A',callback:function(v){return '$'+v;}},title:{display:true,text:'CPL ($)',color:'#C9882A',font:{size:10}}}}}
+  });
+
+  var schedRates=[43,67,38,50,57,43,60,83,0,43,100,80];
+  new Chart(document.getElementById('schedChart').getContext('2d'),{
+    type:'line',
+    data:{
+      labels:weeks,
+      datasets:[{
+        label:'Google Ads scheduling rate (%)',
+        data:schedRates,
+        borderColor:'#3D7A72',
+        backgroundColor:'rgba(61,122,114,0.07)',
+        pointBackgroundColor:schedRates.map(function(v){return v>=80?'#3D8A60':v===0?'#C44040':'#C9882A';}),
+        pointRadius:6,borderWidth:2.5,fill:true,tension:0.3
+      }]
+    },
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(ctx){return ctx.parsed.y+'%';}}}},scales:{x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:10},color:'#6B6460',maxRotation:45}},y:{min:0,max:110,grid:{color:'#EDE7DC'},ticks:{font:{family:'DM Sans',size:11},color:'#6B6460',callback:function(v){return v+'%';},stepSize:20}}}}
+  });
+});
+</script>
+</body></html>
