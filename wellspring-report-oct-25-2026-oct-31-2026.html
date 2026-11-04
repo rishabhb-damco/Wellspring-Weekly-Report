@@ -7,7 +7,7 @@
 .camp-table{width:100%;border-collapse:collapse;font-size:12px;}.camp-table th{background:var(--cream-dark);padding:6px 10px;text-align:left;font-size:9.5px;text-transform:uppercase;letter-spacing:1px;color:var(--warm-mid);font-weight:500;}.camp-table td{padding:7px 10px;border-bottom:1px solid var(--cream-dark);vertical-align:middle;}.camp-table tr:last-child td{border-bottom:none;font-weight:600;background:#fdf9f5;}.camp-bar{height:6px;border-radius:3px;}.badge-status{font-size:9px;padding:2px 6px;border-radius:12px;font-weight:500;}.st-ok{background:#E8F5EC;color:#2E7D4F;}.st-warn{background:#FDF6EC;color:#C9882A;}.st-lim{background:#FDF1EE;color:#C25B3F;}
 .hbar-row{display:flex;align-items:center;gap:10px;margin-bottom:7px;}.hbar-label{font-size:11.5px;color:var(--charcoal);min-width:160px;flex-shrink:0;}.hbar-track{flex:1;background:var(--cream-dark);border-radius:4px;height:22px;position:relative;}.hbar-fill{height:100%;border-radius:4px;display:flex;align-items:center;justify-content:flex-end;padding-right:8px;min-width:24px;}.hbar-pct{font-size:10.5px;font-weight:600;color:#fff;}.hbar-count{font-size:12px;color:var(--warm-mid);min-width:20px;text-align:right;font-weight:600;}
 .insight-card{border-left:3px solid var(--teal);padding:10px 14px;margin-bottom:8px;background:var(--teal-pale);border-radius:0 8px 8px 0;font-size:12.5px;line-height:1.6;}.insight-card.amber{border-left-color:var(--amber);background:#FDF6EC;}.insight-card.rust{border-left-color:var(--rust);background:#FDF1EE;}.insight-card.green{border-left-color:var(--green);background:#EBF5F0;}.insight-card.violet{border-left-color:var(--violet);background:#F2F0F9;}
-.actions-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}.action-card{background:#fff;border:1px solid var(--border);border-radius:9px;padding:13px 15px;}.action-prio{font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;margin-bottom:5px;}.action-title{font-size:13px;font-weight:600;color:var(--charcoal);margin-bottom:4px;}.action-body{font-size:11.5px;color:var(--warm-mid);line-height:1.6;}
+.updates-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:12px;}.update-card{background:#fff;border:1px solid var(--border);border-radius:9px;padding:14px 16px;}.update-badge{display:inline-block;font-size:9px;text-transform:uppercase;letter-spacing:1.5px;font-weight:600;padding:2px 8px;border-radius:12px;margin-bottom:7px;}.ub-live{background:#E8F5EC;color:#2E7D4F;}.ub-track{background:#FDF6EC;color:#C9882A;}.update-title{font-size:13.5px;font-weight:600;color:var(--charcoal);margin-bottom:5px;font-family:'Cormorant Garamond',serif;}.update-body{font-size:11.5px;color:var(--warm-mid);line-height:1.65;}
 .lead-kpi-row{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:12px;}.lkpi{background:#fff;border:1px solid var(--border);border-radius:9px;padding:12px 14px;}.lkpi-val{font-family:'Cormorant Garamond',serif;font-size:34px;font-weight:600;color:var(--charcoal);line-height:1;}.lkpi-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;color:var(--warm-mid);font-weight:500;margin-top:4px;}
 .phone-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:10px;}.pf-card{border-radius:8px;padding:12px 14px;text-align:center;}.pf-val{font-family:'Cormorant Garamond',serif;font-size:32px;font-weight:600;line-height:1;}.pf-label{font-size:10px;text-transform:uppercase;letter-spacing:1.5px;font-weight:500;margin-top:4px;}.pf-sub{font-size:11px;margin-top:4px;}
 .context-note{background:var(--teal-pale);border:1px solid #b2d8d4;border-radius:9px;padding:11px 16px;margin-bottom:16px;font-size:11.5px;color:var(--charcoal);line-height:1.6;}
@@ -27,7 +27,7 @@ canvas{max-height:200px;}</style></head><body>
 
 <!-- CONTEXT NOTE -->
 <div class="context-note">
-  <strong>Campaign context:</strong> DSA and Brand Search were intentionally paused this week. All spend and performance figures reflect <strong>Generic Search only</strong>. Direct WoW comparison on spend, CTR, and platform conversions is not meaningful vs prior weeks that had DSA running.
+  <strong>Campaign context:</strong> DSA and Brand Search were intentionally paused this week. All spend and performance figures reflect <strong>Generic Search only</strong>. Direct WoW comparison on spend, CTR, and conversions is not meaningful vs prior weeks that had DSA running.
 </div>
 
 <!-- SECTION 1: KPI CARDS -->
@@ -63,10 +63,10 @@ canvas{max-height:200px;}</style></head><body>
     <span class="delta d-warn">Generic-only · not comparable</span>
   </div>
   <div class="kpi-card violet">
-    <div class="kpi-label">Platform Conversions</div>
-    <div class="kpi-value">3</div>
-    <div class="kpi-sub">Generic Search · 6.67% conv. rate</div>
-    <span class="delta d-warn">Generic-only · not comparable</span>
+    <div class="kpi-label">Pending Response</div>
+    <div class="kpi-value">1</div>
+    <div class="kpi-sub">L11 — Psychology Today · Awaiting reply</div>
+    <span class="delta d-warn">Follow-up needed</span>
   </div>
 </div>
 
@@ -86,15 +86,15 @@ canvas{max-height:200px;}</style></head><body>
       </tbody>
     </table>
     <div style="margin-top:10px;background:var(--teal-pale);border-radius:7px;padding:9px 12px;font-size:11.5px;line-height:1.7;">
-      <strong>Generic Search solo week:</strong> With DSA paused, Generic carried the full budget. CPC of $5.97 is in line with recent weeks ($5.51–$5.93). 3 platform conversions on 45 clicks = 6.67% conversion rate — the strongest platform conv. rate in recent memory. CPL of $54 is the best in 5 weeks.
+      <strong>Generic Search solo week:</strong> With DSA paused, Generic carried the full budget. CPC of $5.97 is in line with recent weeks ($5.51–$5.93). 3 platform conversions on 45 clicks = 6.67% conversion rate. CPL of $54 is the best in 5 weeks — driven by the lower budget base, but encouraging nonetheless.
     </div>
   </div>
   <div class="panel">
     <div class="panel-title"><span class="dot" style="background:var(--violet)"></span> 4-Week Trend — Spend &amp; CPL</div>
     <div style="position:relative;height:190px;"><canvas id="trendChart"></canvas></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-top:8px;">
-      <div style="background:var(--cream);border-radius:5px;padding:7px 9px;font-size:10px;"><span style="font-weight:600;color:var(--green);">CPL improvement:</span> $135 → $54 — best 4-week result. Note: Oct 11–17 had DSA running (+$70 spend); this week is Generic-only at a lower budget base.</div>
-      <div style="background:#EBF5F0;border-radius:5px;padding:7px 9px;font-size:10px;"><span style="font-weight:600;color:var(--teal);">Spend drop explained:</span> DSA paused this week. Generic at $269 is consistent with prior Generic-only spend patterns — not a budget cut signal.</div>
+      <div style="background:var(--cream);border-radius:5px;padding:7px 9px;font-size:10px;"><span style="font-weight:600;color:var(--green);">CPL at $54:</span> Best result in the 4-week window. Note: Oct 11–17 had DSA running (+$70). This week is Generic-only at a lower budget base — context matters for comparison.</div>
+      <div style="background:#EBF5F0;border-radius:5px;padding:7px 9px;font-size:10px;"><span style="font-weight:600;color:var(--teal);">Spend at $269:</span> Lower than prior weeks because DSA was paused. Not a budget cut — campaign mix changed intentionally this week.</div>
     </div>
   </div>
 </div>
@@ -106,7 +106,7 @@ canvas{max-height:200px;}</style></head><body>
   <div class="lkpi"><div class="lkpi-val">12</div><div class="lkpi-label">Total leads (all sources)</div></div>
   <div class="lkpi"><div class="lkpi-val">5</div><div class="lkpi-label">Total confirmed booked</div></div>
   <div class="lkpi"><div class="lkpi-val">45%</div><div class="lkpi-label">Overall scheduling rate (excl. pending)</div></div>
-  <div class="lkpi"><div class="lkpi-val" style="color:var(--rust);">6</div><div class="lkpi-label">Not scheduled · 1 pending response</div></div>
+  <div class="lkpi"><div class="lkpi-val" style="color:var(--rust);">6</div><div class="lkpi-label">Not scheduled · 1 in pending process</div></div>
 </div>
 
 <div class="two-col">
@@ -196,49 +196,34 @@ canvas{max-height:200px;}</style></head><body>
 <div class="panel">
   <div class="panel-title"><span class="dot" style="background:var(--teal)"></span> Google Ads Scheduling Rate — 5-Week Trend</div>
   <div style="position:relative;height:160px;"><canvas id="schedRateChart"></canvas></div>
-  <p style="font-size:10.5px;color:var(--warm-mid);margin-top:8px;line-height:1.6;">Scheduling rate has held at 17–20% for the past three weeks (Oct 4–10 also 20%). This is not a campaign performance issue — it reflects insurance eligibility blocking Google leads at intake. The 60% peak of Sep 27–Oct 3 and 50% of Oct 11–17 were both driven by weeks with fewer insurance mismatches. Structural improvement requires resolving HAP and reinforcing Medicaid negatives, not campaign changes.</p>
+  <p style="font-size:10.5px;color:var(--warm-mid);margin-top:8px;line-height:1.6;">Scheduling rate has held at 17–20% for the past three weeks (Oct 4–10 also 20%). The 60% peak of Sep 27–Oct 3 and 50% of Oct 11–17 were both driven by weeks with fewer insurance mismatches. Structural improvement requires resolving HAP and reinforcing Medicaid negatives — not campaign changes alone.</p>
 </div>
 
-<!-- RECOMMENDED ACTIONS -->
-<div class="section-divider"><span class="sdot" style="background:var(--green)"></span><h2>Recommended Actions</h2><span class="stag">Priority items heading into week of 02 Nov 2026</span></div>
-<div class="actions-grid">
-  <div class="action-card" style="border-left:3px solid var(--rust);">
-    <div class="action-prio" style="color:var(--rust);">High priority</div>
-    <div class="action-title">Resolve HAP insurance status with Wellspring</div>
-    <div class="action-body">L3 this week declined for HAP — appearing for the third consecutive week with at least one HAP decline. HAP historically accounts for 20–28% of all lost leads. Confirm whether Wellspring now accepts HAP and update ads and intake language accordingly. This is the single highest-impact change available for scheduling rate.</div>
+<!-- UPDATES THIS WEEK -->
+<div class="section-divider"><span class="sdot" style="background:var(--green)"></span><h2>Updates This Week</h2><span class="stag">Account changes, launches, and initiatives — week of 25 Oct 2026</span></div>
+<div class="updates-grid">
+  <div class="update-card" style="border-left:3px solid var(--green);">
+    <span class="update-badge ub-live">Live</span>
+    <div class="update-title">New Landing Page Is Now Live</div>
+    <div class="update-body">The redesigned Wellspring landing page went live this week. This is a key step toward improving post-click conversion — the previous page lacked dedicated therapy-service copy and a clear CTA above the fold. All Generic Search traffic is now directed to the new page. We will monitor quality score, bounce rate, and scheduling rate over the next 3–4 weeks to measure its impact on lead conversion.</div>
   </div>
-  <div class="action-card" style="border-left:3px solid var(--rust);">
-    <div class="action-prio" style="color:var(--rust);">High priority</div>
-    <div class="action-title">Reinforce Medicaid negative keywords</div>
-    <div class="action-body">Two Medicaid declines again this week (L4 UHC Medicaid, L7 Medicaid). The Aug 19 negative keyword fix reduced these but has not eliminated them. Review the Search Terms report for Medicaid-triggering queries and add additional negatives. Consider adding "medicaid" as a broad match negative at account level if not already in place.</div>
+  <div class="update-card" style="border-left:3px solid var(--amber);">
+    <span class="update-badge ub-track">Tracking</span>
+    <div class="update-title">Early Signs from the New Landing Page — 3 Leads in 2 Days</div>
+    <div class="update-body">Within just 2 days of the new landing page going live, 3 Google leads have been observed in the consultation sheet. Of these: 1 has not scheduled yet, 1 is in a pending stage — none have booked yet. This is a promising early signal — the volume in 2 days is encouraging — but it is too soon to draw conclusions on conversion impact. We will continue tracking scheduling rate and CPL over the coming weeks as the primary measures of landing page performance.</div>
   </div>
-  <div class="action-card" style="border-left:3px solid var(--amber);">
-    <div class="action-prio" style="color:var(--amber);">Medium priority</div>
-    <div class="action-title">Reactivate DSA and assess impact on lead volume</div>
-    <div class="action-body">DSA was paused this week. Historically, DSA delivers the lowest CPL and highest phone call engagement. With Generic running solo at $269, lead volume held at 5 — reactivating DSA at its prior $10–15/day budget should incrementally add phone call leads without significantly raising CPL. Recommend reactivating for the week of Nov 2.</div>
-  </div>
-  <div class="action-card" style="border-left:3px solid var(--amber);">
-    <div class="action-prio" style="color:var(--amber);">Medium priority</div>
-    <div class="action-title">Address &ldquo;MM for minors&rdquo; service gap in ad copy</div>
-    <div class="action-body">L8 declined because Wellspring does not offer medication management for minors. If this is a recurring inquiry type, add exclusion language in ad copy or as a negative keyword (e.g. "child psychiatry", "teen medication", "pediatric"). Prevents wasted spend on out-of-scope leads — especially relevant now that Generic is the only active campaign.</div>
-  </div>
-  <div class="action-card" style="border-left:3px solid var(--teal);">
-    <div class="action-prio" style="color:var(--teal);">Watch</div>
-    <div class="action-title">Generic Search — monitor CTR with DSA off</div>
-    <div class="action-body">With DSA paused, Generic Search CTR this week was 4.79% (vs 5.44% in Oct 11–17 when it also ran solo for some days). Platform conversion rate of 6.67% is strong. If CTR continues at 4–5% range on Generic alone, the campaign is performing within benchmarks and does not need creative refresh yet.</div>
-  </div>
-  <div class="action-card" style="border-left:3px solid var(--teal);">
-    <div class="action-prio" style="color:var(--teal);">Watch</div>
-    <div class="action-title">Follow up on L11 (Psychology Today) — pending response</div>
-    <div class="action-body">L11 is marked as pending response from Psychology Today. If Wellspring has an active intake process for Psychology Today leads, follow up with this prospect. Converting L11 would bring the overall scheduling rate to 55% for the week — a material improvement.</div>
+  <div class="update-card" style="border-left:3px solid var(--teal);grid-column:1 / -1;">
+    <span class="update-badge" style="background:var(--teal-pale);color:var(--teal);">Live</span>
+    <div class="update-title">Brand Search Campaign Launched</div>
+    <div class="update-body">A Brand Search campaign (Damco_WS_Brand_Searc) has been launched to defend Wellspring's branded queries. The objective is straightforward: prevent competitors from bidding on and capturing traffic from people actively searching for "Wellspring" by name. Without a brand campaign, a competitor can outbid us on our own brand terms and intercept high-intent prospects who already know Wellspring. The campaign is currently in a bidding strategy learning phase and spending $0 — it is expected to ramp up and begin serving in the coming week. We will monitor impression share and cost once it exits learning.</div>
   </div>
 </div>
 
 <!-- KEY OBSERVATIONS -->
 <div class="section-divider"><span class="sdot" style="background:var(--charcoal)"></span><h2>Key Observations</h2></div>
 <div class="insight-card green"><strong>CPL improved significantly to $54 — best result in 5 weeks.</strong> $268.85 spent on Generic Search alone, divided across 5 Google bucket leads, gives a CPL of $53.77. This is below the August benchmark of ~$99 and far below last week's $135. Context: DSA was paused, so total spend is lower than a typical week — but the CPL improvement is real. Generic Search is performing efficiently on its own.</div>
-<div class="insight-card rust"><strong>Insurance eligibility is the persistent conversion blocker — 4 of 6 non-bookings this week were insurance-related.</strong> HAP (1), Medicaid ×2 (2), and Medicare (1) declines account for 67% of all non-bookings. This is a structural intake issue, not a campaign quality issue. Google leads this week were broadly relevant — the pipeline is delivering enquiries, but eligibility is filtering out the majority. HAP resolution alone could lift scheduling rate by 10–15pp.</div>
-<div class="insight-card amber"><strong>Non-Google sources delivered well — 45% overall scheduling rate despite low Google rate.</strong> L1, L6 (external referral), L10 (internal, Lisa), and L12 (Psychology Today) all booked. External referrals and internal warm leads are converting at 60–100%. With Google at 20%, the account's blended scheduling performance is being sustained by non-paid channels. This underscores that intake quality and insurance coverage — not ad targeting — are the binding constraints on growth.</div>
+<div class="insight-card rust"><strong>Insurance eligibility is the persistent conversion blocker — 4 of 6 non-bookings were insurance-related.</strong> HAP (1), Medicaid ×2 (2), and Medicare (1) declines account for 67% of all non-bookings. This is a structural intake issue, not a campaign quality issue. The pipeline is delivering relevant enquiries, but eligibility is filtering out the majority. HAP resolution alone could lift scheduling rate by 10–15pp based on historical patterns.</div>
+<div class="insight-card amber"><strong>Non-Google sources delivered well — 45% overall scheduling rate despite low Google rate.</strong> L1, L6 (external referral), L10 (internal, Lisa), and L12 (Psychology Today) all booked. External referrals and internal warm leads are converting at 60–100%. The account's blended scheduling performance is being sustained by non-paid channels. This underscores that intake quality and insurance coverage — not ad targeting — are the binding constraints on growth this week.</div>
 
 <!-- FOOTER -->
 <hr style="border:none;border-top:1px solid var(--border);margin:14px 0;">
@@ -250,7 +235,7 @@ canvas{max-height:200px;}</style></head><body>
 
 <script>
 window.addEventListener('load', function(){
-  var weeks = ['Oct 4–10','Oct 11–17','Oct 18–24*','Oct 25–31'];
+  var weeks = ['Oct 4–10','Oct 11–17','Oct 18–24','Oct 25–31'];
   var spend  = [443, 538, 207.86, 268.85];
   var cpl    = [89, 135, 34.64, 53.77];
 
@@ -259,11 +244,11 @@ window.addEventListener('load', function(){
     data:{
       labels:weeks,
       datasets:[
-        {label:'Spend ($)',data:spend,backgroundColor:['#8bbdb8','#8bbdb8','#e8c88a','#3D7A72'],borderRadius:5,yAxisID:'y',barPercentage:0.55},
+        {label:'Spend ($)',data:spend,backgroundColor:['#8bbdb8','#8bbdb8','#c8c8c8','#3D7A72'],borderRadius:5,yAxisID:'y',barPercentage:0.55},
         {label:'CPL ($)',data:cpl,type:'line',borderColor:'#C9882A',backgroundColor:'rgba(201,136,42,0.06)',pointBackgroundColor:cpl.map(function(v){return v>120?'#C44040':v<80?'#3D8A60':'#C9882A';}),pointRadius:5,borderWidth:2.5,yAxisID:'y2',tension:0.35,fill:true}
       ]
     },
-    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:'DM Sans',size:11},color:'#6B6460',boxWidth:10}},tooltip:{callbacks:{afterTitle:function(items){var idx=items[0].dataIndex;return idx===2?'⚠️ Partial spend data':'idx===3?Generic Search only':'';}} }}},scales:{x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:10},color:'#6B6460'}},y:{position:'left',min:0,max:700,grid:{color:'#EDE7DC'},ticks:{font:{family:'DM Sans',size:10},color:'#6B6460',callback:function(v){return '$'+v;}},title:{display:true,text:'Spend',color:'#6B6460',font:{size:10}}},y2:{position:'right',min:0,max:180,grid:{display:false},ticks:{font:{family:'DM Sans',size:10},color:'#C9882A',callback:function(v){return '$'+v;}},title:{display:true,text:'CPL',color:'#C9882A',font:{size:10}}}}}
+    options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{labels:{font:{family:'DM Sans',size:11},color:'#6B6460',boxWidth:10}}},scales:{x:{grid:{display:false},ticks:{font:{family:'DM Sans',size:10},color:'#6B6460'}},y:{position:'left',min:0,max:700,grid:{color:'#EDE7DC'},ticks:{font:{family:'DM Sans',size:10},color:'#6B6460',callback:function(v){return '$'+v;}},title:{display:true,text:'Spend',color:'#6B6460',font:{size:10}}},y2:{position:'right',min:0,max:180,grid:{display:false},ticks:{font:{family:'DM Sans',size:10},color:'#C9882A',callback:function(v){return '$'+v;}},title:{display:true,text:'CPL',color:'#C9882A',font:{size:10}}}}}
   });
 
   new Chart(document.getElementById('typeBar').getContext('2d'),{
